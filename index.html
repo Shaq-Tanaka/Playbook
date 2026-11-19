@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Chlk">
+<meta name="apple-mobile-web-app-title" content="Play Draw Lab">
 <meta name="theme-color" content="#18181b">
 <script>
 // ホーム画面アイコン & PWA マニフェストを自動生成（ファイル1つで完結）
@@ -30,14 +30,14 @@
     const i180 = icon(180), i192 = icon(192), i512 = icon(512);
     add('apple-touch-icon', i180, '180x180'); add('icon', i192, '192x192');
     if (/^https?:/.test(location.protocol)) {
-      const m = { name: 'Chlk', short_name: 'Chlk', start_url: location.href.split('#')[0], scope: location.href.split('#')[0].replace(/[^/]*$/, ''), display: 'standalone', orientation: 'any', background_color: '#18181b', theme_color: '#18181b', icons: [{ src: i192, sizes: '192x192', type: 'image/png' }, { src: i512, sizes: '512x512', type: 'image/png', purpose: 'any' }] };
+      const m = { name: 'Play Draw Lab', short_name: 'Play Draw Lab', start_url: location.href.split('#')[0], scope: location.href.split('#')[0].replace(/[^/]*$/, ''), display: 'standalone', orientation: 'any', background_color: '#18181b', theme_color: '#18181b', icons: [{ src: i192, sizes: '192x192', type: 'image/png' }, { src: i512, sizes: '512x512', type: 'image/png', purpose: 'any' }] };
       add('manifest', URL.createObjectURL(new Blob([JSON.stringify(m)], { type: 'application/manifest+json' })));
       if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
     }
   } catch (e) {}
 })();
 </script>
-<title>Chlk (Pro Edition v71)</title>
+<title>Play Draw Lab (Pro Edition v78)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
   :root {
@@ -190,9 +190,19 @@
     #touch-bar button { padding: 9px 10px; font-size: 13px; white-space: nowrap; }
   }
   @media (max-width: 520px) { #touch-bar { gap: 3px; padding: 4px; overflow-x: auto; } #touch-bar button { padding: 9px 6px; font-size: 11.5px; min-height: 0; } }
+  button, input, select, label { touch-action: manipulation; }
+  body.big button { min-height: 50px !important; font-size: 15px !important; padding: 12px 8px !important; }
+  body.big .mini-btn { min-height: 44px !important; padding: 10px 12px !important; }
+  body.big .tool-group h4, body.big .sidebar-header { font-size: 14px; }
+  body.big .prop-row label, body.big .field-tag { font-size: 13px; }
+  body.big input, body.big select { font-size: 16px; padding: 10px 10px; min-height: 44px; }
+  body.big input[type=checkbox], body.big input[type=radio] { min-height: 0; width: 24px !important; height: 24px; padding: 0; }
+  body.big #touch-bar button { padding: 14px 14px; font-size: 15px; min-height: 52px !important; }
+  body.big #zoom-ctl button { min-width: 48px; min-height: 48px !important; }
+  @media (max-width: 820px), (pointer: coarse) and (max-width: 1280px) { body.big .sidebar, body.big .inspector { width: min(430px, 94vw); } }
   @media (pointer: coarse) {
     body { -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
-    button { padding: 8px 6px; font-size: 12.5px; min-height: 36px; }
+    button { padding: 10px 6px; font-size: 13.5px; min-height: 44px; }
     .mini-btn { padding: 6px 9px; }
     input, select, textarea { font-size: 16px; padding: 7px 8px; }
     .menu-item { padding: 12px 14px; }
@@ -273,8 +283,8 @@
   <!-- 左サイドバー -->
   <div class="sidebar">
     <div class="sidebar-header">
-      <span>Chlk</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v71</span></span>
+      <span>Play Draw Lab</span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v78</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -292,7 +302,7 @@
       </div>
       <div class="btn-grid-3" style="margin-bottom:3px;">
         <div class="group-btn-wrap">
-          <button id="grp-ol" onclick="GridironApp.selectGroup('ol')">OL (OT/OG/C)</button>
+          <button id="grp-ol" onclick="GridironApp.selectGroup('ol')">OL (LT/LG/C/RG/RT)</button>
           <span class="group-rename-badge" onclick="GridironApp.renameGroup('ol')">✏️</span>
         </div>
         <div class="group-btn-wrap">
@@ -316,6 +326,7 @@
         <button onclick="GridironApp.resetGroupNames()" title="グループ名を初期値に戻す" style="background:#334155; font-size:9.5px;">↺ 名称リセット</button>
       </div>
       <button onclick="GridironApp.flipOffDefPositions()" style="width:100%; background:#7c3aed; border-color:#8b5cf6; font-weight:bold; font-size:11px; margin-top:2px;">🔄 Off / Def 位置を反転 (上下入替)</button>
+      <button onclick="GridironApp.flipLR()" style="width:100%; background:#7c3aed; border-color:#8b5cf6; font-weight:bold; font-size:11px; margin-top:2px;">↔ 左右反転 (LT/LG=左・RT/RG=右 固定)</button>
     </div>
 
     <div class="tool-group">
@@ -504,6 +515,21 @@
         <input type="range" id="def-size-range" min="8" max="24" value="12" style="flex:1;" oninput="GridironApp.changePlayerSize()">
         <span id="def-size-val" style="font-size:10.5px; width:24px; text-align:right;">12</span>
       </div>
+    </div>
+
+    <div class="tool-group" id="pn-group">
+      <h4>📝 Players Note</h4>
+      <div style="display:flex; gap:4px; margin-bottom:4px;">
+        <button id="pn-tab-off" type="button" onclick="GridironApp.pnSide('off')" style="flex:1; font-weight:bold;">OFFENSE</button>
+        <button id="pn-tab-def" type="button" onclick="GridironApp.pnSide('def')" style="flex:1; font-weight:bold;">DEFENSE</button>
+      </div>
+      <div id="pn-rows"></div>
+      <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:4px;">
+        <button type="button" onclick="GridironApp.pnAdd()" style="flex:1; background:#059669; border-color:#10b981;">＋ 行を追加</button>
+        <button type="button" onclick="GridironApp.pnFromField()" style="flex:1;" title="今、フィールドにいる選手の名前から行を作ります">選手から作成</button>
+        <button type="button" onclick="GridironApp.pnReset()" style="flex:1;" title="標準のポジション一覧に戻します(メモは消えます)">標準に戻す</button>
+      </div>
+      <div style="font-size:9.5px; color:#a1a1aa; margin-top:3px;">ポジション名はいつでも書き換えられます。プレイ保存で、一緒に保存されます。</div>
     </div>
 
     <div class="tool-group">
@@ -784,7 +810,7 @@ const APP_CONFIG = {
 const DEFAULT_GROUP_NAMES = {
   'all_off': 'OFF全体',
   'all_def': 'DEF全体',
-  'ol': 'OL (OT/OG/C)',
+  'ol': 'OL (LT/LG/C/RG/RT)',
   'wr': 'WR (X/Z/S/W)',
   'te': 'TE(Y/W)',
   'rb': 'RB (R/F)',
@@ -807,7 +833,7 @@ function isPlayerInActiveGroup(p, activeGroup) {
   if (activeGroup === 'all_off') return p.side !== 'def';
   if (activeGroup === 'all_def') return p.side === 'def';
   
-  if (activeGroup === 'ol') return p.side !== 'def' && ['OT', 'OG', 'C'].includes(p.label);
+  if (activeGroup === 'ol') return p.side !== 'def' && ['OT', 'OG', 'C', 'LT', 'LG', 'RG', 'RT'].includes(p.label);
   if (activeGroup === 'wr') return p.side !== 'def' && ['X', 'Z', 'S', 'W'].includes(p.label);
   if (activeGroup === 'te') return p.side !== 'def' && ['Y', 'W', 'TE'].includes(p.label);
   if (activeGroup === 'rb') return p.side !== 'def' && ['R', 'F'].includes(p.label);
@@ -843,10 +869,11 @@ const GridironApp = (() => {
   let groupNames = { ...DEFAULT_GROUP_NAMES };
 
   let offPalette = [
-    { label: 'OT', shape: 'circle', bg: '#3f3f46', border: '#52525b' },
-    { label: 'OG', shape: 'circle', bg: '#3f3f46', border: '#52525b' },
+    { label: 'LT', shape: 'circle', bg: '#3f3f46', border: '#52525b' },
+    { label: 'LG', shape: 'circle', bg: '#3f3f46', border: '#52525b' },
     { label: 'C',  shape: 'square', bg: '#047857', border: '#10b981' },
-    { label: 'OT', shape: 'circle', bg: '#3f3f46', border: '#52525b' },
+    { label: 'RG', shape: 'circle', bg: '#3f3f46', border: '#52525b' },
+    { label: 'RT', shape: 'circle', bg: '#3f3f46', border: '#52525b' },
     { label: 'X',  shape: 'circle', bg: '#3f3f46', border: '#52525b' },
     { label: 'Z',  shape: 'circle', bg: '#3f3f46', border: '#52525b' },
     { label: 'S',  shape: 'circle', bg: '#3f3f46', border: '#52525b' },
@@ -883,14 +910,15 @@ const GridironApp = (() => {
   let historyStack = [];
   let redoStack = [];
   let clickTimer = null;
+  let lastPT = 'mouse';
 
   const DEFAULT_OFF = {
     'Gun 3x1 (Trips)': [
-      { label: 'OT', shape: 'circle', side: 'off', x: 390, relY: 15, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
-      { label: 'OG', shape: 'circle', side: 'off', x: 420, relY: 15, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
+      { label: 'LT', shape: 'circle', side: 'off', x: 390, relY: 15, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
+      { label: 'LG', shape: 'circle', side: 'off', x: 420, relY: 15, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
       { label: 'C',  shape: 'square', side: 'off', x: 450, relY: 15, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
-      { label: 'OG', shape: 'circle', side: 'off', x: 480, relY: 15, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
-      { label: 'OT', shape: 'circle', side: 'off', x: 510, relY: 15, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
+      { label: 'RG', shape: 'circle', side: 'off', x: 480, relY: 15, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
+      { label: 'RT', shape: 'circle', side: 'off', x: 510, relY: 15, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
       { label: 'QB', shape: 'circle', side: 'off', x: 450, relY: 75, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
       { label: 'X',  shape: 'circle', side: 'off', x: 130, relY: 15, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
       { label: 'S',  shape: 'circle', side: 'off', x: 580, relY: 25, strokeColor: '#000000', fillColor: '#ffffff', visible: true },
@@ -985,7 +1013,7 @@ const GridironApp = (() => {
   let draftTimer = null;
   function scheduleDraft() {
     clearTimeout(draftTimer);
-    draftTimer = setTimeout(() => { idb.set('draft', { players, lines, zones, texts, name: document.getElementById('play-name').value }).catch(() => {}); }, 1000);
+    draftTimer = setTimeout(() => { idb.set('draft', { pnotes, players, lines, zones, texts, name: document.getElementById('play-name').value }).catch(() => {}); }, 1000);
   }
   async function loadFromIDB() {
     try {
@@ -995,7 +1023,7 @@ const GridironApp = (() => {
       updatePlayList();
       const dr = await idb.get('draft');
       if (dr && ((dr.players || []).length + (dr.lines || []).length + (dr.texts || []).length) > 0 && confirm('前回の編集内容（自動保存）を復元しますか？')) {
-        players = dr.players || []; lines = dr.lines || []; zones = dr.zones || []; texts = dr.texts || [];
+        players = dr.players || []; lines = dr.lines || []; zones = dr.zones || []; texts = dr.texts || []; pnLoad(dr.pnotes);
         document.getElementById('play-name').value = dr.name || '';
         historyStack = []; redoStack = []; selectedObj = null; render(); toast('編集内容を復元しました');
       }
@@ -1050,7 +1078,11 @@ const GridironApp = (() => {
     delete defFormations['4-2-5 Nickel'];
 
     const storedOffPal = JSON.parse(localStorage.getItem(APP_CONFIG.storageKeys.offPalette) || 'null');
-    if (storedOffPal) offPalette = storedOffPal;
+    if (storedOffPal) {
+      offPalette = storedOffPal;
+      const L4 = offPalette.slice(0, 4).map(q => q.label).join(',');
+      if (L4 === 'OT,OG,C,OT') { const mk = (l, o) => Object.assign({}, o, { label: l }); const [a, b, c, d] = offPalette; offPalette.splice(0, 4, mk('LT', a), mk('LG', b), c, mk('RG', b), mk('RT', d)); try { localStorage.setItem(APP_CONFIG.storageKeys.offPalette, JSON.stringify(offPalette)); } catch (e) {} }
+    }
 
     const storedDefPal = JSON.parse(localStorage.getItem(APP_CONFIG.storageKeys.defPalette) || 'null');
     if (storedDefPal) defPalette = storedDefPal;
@@ -1069,6 +1101,7 @@ const GridironApp = (() => {
     bindCanvasEvents();
     updateLinesSeg();
     setAssign([]);
+    pnRender();
     restoreCover();
 
     render();
@@ -1094,7 +1127,7 @@ const GridironApp = (() => {
     // 折りたたみ: 見出し(先頭の要素)を押して開閉。状態は覚えておく
     const blocks = [...sb.querySelectorAll(':scope > .tool-group'), ...ins.querySelectorAll(':scope > div')];
     const keyOf = b => 'gps_acc_' + (b.querySelector('h4') ? b.querySelector('h4').textContent.trim().slice(0, 24) : '');
-    const defOpen = b => /グループ|ルート|ライン設定|選手配置|FIELD|保存済み|プレイ・状況/.test((b.querySelector('h4') || {}).textContent || '');
+    const defOpen = b => /グループ|ルート|ライン設定|選手配置|FIELD|保存済み|プレイ・状況|Players Note/.test((b.querySelector('h4') || {}).textContent || '');
     blocks.forEach(b => {
       const head = b.firstElementChild; if (!head || !b.querySelector('h4')) return;
       head.classList.add('acc-head');
@@ -1119,6 +1152,8 @@ const GridironApp = (() => {
     apply();
     tl.addEventListener('click', () => { document.body.classList.toggle('hide-left'); ls.set('gps_hide_left', document.body.classList.contains('hide-left') ? '1' : '0'); apply(); refit(); });
     tr.addEventListener('click', () => { document.body.classList.toggle('hide-right'); ls.set('gps_hide_right', document.body.classList.contains('hide-right') ? '1' : '0'); apply(); refit(); });
+    { let sv = null; try { sv = localStorage.getItem('gps_big'); } catch (e) {} const on = sv === null ? matchMedia('(pointer: coarse)').matches : sv === '1'; document.body.classList.toggle('big', on); }
+    document.getElementById('btn-big').addEventListener('click', () => { document.body.classList.toggle('big'); if (document.body.classList.contains('big')) document.body.classList.remove('compact'); ls.set('gps_big', document.body.classList.contains('big') ? '1' : '0'); refit(); });
     document.getElementById('btn-compact').addEventListener('click', () => { document.body.classList.toggle('compact'); ls.set('gps_compact', document.body.classList.contains('compact') ? '1' : '0'); refit(); });
     // 弧は使わない: Arc Bend 設定を隠す
     const ad = document.getElementById('line-arc-dir'); if (ad && ad.closest('.prop-row')) ad.closest('.prop-row').style.display = 'none';
@@ -1340,6 +1375,31 @@ const GridironApp = (() => {
       p.y = losY - distFromLos;
     });
     render();
+  }
+
+  function flipLR() {
+    pushHistory();
+    const mx = x => W - x;
+    const keepOL = !!(document.getElementById('flip-keep-ol') || {}).checked;
+    const isOL = p => p.side !== 'def' && ['OT', 'OG', 'C', 'T', 'G', 'LT', 'LG', 'RG', 'RT'].includes((p.label || '').trim());
+    const olPos = keepOL ? players.filter(isOL) : [];
+    const SWL = { LT: 'RT', RT: 'LT', LG: 'RG', RG: 'LG' };
+    players.forEach(p => {
+      if (keepOL && isOL(p)) return;
+      p.x = mx(p.x);
+      if (isOL(p) && SWL[(p.label || '').trim()]) p.label = SWL[p.label.trim()]; // 位置を反転したら、左側=LT/LG・右側=RT/RGになるよう名前を合わせる
+    });
+    lines.forEach(l => {
+      const st = (l.points || [])[0];
+      if (keepOL && st && olPos.some(o => Math.hypot(o.x - st.x, o.y - st.y) < 22)) return;
+      (l.points || []).forEach(q => { q.x = mx(q.x); });
+      if (l.arcDir === 'left') l.arcDir = 'right'; else if (l.arcDir === 'right') l.arcDir = 'left';
+    });
+    zones.forEach(z => { z.x = mx(z.x); });
+    texts.forEach(t => { t.x = mx(t.x); });
+    selectedObj = null;
+    render();
+    toast('左右を反転しました（OLは LT/LG=左、RG/RT=右 に固定）', 2800);
   }
 
   function applySelectedOff(recordHist = true) {
@@ -1754,7 +1814,7 @@ const GridironApp = (() => {
 
   function getClosestPlayer(x, y) {
     let closest = null;
-    let minDist = 22; 
+    let minDist = lastPT === 'mouse' ? 22 : 36; 
     players.forEach(p => {
       let dist = Math.hypot(p.x - x, p.y - y);
       if (dist < minDist) {
@@ -2420,7 +2480,15 @@ const GridironApp = (() => {
     const tptrs = new Map(); let tg = null, tIgnore = false, lpTimer = null, tpPicked = false, tpStart = null;
     const synth = (type, e) => canvas.dispatchEvent(new MouseEvent(type, { clientX: e.clientX, clientY: e.clientY, button: 0, bubbles: true, cancelable: true }));
     window.addEventListener('pointerdown', e => {
-      if (e.pointerType === 'mouse' || e.target !== canvas) return;
+      lastPT = e.pointerType || 'mouse';
+      if (e.target !== canvas) return;
+      if (e.pointerType === 'mouse') {
+        if (e.button !== 0 || mode !== 'select' || spaceDown) return;
+        const p = cpos(e);
+        if (selectedObj && selectedObj.type === 'line' && lineHandles(selectedObj.item).some(h => Math.hypot(h.x - p.x, h.y - p.y) < 10)) return;
+        if (selectedObj && selectedObj.type === 'zone' && zoneHandles(selectedObj.item).some(h => Math.hypot(h.x - p.x, h.y - p.y) < 12)) return;
+        tptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); tpPicked = true; synth('click', e); return;
+      }
       tptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); clearTimeout(lpTimer);
       if (e.pointerType === 'touch' && tptrs.size >= 2) {
         e.stopImmediatePropagation(); tIgnore = true; if (selectedObj) selectedObj.dragging = false;
@@ -2431,8 +2499,8 @@ const GridironApp = (() => {
       tpStart = { x: e.clientX, y: e.clientY };
       if (mode === 'select') {
         const p = cpos(e);
-        if (selectedObj && selectedObj.type === 'line' && lineHandles(selectedObj.item).some(h => Math.hypot(h.x - p.x, h.y - p.y) < 22)) return;
-        if (selectedObj && selectedObj.type === 'zone' && zoneHandles(selectedObj.item).some(h => Math.hypot(h.x - p.x, h.y - p.y) < 24)) return;
+        if (selectedObj && selectedObj.type === 'line' && lineHandles(selectedObj.item).some(h => Math.hypot(h.x - p.x, h.y - p.y) < 30)) return;
+        if (selectedObj && selectedObj.type === 'zone' && zoneHandles(selectedObj.item).some(h => Math.hypot(h.x - p.x, h.y - p.y) < 30)) return;
         tpPicked = true; synth('click', e);
         const sx = e.clientX, sy = e.clientY;
         lpTimer = setTimeout(() => {
@@ -2463,7 +2531,8 @@ const GridironApp = (() => {
       synth('mousemove', e);
     }, true);
     const tUp = e => {
-      if (e.pointerType === 'mouse' || !tptrs.delete(e.pointerId)) return;
+      if (!tptrs.delete(e.pointerId)) return;
+      if (e.pointerType === 'mouse') { if (selectedObj) selectedObj.dragging = false; dragLastPos = null; if (tpPicked) { tpPicked = false; suppress = true; setTimeout(() => suppress = false, 80); } return; }
       clearTimeout(lpTimer); tpStart = null;
       if (tptrs.size < 2) tg = null;
       if (tIgnore) { e.stopImmediatePropagation(); if (tptrs.size === 0) tIgnore = false; return; }
@@ -2501,7 +2570,10 @@ const GridironApp = (() => {
           return;
         }
 
-        const p = [...players].reverse().find(pl => Math.hypot(pl.x - rawX, pl.y - rawY) < 18);
+        const HR = lastPT !== 'mouse' ? 38 : 18;
+        let p = null;
+        if (lastPT !== 'mouse') { let bd = HR; players.forEach(pl => { const d = Math.hypot(pl.x - rawX, pl.y - rawY); if (d < bd) { bd = d; p = pl; } }); }
+        else p = [...players].reverse().find(pl => Math.hypot(pl.x - rawX, pl.y - rawY) < HR);
         if (p) {
           pushHistory();
           selectedObj = { type: 'player', item: p, dragging: true };
@@ -2510,7 +2582,7 @@ const GridironApp = (() => {
           return;
         }
 
-        const tObj = [...texts].reverse().find(t => Math.abs(t.x - rawX) < 40 && Math.abs(t.y - rawY) < 15);
+        const tObj = [...texts].reverse().find(t => Math.abs(t.x - rawX) < (lastPT !== 'mouse' ? 56 : 40) && Math.abs(t.y - rawY) < (lastPT !== 'mouse' ? 26 : 15));
         if (tObj) {
           pushHistory();
           selectedObj = { type: 'text', item: tObj, dragging: true }; syncTextControls(tObj);
@@ -2593,7 +2665,7 @@ const GridironApp = (() => {
       const lineSection = document.getElementById('ctx-line-section');
       const menu = document.getElementById('context-menu');
 
-      const p = [...players].reverse().find(pl => Math.hypot(pl.x - rawX, pl.y - rawY) < 18);
+      const p = [...players].reverse().find(pl => Math.hypot(pl.x - rawX, pl.y - rawY) < (lastPT !== 'mouse' ? 38 : 18));
       if (p) {
         ctxTargetObj = p; ctxTargetLine = null;
         playerSection.style.display = 'block'; lineSection.style.display = 'none';
@@ -2635,7 +2707,7 @@ const GridironApp = (() => {
     canvas.addEventListener('pointerdown', e => {
       if (e.button !== 0 || currentLine) return;
       if (mode !== 'tapered' && !(e.pointerType !== 'mouse' && ['route', 'curve', 'elbow', 'dashed', 'wavy'].includes(mode))) return;
-      drag = pos(e); drag.moved = false;
+      drag = pos(e); drag.moved = false; drag.free = e.pointerType !== 'mouse' && ['route', 'dashed', 'wavy'].includes(mode);
       canvas.setPointerCapture(e.pointerId);
     });
     canvas.addEventListener('pointermove', e => {
@@ -2647,7 +2719,7 @@ const GridironApp = (() => {
         pushHistory();
         currentLine = { type: mode, color: gv('stroke-color'), thickness: parseFloat(gv('line-thickness')), arrowhead: gv('line-arrowhead'), arcDir: gv('line-arc-dir'), points: [{ x: sp ? sp.x : snap(drag.x), y: sp ? sp.y : snap(drag.y) }] };
       }
-      if (drag.moved && FREE.includes(mode) && currentLine) {
+      if (drag.moved && (FREE.includes(mode) || drag.free) && currentLine) {
         const last = currentLine.points[currentLine.points.length - 1];
         if (Math.hypot(p.x - last.x, p.y - last.y) > 4) currentLine.points.push({ x: p.x, y: p.y });
       }
@@ -2655,9 +2727,18 @@ const GridironApp = (() => {
     });
     canvas.addEventListener('pointerup', e => {
       if (!drag) return;
-      const wasMoved = drag.moved; drag = null;
+      const wasMoved = drag.moved, wasFree = drag.free; drag = null;
       if (!wasMoved || !currentLine) return;
       const p = pos(e), sp = getClosestPlayer(p.x, p.y);
+      if (wasFree) {
+        const first = currentLine.points[0];
+        let pts = currentLine.points.slice(); pts[pts.length - 1] = { x: sp ? sp.x : p.x, y: sp ? sp.y : p.y };
+        pts = rdp(pts, 14);
+        if (pts.length < 2) pts = [first, { x: p.x, y: p.y }];
+        currentLine.points = pts.map((q, i) => i === 0 ? q : { x: snap(q.x), y: snap(q.y) });
+        suppress = true; setTimeout(() => suppress = false, 50);
+        finalizeCurrentLine(); return;
+      }
       if (FREE.includes(mode)) {
         const first = currentLine.points[0];
         currentLine.points = rdp(currentLine.points, 5);
@@ -2676,7 +2757,7 @@ const GridironApp = (() => {
     let hd = null;
     window.addEventListener('pointerdown', e => {
       if (e.target !== canvas || e.button !== 0 || mode !== 'select' || !selectedObj || selectedObj.type !== 'line') return;
-      const p = cpos(e), h = lineHandles(selectedObj.item).find(h => Math.hypot(h.x - p.x, h.y - p.y) < (e.pointerType === 'mouse' ? 10 : 22));
+      const p = cpos(e), h = lineHandles(selectedObj.item).find(h => Math.hypot(h.x - p.x, h.y - p.y) < (e.pointerType === 'mouse' ? 10 : 30));
       if (!h) return;
       e.stopImmediatePropagation(); pushHistory(); hd = { l: selectedObj.item, i: h.i };
     }, true);
@@ -2708,7 +2789,7 @@ const GridironApp = (() => {
     let zh = null;
     window.addEventListener('pointerdown', e => {
       if (e.target !== canvas || e.button !== 0 || !selectedObj || selectedObj.type !== 'zone') return;
-      const p = cpos(e), z = selectedObj.item, h = zoneHandles(z).find(h => Math.hypot(h.x - p.x, h.y - p.y) < (e.pointerType === 'mouse' ? 12 : 24));
+      const p = cpos(e), z = selectedObj.item, h = zoneHandles(z).find(h => Math.hypot(h.x - p.x, h.y - p.y) < (e.pointerType === 'mouse' ? 12 : 30));
       if (!h) return;
       e.stopImmediatePropagation(); pushHistory(); zh = { z, k: h.k }; selectedObj.dragging = false;
     }, true);
@@ -2724,7 +2805,13 @@ const GridironApp = (() => {
 
     // ズーム・パン（ホイール＝拡大縮小 / Space+ドラッグ・中ボタンドラッグ＝移動）
     let spaceDown = false, pan = null;
-    canvas.addEventListener('wheel', e => { e.preventDefault(); zoomAt(e.clientX, e.clientY, zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1)); }, { passive: false });
+    canvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      let dy = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 300 : 1);
+      dy = Math.max(-120, Math.min(120, dy));
+      const k = e.ctrlKey ? 0.006 : 0.0006;
+      zoomAt(e.clientX, e.clientY, zoom * Math.exp(-dy * k));
+    }, { passive: false });
     window.addEventListener('pointerdown', e => {
       if (e.target !== canvas || !(spaceDown || e.button === 1)) return;
       e.preventDefault(); e.stopImmediatePropagation();
@@ -2785,6 +2872,44 @@ const GridironApp = (() => {
     pushHistory();
     players.push({ label, shape, side, x: W / 2, y: side === 'def' ? losY - 40 : losY + 40, strokeColor: side === 'def' ? '#1e293b' : '#000000', fillColor: side === 'def' ? 'transparent' : '#ffffff', visible: true });
     render();
+  }
+
+  // ===== Players Note =====
+  const PN_DEF = { off: ['RT', 'RG', 'C', 'LG', 'LT', 'Y', 'X', 'Z', 'TB', 'FB', 'QB'], def: ['E', 'T', 'N', 'R', 'M', 'W', 'Ni', 'CB', 'CB', 'FS', 'SS'] };
+  const pnDefault = () => ({ off: PN_DEF.off.map(p => ({ p, n: '' })), def: PN_DEF.def.map(p => ({ p, n: '' })) });
+  let pnotes = pnDefault(), pnCur = 'off';
+  function pnRender() {
+    const box = document.getElementById('pn-rows'); if (!box) return;
+    ['off', 'def'].forEach(k => { const b = document.getElementById('pn-tab-' + k); if (b) b.style.outline = (k === pnCur) ? '2px solid #fff' : 'none'; if (b) b.style.background = (k === pnCur) ? (k === 'off' ? '#2563eb' : '#4338ca') : ''; });
+    box.innerHTML = '';
+    pnotes[pnCur].forEach((r, i) => {
+      const row = document.createElement('div'); row.style.cssText = 'display:flex; gap:3px; margin-bottom:3px; align-items:stretch;';
+      const pi = document.createElement('input'); pi.type = 'text'; pi.value = r.p; pi.title = 'ポジション名(書き換えられます)'; pi.style.cssText = 'width:52px; flex:none; font-weight:bold; text-align:center;';
+      pi.oninput = () => { r.p = pi.value; };
+      const ni = document.createElement('textarea'); ni.rows = 1; ni.value = r.n; ni.placeholder = 'メモ'; ni.style.cssText = 'flex:1; min-width:0; resize:vertical; height:30px; min-height:30px;';
+      ni.oninput = () => { r.n = ni.value; };
+      const mk = (t, fn, ttl) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.title = ttl; b.className = 'mini-btn'; b.style.cssText = 'flex:none; padding:2px 5px; min-height:30px;'; b.onclick = fn; return b; };
+      const mv = (d) => () => { const a = pnotes[pnCur], j = i + d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; pnRender(); };
+      row.append(pi, ni, mk('▲', mv(-1), '上へ'), mk('▼', mv(1), '下へ'), mk('×', () => { pnotes[pnCur].splice(i, 1); pnRender(); }, 'この行を削除'));
+      box.appendChild(row);
+    });
+  }
+  function pnSide(k) { pnCur = k; pnRender(); }
+  function pnAdd() { pnotes[pnCur].push({ p: '', n: '' }); pnRender(); const ins = document.querySelectorAll('#pn-rows input'); if (ins.length) ins[ins.length - 1].focus(); }
+  function pnFromField() {
+    const side = pnCur === 'off' ? p => p.side !== 'def' : p => p.side === 'def';
+    const names = []; players.filter(side).slice().sort((a, b) => a.x - b.x).forEach(p => { const l = (p.label || '').trim(); if (l && !names.includes(l)) names.push(l); });
+    if (!names.length) { toast('フィールドに選手がいません'); return; }
+    const old = {}; pnotes[pnCur].forEach(r => { if (r.n && r.p) old[r.p] = r.n; });
+    pnotes[pnCur] = names.map(p => ({ p, n: old[p] || '' })); pnRender();
+  }
+  function pnReset() { if (!confirm((pnCur === 'off' ? 'OFFENSE' : 'DEFENSE') + ' の Players Note を標準のポジション一覧に戻します。メモは消えます。よろしいですか？')) return; pnotes[pnCur] = PN_DEF[pnCur].map(p => ({ p, n: '' })); pnRender(); }
+  const pnClone = () => JSON.parse(JSON.stringify(pnotes));
+  function pnLoad(d) { const x = pnDefault(); if (d && typeof d === 'object') { ['off', 'def'].forEach(k => { if (Array.isArray(d[k])) x[k] = d[k].map(r => ({ p: String(r.p || ''), n: String(r.n || '') })); }); } pnotes = x; pnRender(); }
+  function pnPrintHtml(pd) {
+    const d = pd && pd.pnotes; if (!d) return '';
+    const one = (k, t) => { const rows = (d[k] || []).filter(r => (r.n || '').trim()); return rows.length ? `<table style="margin-top:3mm"><tr><th style="width:22mm">${t}</th><th>NOTE</th></tr>${rows.map(r => `<tr><td><b>${esc(r.p)}</b></td><td>${esc(r.n)}</td></tr>`).join('')}</table>` : ''; };
+    return one('off', 'OFFENSE') + one('def', 'DEFENSE');
   }
 
   function clearField() {
@@ -2857,6 +2982,7 @@ const GridironApp = (() => {
 
     savedPlays[name] = {
       cat: document.getElementById('play-cat').value || 'play',
+      pnotes: pnClone(),
       players: JSON.parse(JSON.stringify(players)),
       lines: JSON.parse(JSON.stringify(lines)),
       zones: JSON.parse(JSON.stringify(zones)),
@@ -2983,6 +3109,7 @@ const GridironApp = (() => {
         document.getElementById('call-play').value = pData.callInfo?.play || '';
         { const ta = document.getElementById('title-auto'); if (ta) { const f = pData.callInfo?.formation || '', m = pData.callInfo?.motion || '', c = pData.callInfo?.play || ''; ta.checked = ([[f, m].filter(Boolean).join(' '), c].filter(Boolean).join(' - ') === name); } }
         document.getElementById('play-notes').value = pData.notes || '';
+        pnLoad(pData.pnotes);
 
         APP_CONFIG.metaFields.forEach(f => {
           const el = document.getElementById('meta-' + f.key);
@@ -3189,12 +3316,13 @@ const GridironApp = (() => {
     const rows = (p.assign && p.assign.length) ? p.assign.map(normAssignRow) : (p.notes ? [['', p.notes]] : []);
     return { cols, rows };
   }
+  function pbAssignHead(k, h) { return h; }
   function pbAssignBody(k, L) {
     const p = savedPlays[k], m = p.meta || {}, AD = pbAssignData(k);
     const ratio = W / (p.imgH || 560), maxH = L ? 100 : 150, maxW = L ? 270 : 186;
     let ih = Math.min(maxH, maxW / ratio), iw = ih * ratio;
     const info = [p.offPersonnel && 'PERSONNEL: ' + p.offPersonnel, m.formation && 'FORMATION: ' + m.formation].filter(Boolean).join('   ');
-    return `<div class="ce" style="flex:none; width:${iw.toFixed(1)}mm; height:${ih.toFixed(1)}mm; margin:3mm auto 0"><img src="${p.image}"></div>${info ? `<div style="font-size:10pt; font-weight:bold; margin-top:2mm">${esc(info)}</div>` : ''}<table><tr>${AD.cols.map((c, ci) => `<th${ci === 0 ? ' style="width:22mm"' : ''}>${esc(c)}</th>`).join('')}</tr>${AD.rows.map(r => `<tr>${AD.cols.map((c, ci) => `<td>${ci === 0 ? `<b>${esc(r[ci])}</b>` : esc(r[ci])}</td>`).join('')}</tr>`).join('')}</table>`;
+    return pbAssignHead(k, `<div class="ce" style="flex:none; width:${iw.toFixed(1)}mm; height:${ih.toFixed(1)}mm; margin:3mm auto 0"><img src="${p.image}"></div>${info ? `<div style="font-size:10pt; font-weight:bold; margin-top:2mm">${esc(info)}</div>` : ''}<table><tr>${AD.cols.map((c, ci) => `<th${ci === 0 ? ' style="width:22mm"' : ''}>${esc(c)}</th>`).join('')}</tr>${AD.rows.map(r => `<tr>${AD.cols.map((c, ci) => `<td>${ci === 0 ? `<b>${esc(r[ci])}</b>` : esc(r[ci])}</td>`).join('')}</tr>`).join('')}</table>`) + pnPrintHtml(p);
   }
   function pbStyledPages(key) {
     const ks = pbKeys();
@@ -3852,7 +3980,7 @@ const GridironApp = (() => {
   return {
     init, setMode, undo, redo, toast, toggleBlockEnd, openFontDialog, deleteSelected, addPlayer, clearField, render,
     selectGroup, applySelectedOff, applySelectedDef, renameFormation, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
-    flipOffDefPositions, renameGroup, resetGroupNames, changeOffHashPosition,
+    flipOffDefPositions, flipLR, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition,
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
