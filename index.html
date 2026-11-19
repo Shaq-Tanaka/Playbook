@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Chlk (Pro Edition v69)</title>
+<title>Chlk (Pro Edition v70)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
   :root {
@@ -58,7 +58,7 @@
   body.hide-right { --rw: 0px; }
   body.hide-left .sidebar, body.hide-right .inspector { display: none; }
   .sidebar { width: var(--lw); background: var(--panel-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
-  .sidebar-header { padding: 9px 12px; font-weight: 800; border-bottom: 1px solid var(--border); font-size: 13px; letter-spacing: 0.8px; color: #60a5fa; display: flex; justify-content: space-between; align-items: center; }
+  .sidebar-header { padding: 9px 12px; font-weight: 800; border-bottom: 1px solid var(--border); font-size: 13px; letter-spacing: 0.8px; color: #ffffff; display: flex; justify-content: space-between; align-items: center; }
   .tool-group { padding: 7px 10px; border-bottom: 1px solid var(--border); }
   .tool-group h4 { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center; }
   .btn-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; }
@@ -131,7 +131,7 @@
   .play-item span.del:hover { background: #7f1d1d; }
   .chk-label { font-size: 10.5px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap; }
   .prop-row { display: flex; align-items: center; gap: 5px; margin-bottom: 4px; }
-  .prop-row label { width: 88px; font-size: 10.5px; color: #93c5fd; flex-shrink: 0; font-weight: bold; }
+  .prop-row label { width: 88px; font-size: 10.5px; color: #ffffff; flex-shrink: 0; font-weight: bold; }
 
   /* 右クリックメニュー */
   #context-menu {
@@ -249,20 +249,20 @@
     </div>
 
     <div id="ctx-line-section">
-      <div style="padding: 4px 12px; font-size:10px; color:#93c5fd; font-weight:bold;">✏️ ライン種類変更</div>
+      <div style="padding: 4px 12px; font-size:10px; color:#ffffff; font-weight:bold;">✏️ ライン種類変更</div>
       <div class="menu-item" onclick="GridironApp.setLineType('route')">↗ 直線 (Straight)</div>
       <div class="menu-item" onclick="GridironApp.setLineType('elbow')">∟ 直角折れ (Orthogonal)</div>
       <div class="menu-item" onclick="GridironApp.setLineType('dashed')">╌ 破線 (Dashed)</div>
       <div class="menu-item" onclick="GridironApp.setLineType('wavy')">〰 波線 (Motion)</div>
       
       <div class="menu-divider"></div>
-      <div style="padding: 4px 12px; font-size:10px; color:#93c5fd; font-weight:bold;">↪ 弧の方向・膨らみ</div>
+      <div style="padding: 4px 12px; font-size:10px; color:#ffffff; font-weight:bold;">↪ 弧の方向・膨らみ</div>
       <div class="menu-item" onclick="GridironApp.setLineArcDir('auto')">Auto (自動)</div>
       <div class="menu-item" onclick="GridironApp.setLineArcDir('left')">Left / Outward (左・外側)</div>
       <div class="menu-item" onclick="GridironApp.setLineArcDir('right')">Right / Inward (右・内側)</div>
 
       <div class="menu-divider"></div>
-      <div style="padding: 4px 12px; font-size:10px; color:#93c5fd; font-weight:bold;">🏹 矢印の形状</div>
+      <div style="padding: 4px 12px; font-size:10px; color:#ffffff; font-weight:bold;">🏹 矢印の形状</div>
       <div class="menu-item" onclick="GridironApp.setLineArrowhead('none')">矢印なし</div>
       <div class="menu-item" onclick="GridironApp.setLineArrowhead('standard')">標準矢印</div>
       <div class="menu-item" onclick="GridironApp.setLineArrowhead('block')">T字止め (Block)</div>
@@ -274,7 +274,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Chlk</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v69</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v70</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -285,7 +285,7 @@
           <span class="group-rename-badge" onclick="GridironApp.renameGroup('all_off')">✏️</span>
         </div>
         <div class="group-btn-wrap">
-          <button id="grp-all-def" onclick="GridironApp.selectGroup('all_def')" style="color:#93c5fd;">DEF全体</button>
+          <button id="grp-all-def" onclick="GridironApp.selectGroup('all_def')" style="color:#ffffff;">DEF全体</button>
           <span class="group-rename-badge" onclick="GridironApp.renameGroup('all_def')">✏️</span>
         </div>
         <button id="grp-clear" onclick="GridironApp.selectGroup('clear')" style="background:#7f1d1d;">解除</button>
@@ -343,7 +343,7 @@
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
-      <h4 style="color:#93c5fd;">ライン設定 & スタイル</h4>
+      <h4 style="color:#ffffff;">ライン設定 & スタイル</h4>
       <div class="prop-row" title="ゾーンを選ぶと大きさを変えられます（キャンバス上の白い■をドラッグしても変更できます）">
         <label>Zone Size (yd):</label>
         <span style="display:flex; gap:3px; align-items:center; font-size:10.5px;">幅<input type="number" id="zone-w" min="0.5" max="60" step="0.5" value="7" disabled oninput="GridironApp.setZoneSize()" style="width:54px;"> 高さ<input type="number" id="zone-h" min="0.5" max="60" step="0.5" value="4" disabled oninput="GridironApp.setZoneSize()" style="width:54px;"></span>
@@ -379,7 +379,7 @@
     </div>
 
     <div class="tool-group" id="text-prop-group" style="background:#1e1e22; border-radius:5px;">
-      <h4 style="color:#93c5fd;">テキストプロパティ設定</h4>
+      <h4 style="color:#ffffff;">テキストプロパティ設定</h4>
       <div class="prop-row">
         <label>Font:</label>
         <select id="text-font" onchange="GridironApp.updateTextProps()">
@@ -437,13 +437,13 @@
     <div class="tool-group">
       <h4>2. 選手配置パレット & カラー自由設定</h4>
       
-      <div style="font-size:10px; color:#93c5fd; font-weight:bold; margin-bottom:2px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:10px; color:#ffffff; font-weight:bold; margin-bottom:2px; display:flex; justify-content:space-between; align-items:center;">
         <span>OFFENSIVE POSITIONS</span>
         <button class="mini-btn" onclick="GridironApp.addOffPaletteItem()" style="font-size:9px; padding:1px 4px; background:#059669;">+ 追加</button>
       </div>
       <div id="off-palette-grid" style="margin-bottom:6px;"></div>
 
-      <div style="font-size:10px; color:#93c5fd; font-weight:bold; margin-bottom:2px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:10px; color:#ffffff; font-weight:bold; margin-bottom:2px; display:flex; justify-content:space-between; align-items:center;">
         <span>DEFENSIVE POSITIONS</span>
         <button class="mini-btn" onclick="GridironApp.addDefPaletteItem()" style="font-size:9px; padding:1px 4px; background:#4338ca;">+ 追加</button>
       </div>
@@ -493,7 +493,7 @@
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
-      <h4 style="color:#93c5fd;">Player Size 調整</h4>
+      <h4 style="color:#ffffff;">Player Size 調整</h4>
       <div class="prop-row">
         <label style="width:110px;">Offensive Size:</label>
         <input type="range" id="off-size-range" min="8" max="24" value="12" style="flex:1;" oninput="GridironApp.changePlayerSize()">
@@ -628,7 +628,7 @@
         <select id="play-cat" title="図の種類（Play Book の振り分けに使います）" style="width:auto; font-weight:bold;"><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
         <button onclick="GridironApp.manageCats()" title="種類の追加・名前変更・削除" style="padding:2px 7px;">✎</button>
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">保存タイトル:</span>
-        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" style="flex:1; font-weight:bold; color:#93c5fd;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label>
+        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" style="flex:1; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label>
         <button onclick="GridironApp.savePlay()" style="background: #10b981; border-color: #059669; font-weight: bold; white-space:nowrap;">💾 プレイ保存</button>
         <button onclick="GridironApp.exportPNG()" style="background: var(--accent); border-color: #3b82f6; white-space:nowrap;">🖼 PNG出力</button>
         <button onclick="GridironApp.clearField()" class="danger" style="white-space:nowrap;">全クリア</button>
@@ -645,7 +645,7 @@
   <!-- 右インスペクター -->
   <div class="inspector">
     <div>
-      <h4 style="font-size: 10.5px; color: #93c5fd; margin-bottom:3px;">プレイ・状況設定 (指定の6項目)</h4>
+      <h4 style="font-size: 10.5px; color: #ffffff; margin-bottom:3px;">プレイ・状況設定 (指定の6項目)</h4>
       <div class="meta-box" id="dynamic-meta-fields"></div>
     </div>
 
@@ -655,7 +655,7 @@
     </div>
 
     <div>
-      <h4 style="font-size: 10.5px; color: #93c5fd; margin-bottom:2px;">アサイメント表 (見出し・列・行を自由に編集)</h4>
+      <h4 style="font-size: 10.5px; color: #ffffff; margin-bottom:2px;">アサイメント表 (見出し・列・行を自由に編集)</h4>
       <div id="assign-rows" style="display:flex; flex-direction:column; gap:2px;"></div>
       <div style="display:flex; gap:3px; margin-top:3px;">
         <button class="mini-btn" onclick="GridironApp.addAssignRow()" style="flex:1;">+ 行</button>
@@ -668,7 +668,7 @@
     <div style="flex:1; display:flex; flex-direction:column;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
         <h4 style="font-size: 10.5px; color: var(--text-muted);">保存済みプレイ一覧</h4>
-        <span id="play-count" style="font-size:10.5px; color:#60a5fa;">0件</span>
+        <span id="play-count" style="font-size:10.5px; color:#ffffff;">0件</span>
       </div>
       <select id="play-catf" onchange="GridironApp.updatePlayList()" style="margin-bottom:3px;"><option value="all">種類: すべて</option><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
       <input type="text" id="play-search" placeholder="🔍 検索..." oninput="GridironApp.updatePlayList()" style="margin-bottom:3px;">
@@ -676,7 +676,7 @@
     </div>
 
     <div style="display:flex; flex-direction:column; gap:5px; border-top:1px solid var(--border); padding-top:6px;">
-      <h4 style="font-size: 10.5px; color: #93c5fd;">📖 Play Book 出力設定 (Box Divide)</h4>
+      <h4 style="font-size: 10.5px; color: #ffffff;">📖 Play Book 出力設定 (Box Divide)</h4>
       
       <div style="display:flex; gap:4px;">
         <div style="flex:1;">
@@ -2817,7 +2817,7 @@ const GridironApp = (() => {
     const tpl = `grid-template-columns:${n > 1 ? '44px ' : ''}repeat(${Math.max(1, n - 1)}, minmax(0,1fr)) 14px; display:grid; gap:2px;`;
     const mk = (cls, v, ph) => { const i = document.createElement('input'); i.type = 'text'; i.className = cls; i.value = v || ''; if (ph) i.placeholder = ph; i.style.cssText = 'font-size:10px; padding:2px; min-width:0;'; return i; };
     const hd = document.createElement('div'); hd.style.cssText = tpl;
-    assignCols.forEach((c, ci) => { const h = mk('as-h', c, '見出し'); h.style.fontWeight = 'bold'; h.style.color = '#93c5fd'; h.title = '列の見出し(編集できます)'; hd.append(h); });
+    assignCols.forEach((c, ci) => { const h = mk('as-h', c, '見出し'); h.style.fontWeight = 'bold'; h.style.color = '#ffffff'; h.title = '列の見出し(編集できます)'; hd.append(h); });
     const dx = document.createElement('span'); dx.textContent = ''; hd.append(dx);
     box.appendChild(hd);
     // 列の削除ボタン行
