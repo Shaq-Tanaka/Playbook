@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v78)</title>
+<title>Play Draw Lab (Pro Edition v79)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
   :root {
@@ -284,7 +284,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v78</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v79</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -327,6 +327,21 @@
       </div>
       <button onclick="GridironApp.flipOffDefPositions()" style="width:100%; background:#7c3aed; border-color:#8b5cf6; font-weight:bold; font-size:11px; margin-top:2px;">🔄 Off / Def 位置を反転 (上下入替)</button>
       <button onclick="GridironApp.flipLR()" style="width:100%; background:#7c3aed; border-color:#8b5cf6; font-weight:bold; font-size:11px; margin-top:2px;">↔ 左右反転 (LT/LG=左・RT/RG=右 固定)</button>
+    </div>
+
+    <div class="tool-group" id="nudge-group">
+      <h4>↕↔ 矢印ボタンで移動</h4>
+      <div style="font-size:9.5px; color:#a1a1aa; margin-bottom:3px;">選手(または線・文字・グループ)を選んでから、矢印を押します。キーボードの矢印キーも使えます(Shiftで3倍)。</div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:3px; max-width:200px; margin:0 auto 4px;">
+        <span></span><button type="button" onclick="GridironApp.nudgeDir('u')" style="font-size:18px; font-weight:bold;" title="上へ">▲</button><span></span>
+        <button type="button" onclick="GridironApp.nudgeDir('l')" style="font-size:18px; font-weight:bold;" title="左へ">◀</button>
+        <span style="display:flex; align-items:center; justify-content:center; font-size:10px; color:#a1a1aa;">移動</span>
+        <button type="button" onclick="GridironApp.nudgeDir('r')" style="font-size:18px; font-weight:bold;" title="右へ">▶</button>
+        <span></span><button type="button" onclick="GridironApp.nudgeDir('d')" style="font-size:18px; font-weight:bold;" title="下へ">▼</button><span></span>
+      </div>
+      <div class="prop-row"><label>1回の移動量</label>
+        <select id="nudge-step"><option value="2">細かい (約0.1yd)</option><option value="6" selected>標準 (約0.3yd)</option><option value="19">大きい (約1yd)</option><option value="56">とても大きい (約3yd)</option></select>
+      </div>
     </div>
 
     <div class="tool-group">
@@ -1127,7 +1142,7 @@ const GridironApp = (() => {
     // 折りたたみ: 見出し(先頭の要素)を押して開閉。状態は覚えておく
     const blocks = [...sb.querySelectorAll(':scope > .tool-group'), ...ins.querySelectorAll(':scope > div')];
     const keyOf = b => 'gps_acc_' + (b.querySelector('h4') ? b.querySelector('h4').textContent.trim().slice(0, 24) : '');
-    const defOpen = b => /グループ|ルート|ライン設定|選手配置|FIELD|保存済み|プレイ・状況|Players Note/.test((b.querySelector('h4') || {}).textContent || '');
+    const defOpen = b => /グループ|ルート|ライン設定|選手配置|FIELD|保存済み|プレイ・状況|Players Note|矢印ボタン/.test((b.querySelector('h4') || {}).textContent || '');
     blocks.forEach(b => {
       const head = b.firstElementChild; if (!head || !b.querySelector('h4')) return;
       head.classList.add('acc-head');
@@ -2847,15 +2862,27 @@ const GridironApp = (() => {
       else if (k === 'enter' && currentLine) { currentLine.bend ? confirmBend(mousePos.x, mousePos.y) : finalizeCurrentLine(); }
       else if (k === 'v') setMode('select');
       else if (k === 'e' && !mod) setMode(mode === 'erase' ? 'select' : 'erase');
-      else if (k.startsWith('arrow') && selectedObj && selectedObj.item && selectedObj.item.x !== undefined) {
-        e.preventDefault(); pushHistory();
-        const st = e.shiftKey ? 10 : 1;
-        selectedObj.item.x += k === 'arrowleft' ? -st : k === 'arrowright' ? st : 0;
-        selectedObj.item.y += k === 'arrowup' ? -st : k === 'arrowdown' ? st : 0;
-        render();
+      else if (k.startsWith('arrow') && (activeGroup || (selectedObj && (selectedObj.item || selectedObj.type === 'group')))) {
+        e.preventDefault();
+        const st = e.shiftKey ? nudgeStep() * 3 : nudgeStep();
+        nudge(k === 'arrowleft' ? -st : k === 'arrowright' ? st : 0, k === 'arrowup' ? -st : k === 'arrowdown' ? st : 0);
       }
     });
   }
+
+  // ===== 矢印ボタンで動かす =====
+  function nudgeStep() { const el = document.getElementById('nudge-step'); const v = el ? parseFloat(el.value) : 6; return v > 0 ? v : 6; }
+  function nudge(dx, dy) {
+    let did = false;
+    if (activeGroup) { const g = players.filter(p => isPlayerInActiveGroup(p, activeGroup)); if (g.length) { pushHistory(); g.forEach(p => { p.x += dx; p.y += dy; }); did = true; } }
+    else if (selectedObj && selectedObj.item) {
+      const it = selectedObj.item;
+      if (selectedObj.type === 'line') { pushHistory(); (it.points || []).forEach(q => { q.x += dx; q.y += dy; }); did = true; }
+      else if (it.x !== undefined) { pushHistory(); it.x += dx; it.y += dy; did = true; }
+    }
+    if (did) { render(); } else toast('動かしたい選手(または線・グループ)を、先に選んでください', 2200);
+  }
+  function nudgeDir(d) { const st = nudgeStep(); nudge(d === 'l' ? -st : d === 'r' ? st : 0, d === 'u' ? -st : d === 'd' ? st : 0); }
 
   function deleteSelected() {
     if (!selectedObj) return;
@@ -3980,7 +4007,7 @@ const GridironApp = (() => {
   return {
     init, setMode, undo, redo, toast, toggleBlockEnd, openFontDialog, deleteSelected, addPlayer, clearField, render,
     selectGroup, applySelectedOff, applySelectedDef, renameFormation, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
-    flipOffDefPositions, flipLR, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition,
+    flipOffDefPositions, flipLR, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition,
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
