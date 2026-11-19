@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v85)</title>
+<title>Play Draw Lab (Pro Edition v86)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
   :root {
@@ -284,7 +284,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v85</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v86</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -339,6 +339,7 @@
         <button type="button" onclick="GridironApp.nudgeDir('r')" style="font-size:18px; font-weight:bold;" title="右へ">▶</button>
         <span></span><button type="button" onclick="GridironApp.nudgeDir('d')" style="font-size:18px; font-weight:bold;" title="下へ">▼</button><span></span>
       </div>
+      <button type="button" onclick="GridironApp.duplicateSelected()" style="width:100%; margin-bottom:4px; font-weight:bold; background:#0f766e; border-color:#14b8a6;" title="選んでいる文字・線・ゾーンを、同じ内容でもう1つ作ります（Ctrl+D）">⧉ 複製（文字・線・ゾーン）</button>
       <div class="prop-row"><label>1回の移動量</label>
         <select id="nudge-step"><option value="2">細かい (約0.1yd)</option><option value="6" selected>標準 (約0.3yd)</option><option value="19">大きい (約1yd)</option><option value="56">とても大きい (約3yd)</option></select>
       </div>
@@ -3027,6 +3028,7 @@ const GridironApp = (() => {
       else if (k === 'delete' || k === 'backspace') { e.preventDefault(); deleteSelected(); }
       else if (k === 'escape') { currentLine = null; render(); }
       else if (k === 'enter' && currentLine) { currentLine.bend ? confirmBend(mousePos.x, mousePos.y) : finalizeCurrentLine(); }
+      else if (mod && k === 'd') { e.preventDefault(); duplicateSelected(); }
       else if (k === 'v') setMode('select');
       else if (k === 'e' && !mod) setMode(mode === 'erase' ? 'select' : 'erase');
       else if (k.startsWith('arrow') && (activeGroup || (selectedObj && (selectedObj.item || selectedObj.type === 'group')))) {
@@ -3048,6 +3050,16 @@ const GridironApp = (() => {
       else if (it.x !== undefined) { pushHistory(); it.x += dx; it.y += dy; did = true; }
     }
     if (did) { render(); } else toast('動かしたい選手(または線・グループ)を、先に選んでください', 2200);
+  }
+  function duplicateSelected() {
+    if (!selectedObj || !selectedObj.item || !['text', 'line', 'zone'].includes(selectedObj.type)) { toast('複製したい文字・線・ゾーンを、先に選んでください', 2400); return; }
+    pushHistory();
+    const t = selectedObj.type, c = JSON.parse(JSON.stringify(selectedObj.item)), off = 20;
+    if (t === 'line') { (c.points || []).forEach(q => { q.x += off; q.y += off; }); lines.push(c); }
+    else if (t === 'text') { c.x += off; c.y += off; texts.push(c); syncTextControls(c); }
+    else { c.x += off; c.y += off; zones.push(c); syncZoneInputs(c); }
+    selectedObj = { type: t, item: c };
+    render(); toast('複製しました（ドラッグか矢印ボタンで動かせます）', 2200);
   }
   function nudgeDir(d) { const st = nudgeStep(); nudge(d === 'l' ? -st : d === 'r' ? st : 0, d === 'u' ? -st : d === 'd' ? st : 0); }
 
@@ -4267,7 +4279,7 @@ const GridironApp = (() => {
   return {
     init, setMode, undo, redo, toast, toggleBlockEnd, openFontDialog, deleteSelected, addPlayer, clearField, render,
     selectGroup, applySelectedOff, applySelectedDef, renameFormation, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
-    flipOffDefPositions, flipLR, togglePenOnly, shareExport, editTextContent, textEditStart, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition, changeDefHashPosition, alignSide,
+    flipOffDefPositions, flipLR, duplicateSelected, togglePenOnly, shareExport, editTextContent, textEditStart, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition, changeDefHashPosition, alignSide,
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
