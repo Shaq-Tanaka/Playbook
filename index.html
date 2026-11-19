@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Chlk (Pro Edition v68)</title>
+<title>Chlk (Pro Edition v69)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
   :root {
@@ -103,7 +103,7 @@
     box-shadow: 0 4px 14px rgba(0,0,0,0.55); width: 920px; max-width: calc(100vw - var(--lw) - var(--rw) - 20px);
   }
   .call-row { display: flex; gap: 5px; align-items: center; }
-  .field-tag { font-size: 10px; color: #93c5fd; font-weight: bold; white-space: nowrap; }
+  .field-tag { font-size: 10px; color: #fff; font-weight: bold; white-space: nowrap; }
   .status-bar {
     position: fixed; bottom: 8px; z-index: 10; background: rgba(39,39,42,0.95); padding: 4px 12px;
     border-radius: 20px; border: 1px solid var(--border); font-size: 10.5px; color: #d4d4d8;
@@ -274,7 +274,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Chlk</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v68</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v69</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -624,11 +624,11 @@
         <input type="text" id="call-play" value="Mesh" placeholder="例: Mesh / Inside Zone" oninput="GridironApp.syncPlayTitle()" style="flex:1.2;">
       </div>
       <div class="call-row">
-        <span style="font-size: 10.5px; color: var(--text-muted); white-space:nowrap;">種類:</span>
+        <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">種類:</span>
         <select id="play-cat" title="図の種類（Play Book の振り分けに使います）" style="width:auto; font-weight:bold;"><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
         <button onclick="GridironApp.manageCats()" title="種類の追加・名前変更・削除" style="padding:2px 7px;">✎</button>
-        <span style="font-size: 10.5px; color: var(--text-muted); white-space:nowrap;">保存タイトル:</span>
-        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" style="flex:1; font-weight:bold; color:#93c5fd;">
+        <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">保存タイトル:</span>
+        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" style="flex:1; font-weight:bold; color:#93c5fd;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label>
         <button onclick="GridironApp.savePlay()" style="background: #10b981; border-color: #059669; font-weight: bold; white-space:nowrap;">💾 プレイ保存</button>
         <button onclick="GridironApp.exportPNG()" style="background: var(--accent); border-color: #3b82f6; white-space:nowrap;">🖼 PNG出力</button>
         <button onclick="GridironApp.clearField()" class="danger" style="white-space:nowrap;">全クリア</button>
@@ -1535,6 +1535,7 @@ const GridironApp = (() => {
   }
 
   function syncPlayTitle() {
+    const ta = document.getElementById('title-auto'); if (ta && !ta.checked) return;
     const form = document.getElementById('call-formation').value.trim();
     const mot = document.getElementById('call-motion').value.trim();
     const call = document.getElementById('call-play').value.trim();
