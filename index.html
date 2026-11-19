@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Playbook">
+<meta name="apple-mobile-web-app-title" content="Chlk">
 <meta name="theme-color" content="#18181b">
 <script>
 // ホーム画面アイコン & PWA マニフェストを自動生成（ファイル1つで完結）
@@ -30,14 +30,14 @@
     const i180 = icon(180), i192 = icon(192), i512 = icon(512);
     add('apple-touch-icon', i180, '180x180'); add('icon', i192, '192x192');
     if (/^https?:/.test(location.protocol)) {
-      const m = { name: 'Gridiron Playbook Studio', short_name: 'Playbook', start_url: location.href.split('#')[0], scope: location.href.split('#')[0].replace(/[^/]*$/, ''), display: 'standalone', orientation: 'any', background_color: '#18181b', theme_color: '#18181b', icons: [{ src: i192, sizes: '192x192', type: 'image/png' }, { src: i512, sizes: '512x512', type: 'image/png', purpose: 'any' }] };
+      const m = { name: 'Chlk', short_name: 'Chlk', start_url: location.href.split('#')[0], scope: location.href.split('#')[0].replace(/[^/]*$/, ''), display: 'standalone', orientation: 'any', background_color: '#18181b', theme_color: '#18181b', icons: [{ src: i192, sizes: '192x192', type: 'image/png' }, { src: i512, sizes: '512x512', type: 'image/png', purpose: 'any' }] };
       add('manifest', URL.createObjectURL(new Blob([JSON.stringify(m)], { type: 'application/manifest+json' })));
       if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
     }
   } catch (e) {}
 })();
 </script>
-<title>Gridiron Playbook Studio (Pro Edition v67)</title>
+<title>Chlk (Pro Edition v68)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
   :root {
@@ -273,8 +273,8 @@
   <!-- 左サイドバー -->
   <div class="sidebar">
     <div class="sidebar-header">
-      <span>GRIDIRON STUDIO</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v67</span></span>
+      <span>Chlk</span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v68</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
