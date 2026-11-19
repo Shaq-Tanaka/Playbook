@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v81)</title>
+<title>Play Draw Lab (Pro Edition v82)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
   :root {
@@ -284,7 +284,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v81</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v82</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -482,6 +482,12 @@
         <label style="font-size:9px; color:#a1a1aa; display:block; margin-bottom:2px;">Offense Personnel:</label>
         <input type="text" id="off-personnel-input" placeholder="例: 11 (1RB-1TE-3WR) / 21 / 12">
       </div>
+      <div style="display:flex; gap:3px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:46px; flex:none;">Align:</span>
+        <button type="button" data-oa="left" onclick="GridironApp.alignSide('off','left')" style="flex:1;" title="オフェンスを左ハッシュに寄せる">◀ L Hash</button>
+        <button type="button" data-oa="middle" onclick="GridironApp.alignSide('off','middle')" style="flex:1;" title="オフェンスを中央に寄せる">Middle</button>
+        <button type="button" data-oa="right" onclick="GridironApp.alignSide('off','right')" style="flex:1;" title="オフェンスを右ハッシュに寄せる">R Hash ▶</button>
+      </div>
       <div style="display:flex; gap:4px; margin-bottom:4px;">
         <select id="off-form-select" style="flex:1;" onchange="GridironApp.applySelectedOff()">
           <option value="">(未選択 / 空欄)</option>
@@ -502,6 +508,12 @@
       <div style="margin-bottom:4px;">
         <label style="font-size:9px; color:#a1a1aa; display:block; margin-bottom:2px;">Def Personnel:</label>
         <input type="text" id="def-personnel-input" placeholder="例: 3DL-3LB-5DB" oninput="GridironApp.syncPersonnelToHeader(this)">
+      </div>
+      <div style="display:flex; gap:3px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:46px; flex:none;">Align:</span>
+        <button type="button" onclick="GridironApp.alignSide('def','left')" style="flex:1;" title="ディフェンスを左ハッシュに寄せる">◀ L Hash</button>
+        <button type="button" onclick="GridironApp.alignSide('def','middle')" style="flex:1;" title="ディフェンスを中央に寄せる">Middle</button>
+        <button type="button" onclick="GridironApp.alignSide('def','right')" style="flex:1;" title="ディフェンスを右ハッシュに寄せる">R Hash ▶</button>
       </div>
       <div style="display:flex; gap:4px; margin-bottom:4px;">
         <select id="def-form-select" style="flex:1;" onchange="GridironApp.applySelectedDef()">
@@ -626,8 +638,16 @@
 
 
       <div class="prop-row">
-        <label style="color:#34d399;">Off Hash:</label>
+        <label style="color:#34d399;">Off Align:</label>
         <select id="off-hash-pos" onchange="GridironApp.changeOffHashPosition()" style="border-color:#059669;">
+          <option value="middle" selected>Middle (中央)</option>
+          <option value="left">Hash Left (左ハッシュ)</option>
+          <option value="right">Hash Right (右ハッシュ)</option>
+        </select>
+      </div>
+      <div class="prop-row">
+        <label style="color:#a5b4fc;">Def Align:</label>
+        <select id="def-hash-pos" onchange="GridironApp.changeDefHashPosition()" style="border-color:#4338ca;">
           <option value="middle" selected>Middle (中央)</option>
           <option value="left">Hash Left (左ハッシュ)</option>
           <option value="right">Hash Right (右ハッシュ)</option>
@@ -1469,6 +1489,7 @@ const GridironApp = (() => {
       visible: p.visible !== false
     }));
     players = [...offPlayers, ...loadedDef];
+    applyDefHashShift(false);
     
     const frontInput = document.getElementById('meta-defFront');
     if (frontInput) frontInput.value = personnel ? `${personnel} / ${name}` : name;
@@ -1478,6 +1499,25 @@ const GridironApp = (() => {
   function changeOffHashPosition() {
     pushHistory();
     applyOffHashShift(true);
+  }
+
+  function changeDefHashPosition() { pushHistory(); applyDefHashShift(true); }
+  function applyDefHashShift(doRender = true) {
+    const el = document.getElementById('def-hash-pos'); const mode = el ? el.value : 'middle';
+    const dp = players.filter(p => p.side === 'def');
+    if (!dp.length) return;
+    const cur = dp.reduce((sum, p) => sum + p.x, 0) / dp.length;
+    const half = 145;
+    const target = mode === 'left' ? W / 2 - half : mode === 'right' ? W / 2 + half : W / 2;
+    const sh = target - cur;
+    if (Math.abs(sh) > 0.01) dp.forEach(p => { p.x += sh; });
+    if (doRender) render();
+  }
+  function alignSide(side, mode) {
+    const el = document.getElementById(side === 'off' ? 'off-hash-pos' : 'def-hash-pos'); if (el) el.value = mode;
+    pushHistory();
+    if (side === 'off') applyOffHashShift(true); else applyDefHashShift(true);
+    toast((side === 'off' ? 'オフェンス' : 'ディフェンス') + 'を ' + (mode === 'left' ? '左ハッシュ' : mode === 'right' ? '右ハッシュ' : '中央') + ' に寄せました', 1800);
   }
 
   function applyOffHashShift(doRender = true) {
@@ -3047,6 +3087,7 @@ const GridironApp = (() => {
       showHash: document.getElementById('show-hash').checked,
       showGoalPost: document.getElementById('show-goalpost').checked,
       offHashPos: document.getElementById('off-hash-pos').value,
+      defHashPos: (document.getElementById('def-hash-pos') || {}).value || 'middle',
       image: canvas.toDataURL('image/png'), imgH: H
     };
     persistPlays().then(() => toast(`「${name}」を保存しました`)).catch(() => alert('保存に失敗しました。JSON保存でバックアップしてください。'));
@@ -3131,6 +3172,7 @@ const GridironApp = (() => {
         if (pData.showHash !== undefined) document.getElementById('show-hash').checked = pData.showHash;
         if (pData.showGoalPost !== undefined) document.getElementById('show-goalpost').checked = pData.showGoalPost;
         if (pData.offHashPos) { document.getElementById('off-hash-pos').value = pData.offHashPos; }
+        { const dh = document.getElementById('def-hash-pos'); if (dh) dh.value = pData.defHashPos || 'middle'; }
 
         document.getElementById('def-personnel-input').value = pData.defPersonnel || '';
         document.getElementById('off-personnel-input').value = pData.offPersonnel || '';
@@ -4024,7 +4066,7 @@ const GridironApp = (() => {
   return {
     init, setMode, undo, redo, toast, toggleBlockEnd, openFontDialog, deleteSelected, addPlayer, clearField, render,
     selectGroup, applySelectedOff, applySelectedDef, renameFormation, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
-    flipOffDefPositions, flipLR, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition,
+    flipOffDefPositions, flipLR, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition, changeDefHashPosition, alignSide,
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
