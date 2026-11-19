@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v82)</title>
+<title>Play Draw Lab (Pro Edition v85)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
   :root {
@@ -284,7 +284,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v82</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v85</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -344,6 +344,15 @@
       </div>
     </div>
 
+    <div class="tool-group" id="pencil-group">
+      <h4>✏️ Apple Pencil / 自由ペン</h4>
+      <button id="btn-pen-only" type="button" onclick="GridironApp.togglePenOnly()" style="width:100%; font-weight:bold;" title="オン: Apple Pencilだけで描き、指は拡大・移動だけに使います（手のひらを置いても描かれません）">✏️ Pencil専用モード: OFF</button>
+      <div class="prop-row" style="margin-top:4px;"><label>筆圧の強さ:</label>
+        <select id="ink-sens"><option value="0.5">弱 (太さの変化が小さい)</option><option value="1" selected>標準</option><option value="1.6">強 (太さの変化が大きい)</option></select>
+      </div>
+      <div style="font-size:9.5px; color:#a1a1aa; margin-top:3px;">「🖊 自由ペン」を選んで描きます。太さの基準は、下の「Line Width」です。Apple Pencilを強く押すと太く、軽くなぞると細くなります（マウス・指では、一定の太さです）。</div>
+    </div>
+
     <div class="tool-group">
       <h4>1. ルート・線描画</h4>
       <div class="btn-grid-4" style="margin-bottom:4px;">
@@ -359,6 +368,7 @@
       </div>
       <div class="btn-grid-4" style="margin-bottom:4px;">
         <button id="mode-tapered" onclick="GridironApp.setMode('tapered')" title="Tapered Pen (手書き風筆圧強弱)">✒️ 筆圧</button>
+        <button id="mode-ink" onclick="GridironApp.setMode('ink')" title="自由ペン: Apple Pencilの筆圧で太さが変わります（紙に描くように自由に描けます）">🖊 自由ペン</button>
         <button id="mode-zone" onclick="GridironApp.setMode('zone')" title="Zone Ellipse (ゾーン網掛け)">⬭ ゾーン</button>
         <button id="mode-erase" onclick="GridironApp.setMode('erase')" title="消しゴム (E): クリック、またはなぞった線・文字を削除。ゾーンはクリックで削除。選手は消えません" style="grid-column: span 2;">🧽 消しゴム (E)</button>
       </div>
@@ -406,6 +416,10 @@
 
     <div class="tool-group" id="text-prop-group" style="background:#1e1e22; border-radius:5px;">
       <h4 style="color:#ffffff;">テキストプロパティ設定</h4>
+      <div class="prop-row">
+        <label>内容:</label>
+        <input type="text" id="text-content" placeholder="文字を選ぶと、ここで書き換えられます" oninput="GridironApp.editTextContent(this.value)" onfocus="GridironApp.textEditStart()" style="flex:1; min-width:0;">
+      </div>
       <div class="prop-row">
         <label>Font:</label>
         <select id="text-font" onchange="GridironApp.updateTextProps()">
@@ -822,6 +836,9 @@
         <button onclick="document.getElementById('json-import').click()" style="flex:1; font-size:10.5px;">📥 JSON読込</button>
         <input type="file" id="json-import" accept=".json" style="display:none;" onchange="GridironApp.importJSON(event)">
       </div>
+      <div style="display:flex; gap:4px; margin-top:4px;">
+        <button onclick="GridironApp.shareExport()" style="flex:1; font-size:10.5px; background:#0f766e; border-color:#14b8a6; font-weight:bold;" title="チームで共有するプレーだけを選んで、ファイルにします">👥 選んで書き出し（チーム共有）</button>
+      </div>
     </div>
   </div>
 
@@ -949,6 +966,16 @@ const GridironApp = (() => {
   let redoStack = [];
   let clickTimer = null;
   let lastPT = 'mouse';
+  let penOnly = false;
+  try { penOnly = localStorage.getItem('gps_pen_only') === '1'; } catch (e) {}
+  function syncPenUI() {
+    const b = document.getElementById('btn-pen-only'); if (b) { b.textContent = '✏️ Pencil専用モード: ' + (penOnly ? 'ON' : 'OFF'); b.style.background = penOnly ? '#2563eb' : ''; b.style.borderColor = penOnly ? '#3b82f6' : ''; }
+    const t = document.querySelector('#touch-bar [data-a="pen"]'); if (t) t.classList.toggle('active', penOnly);
+  }
+  function togglePenOnly() {
+    penOnly = !penOnly; try { localStorage.setItem('gps_pen_only', penOnly ? '1' : '0'); } catch (e) {}
+    syncPenUI(); toast(penOnly ? 'Pencil専用モード ON: 指は拡大・移動だけになります' : 'Pencil専用モード OFF: 指でも描けます', 2600);
+  }
 
   const DEFAULT_OFF = {
     'Gun 3x1 (Trips)': [
@@ -991,6 +1018,7 @@ const GridironApp = (() => {
     const set = (id, v) => { if (v != null) document.getElementById(id).value = v; };
     set('text-font', t.fontFamily); set('text-size', t.fontSize); set('text-style', t.fontStyle || 'normal'); set('text-color', t.color);
     document.getElementById('text-underline').checked = !!t.underline;
+    const tc = document.getElementById('text-content'); if (tc) tc.value = t.text || '';
   }
   async function openFontDialog() {
     let avail = [];
@@ -1154,6 +1182,7 @@ const GridironApp = (() => {
     });
     initTouchUI();
     initPanels();
+    syncPenUI();
     try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
   }
 
@@ -1165,7 +1194,7 @@ const GridironApp = (() => {
     // 折りたたみ: 見出し(先頭の要素)を押して開閉。状態は覚えておく
     const blocks = [...sb.querySelectorAll(':scope > .tool-group'), ...ins.querySelectorAll(':scope > div')];
     const keyOf = b => 'gps_acc_' + (b.querySelector('h4') ? b.querySelector('h4').textContent.trim().slice(0, 24) : '');
-    const defOpen = b => /グループ|ルート|ライン設定|選手配置|FIELD|保存済み|プレイ・状況|Players Note|矢印ボタン/.test((b.querySelector('h4') || {}).textContent || '');
+    const defOpen = b => /グループ|ルート|ライン設定|選手配置|FIELD|保存済み|プレイ・状況|Players Note|矢印ボタン|Pencil/.test((b.querySelector('h4') || {}).textContent || '');
     blocks.forEach(b => {
       const head = b.firstElementChild; if (!head || !b.querySelector('h4')) return;
       head.classList.add('acc-head');
@@ -1200,7 +1229,7 @@ const GridironApp = (() => {
   const NARROW_Q = '(max-width: 820px), (pointer: coarse) and (max-width: 1280px)';
   function initTouchUI() {
     const bar = document.createElement('div'); bar.id = 'touch-bar';
-    bar.innerHTML = '<button data-a="tools">☰ ツール</button><button data-a="undo">↩ 戻る</button><button data-a="done">✔ 確定</button><button data-a="erase">🧽 消す</button><button data-a="select">👆 選択</button><button data-a="fit">FIT</button><button data-a="insp">📋 設定</button>';
+    bar.innerHTML = '<button data-a="tools">☰ ツール</button><button data-a="undo">↩ 戻る</button><button data-a="done">✔ 確定</button><button data-a="ink">🖊 ペン</button><button data-a="pen">✏️ Pencil専用</button><button data-a="erase">🧽 消す</button><button data-a="select">👆 選択</button><button data-a="fit">FIT</button><button data-a="insp">📋 設定</button>';
     document.body.appendChild(bar);
     const bg = document.createElement('div'); bg.id = 'drawer-bg'; document.body.appendChild(bg);
     const sb = document.querySelector('.sidebar'), ins = document.querySelector('.inspector');
@@ -1213,6 +1242,8 @@ const GridironApp = (() => {
       else if (a === 'undo') { undo(); }
       else if (a === 'done') { if (currentLine) { currentLine.bend ? confirmBend(mousePos.x, mousePos.y) : finalizeCurrentLine(); } }
       else if (a === 'erase') setMode(mode === 'erase' ? 'select' : 'erase');
+      else if (a === 'ink') setMode(mode === 'ink' ? 'select' : 'ink');
+      else if (a === 'pen') togglePenOnly();
       else if (a === 'select') setMode('select');
       else if (a === 'fit') fitView();
     });
@@ -1743,6 +1774,8 @@ const GridironApp = (() => {
     }
   }
 
+  function textEditStart() { if (selectedObj && selectedObj.type === 'text') pushHistory(); }
+  function editTextContent(v) { if (selectedObj && selectedObj.type === 'text') { selectedObj.item.text = v; render(); } }
   function updateTextProps() {
     if (selectedObj && selectedObj.type === 'text') {
       pushHistory();
@@ -2318,6 +2351,7 @@ const GridironApp = (() => {
   function lineHandles(l) {
     const P = l.points;
     if (l.type === 'curve' && P.length === 3 && !l.smooth) { const [a, b, c] = P; return [{ x: a.x, y: a.y, i: 0 }, { x: b.x, y: b.y, i: 1 }, { x: .25*a.x + .5*c.x + .25*b.x, y: .25*a.y + .5*c.y + .25*b.y, i: 'mid' }]; }
+    if (l.type === 'ink') return [];
     return P.map((p, i) => ({ x: p.x, y: p.y, i }));
   }
   function setLineKind(l, v) {
@@ -2409,6 +2443,25 @@ const GridironApp = (() => {
     return sp;
   }
 
+  function inkW(line, p) { const s = line.sens || 1, th = line.thickness || 2.5; return Math.max(0.6, th * Math.max(0.2, 1 + ((p == null ? 0.5 : p) - 0.5) * 1.5 * s)); }
+  function drawInk(line, isSel) {
+    const P = line.points; if (!P.length) return;
+    ctx.strokeStyle = line.color || '#000000'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    if (P.length < 3) { ctx.lineWidth = inkW(line, P[0].p); ctx.beginPath(); ctx.moveTo(P[0].x, P[0].y); ctx.lineTo(P[P.length - 1].x, P[P.length - 1].y); ctx.stroke(); }
+    else {
+      let prev = P[0];
+      for (let i = 1; i < P.length; i++) {
+        const m = i < P.length - 1 ? { x: (P[i].x + P[i + 1].x) / 2, y: (P[i].y + P[i + 1].y) / 2 } : P[i];
+        ctx.lineWidth = inkW(line, ((P[i - 1].p == null ? 0.5 : P[i - 1].p) + (P[i].p == null ? 0.5 : P[i].p)) / 2);
+        ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.quadraticCurveTo(P[i].x, P[i].y, m.x, m.y); ctx.stroke(); prev = m;
+      }
+    }
+    if (isSel) {
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; P.forEach(q => { x0 = Math.min(x0, q.x); y0 = Math.min(y0, q.y); x1 = Math.max(x1, q.x); y1 = Math.max(y1, q.y); });
+      ctx.save(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 1; ctx.setLineDash([5, 4]); ctx.strokeRect(x0 - 8, y0 - 8, x1 - x0 + 16, y1 - y0 + 16); ctx.restore();
+    }
+  }
+
   function drawCustomLine(line, hideHandles = false, isTemp = false) {
     ctx.save();
     const isSel = !hideHandles && selectedObj && selectedObj.item === line;
@@ -2422,6 +2475,7 @@ const GridironApp = (() => {
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
 
+    if (line.type === 'ink') { drawInk(line, isSel); ctx.restore(); return; }
     if (line.type === 'glow') { ctx.shadowColor = color; ctx.shadowBlur = 12; }
     if (line.type === 'dashed') { ctx.setLineDash([6, 6]); }
 
@@ -2538,6 +2592,41 @@ const GridironApp = (() => {
     // ---- タッチ操作（iPhone / iPad / Apple Pencil）: 1本指=通常操作、2本指=ピンチ拡大縮小＋移動、長押し=選手メニュー ----
     const tptrs = new Map(); let tg = null, tIgnore = false, lpTimer = null, tpPicked = false, tpStart = null;
     const synth = (type, e) => canvas.dispatchEvent(new MouseEvent(type, { clientX: e.clientX, clientY: e.clientY, button: 0, bubbles: true, cancelable: true }));
+    // ---- Pencil専用モード: 指は「拡大・移動」だけ。Pencil使用中に触れた手のひらは無視 ----
+    const ft = new Map(); let fg = null, penDownAt = 0; const penActive = new Set();
+    window.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'pen') {
+        penActive.add(e.pointerId); penDownAt = Date.now(); ft.clear(); fg = null;
+        try { if (!penOnly && !localStorage.getItem('gps_pen_hint')) { localStorage.setItem('gps_pen_hint', '1'); toast('Apple Pencilを検出しました。左パネルの「Pencil専用モード」をONにすると、指では描かなくなります', 6000); } } catch (er) {}
+        return;
+      }
+      if (!penOnly || e.pointerType !== 'touch' || e.target !== canvas) return;
+      e.stopImmediatePropagation(); e.preventDefault();
+      if (penActive.size || Date.now() - penDownAt < 400) return;
+      ft.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const a = [...ft.values()];
+      fg = a.length >= 2 ? { d: Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y), mx: (a[0].x + a[1].x) / 2, my: (a[0].y + a[1].y) / 2 } : { d: 0, mx: e.clientX, my: e.clientY };
+    }, true);
+    window.addEventListener('pointermove', e => {
+      if (!penOnly || e.pointerType !== 'touch' || e.target !== canvas) return;
+      e.stopImmediatePropagation();
+      const t = ft.get(e.pointerId); if (!t) return;
+      t.x = e.clientX; t.y = e.clientY;
+      const a = [...ft.values()];
+      if (a.length >= 2 && fg) {
+        const d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y), mx = (a[0].x + a[1].x) / 2, my = (a[0].y + a[1].y) / 2;
+        if (fg.d > 0) zoomAt(mx, my, zoom * d / fg.d);
+        panX += mx - fg.mx; panY += my - fg.my; applyView(); fg = { d, mx, my };
+      } else if (a.length === 1 && fg) { panX += e.clientX - fg.mx; panY += e.clientY - fg.my; applyView(); fg.mx = e.clientX; fg.my = e.clientY; }
+    }, true);
+    const fUp = e => {
+      if (e.pointerType === 'pen') { penActive.delete(e.pointerId); penDownAt = Date.now(); return; }
+      if (!penOnly || e.pointerType !== 'touch') return;
+      if (e.target === canvas) e.stopImmediatePropagation();
+      if (ft.delete(e.pointerId)) { const a = [...ft.values()]; fg = a.length === 1 ? { d: 0, mx: a[0].x, my: a[0].y } : null; }
+    };
+    window.addEventListener('pointerup', fUp, true); window.addEventListener('pointercancel', fUp, true);
+
     window.addEventListener('pointerdown', e => {
       lastPT = e.pointerType || 'mouse';
       if (e.target !== canvas) return;
@@ -2708,6 +2797,16 @@ const GridironApp = (() => {
 
     canvas.addEventListener('dblclick', e => {
       e.preventDefault();
+      if (mode === 'select' && !currentLine) {
+        const rx = cpos(e).x, ry = cpos(e).y;
+        const to = [...texts].reverse().find(t => Math.abs(t.x - rx) < 56 && Math.abs(t.y - ry) < 26);
+        if (to) {
+          selectedObj = { type: 'text', item: to }; syncTextControls(to);
+          const nv = prompt('文字を書き換え (空にすると、そのまま残します):', to.text);
+          if (nv !== null && nv.trim() !== '') { pushHistory(); to.text = nv.trim(); syncTextControls(to); }
+          render(); return;
+        }
+      }
       if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
       if (currentLine && !currentLine.bend) {
         const rawX = cpos(e).x, rawY = cpos(e).y;
@@ -2761,6 +2860,30 @@ const GridironApp = (() => {
     canvas.style.touchAction = 'none';
     const FREE = ['tapered'];
     let drag = null, suppress = false;
+    // 自由ペン: Apple Pencilの筆圧で太さが変わる。点を細かく記録して、描画時になめらかにつなぐ
+    let ink = null;
+    const inkPt = e => { const q = cpos(e); return { x: Math.round(q.x * 10) / 10, y: Math.round(q.y * 10) / 10, p: e.pointerType === 'pen' ? Math.round((e.pressure || 0.5) * 100) / 100 : 0.5 }; };
+    canvas.addEventListener('pointerdown', e => {
+      if (mode !== 'ink' || e.button !== 0 || currentLine) return;
+      if (penOnly && e.pointerType === 'touch') return;
+      e.preventDefault(); try { canvas.setPointerCapture(e.pointerId); } catch (er) {}
+      pushHistory();
+      const l = { type: 'ink', color: document.getElementById('stroke-color').value, thickness: parseFloat(document.getElementById('line-thickness').value) || 2.5, sens: parseFloat(document.getElementById('ink-sens').value) || 1, points: [inkPt(e)] };
+      lines.push(l); ink = { l, id: e.pointerId }; render();
+    });
+    canvas.addEventListener('pointermove', e => {
+      if (!ink || e.pointerId !== ink.id) return;
+      const evs = (e.getCoalescedEvents && e.getCoalescedEvents().length) ? e.getCoalescedEvents() : [e];
+      const P = ink.l.points; let ch = false;
+      evs.forEach(ev => { const q = inkPt(ev), l = P[P.length - 1]; if (Math.hypot(q.x - l.x, q.y - l.y) >= 1.2) { P.push(q); ch = true; } });
+      if (ch) render();
+    });
+    const inkEnd = e => {
+      if (!ink || (e && e.pointerId !== ink.id)) return;
+      const P = ink.l.points; if (P.length === 1) P.push({ x: P[0].x + 0.1, y: P[0].y, p: P[0].p });
+      ink = null; suppress = true; setTimeout(() => suppress = false, 60); render();
+    };
+    canvas.addEventListener('pointerup', inkEnd); canvas.addEventListener('pointercancel', inkEnd);
     const pos = cpos;
     const gv = id => document.getElementById(id).value;
     canvas.addEventListener('pointerdown', e => {
@@ -3063,6 +3186,7 @@ const GridironApp = (() => {
 
     savedPlays[name] = {
       cat: document.getElementById('play-cat').value || 'play',
+      savedAt: Date.now(), savedBy: shareUser(),
       pnotes: pnClone(),
       players: JSON.parse(JSON.stringify(players)),
       lines: JSON.parse(JSON.stringify(lines)),
@@ -3159,6 +3283,7 @@ const GridironApp = (() => {
       const div = document.createElement('div');
       div.className = 'play-item' + (name === currentName ? ' current' : '');
       const cc = savedPlays[name].cat || 'play';
+      { const sp = savedPlays[name]; div.title = sp.savedAt ? ('更新: ' + (sp.savedBy || '(名前なし)') + '  ' + fmtT(sp.savedAt)) : ''; }
       div.innerHTML = `${cc === 'play' ? '' : `<span class="catbadge">${esc(CAT_SHORT[cc] || catLabel(cc))}</span>`}<span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${name}</span><span class="del" title="削除">×</span>`;
       div.onclick = () => {
         const pData = savedPlays[name];
@@ -4036,6 +4161,77 @@ const GridironApp = (() => {
     link.click();
   }
 
+  // ===== チーム共有（選んで書き出し／重なったときの取り込み方を選ぶ） =====
+  function shareUser() { try { return localStorage.getItem('gps_user_name') || ''; } catch (e) { return ''; } }
+  function fmtT(t) { if (!t) return '(日時なし)'; const d = new Date(t); const z = n => String(n).padStart(2, '0'); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + z(d.getHours()) + ':' + z(d.getMinutes()); }
+  function shareModal(inner, wide) {
+    const ov = document.createElement('div');
+    ov.style.cssText = 'position:fixed; inset:0; z-index:500; background:rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center; padding:10px;';
+    ov.innerHTML = `<div style="background:#27272a; border:1px solid #52525b; border-radius:10px; padding:14px; width:${wide ? 560 : 480}px; max-width:100%; max-height:92vh; overflow:auto; color:#fff; font-size:12.5px;">${inner}</div>`;
+    ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+    document.body.appendChild(ov); return ov;
+  }
+  function shareExport() {
+    const keys = Object.keys(savedPlays).sort((a, b) => a.localeCompare(b, 'ja', { numeric: true }));
+    if (!keys.length) return alert('保存済みのプレーがありません。');
+    const ov = shareModal(`<div style="font-weight:bold; font-size:14px; margin-bottom:8px;">👥 選んで書き出し（チーム共有用）</div>
+      <div style="margin-bottom:6px;">あなたの名前: <input id="sx-name" type="text" value="${esc(shareUser())}" placeholder="例: 田中" style="width:140px;"> <span style="color:#a1a1aa; font-size:10.5px;">（更新者として記録されます）</span></div>
+      <div style="display:flex; gap:6px; margin-bottom:6px;"><select id="sx-cat" style="flex:0 0 150px;"></select><input id="sx-q" type="text" placeholder="名前で絞り込み" style="flex:1;"></div>
+      <div style="display:flex; gap:6px; margin-bottom:6px;"><button id="sx-all" type="button">表示中を全選択</button><button id="sx-none" type="button">表示中を全解除</button><span id="sx-cnt" style="margin-left:auto; align-self:center; color:#a1a1aa;"></span></div>
+      <div id="sx-list" style="border:1px solid #3f3f46; border-radius:6px; max-height:300px; overflow:auto; padding:4px; margin-bottom:8px;"></div>
+      <label style="display:block; margin-bottom:3px;"><input id="sx-forms" type="checkbox" style="width:auto;"> OFF/DEF陣形（左パネルの登録リスト）も入れる</label>
+      <label style="display:block; margin-bottom:8px;"><input id="sx-cover" type="checkbox" style="width:auto;"> Play Bookの表紙・出力設定も入れる</label>
+      <div style="display:flex; gap:8px; justify-content:flex-end;"><button id="sx-close" type="button">閉じる</button><button id="sx-go" type="button" style="background:#2563eb; border-color:#3b82f6; font-weight:bold;">📤 書き出す</button></div>`, true);
+    const g = id => ov.querySelector('#' + id), list = g('sx-list'), catSel = g('sx-cat');
+    catSel.innerHTML = '<option value="all">種類: すべて</option>' + allCats().map(c => `<option value="${c.k}">${esc(c.l)}</option>`).join('');
+    list.innerHTML = keys.map(k => { const p = savedPlays[k]; return `<label data-k="${esc(k)}" data-c="${esc(p.cat || 'play')}" style="display:flex; gap:6px; align-items:center; padding:3px 4px; border-bottom:1px solid #3f3f46;"><input type="checkbox" class="sx-ck" value="${esc(k)}" checked style="width:auto; flex:none;"><span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(k)}</span><span style="color:#a1a1aa; font-size:10.5px; flex:none;">${esc(p.savedBy || '')} ${p.savedAt ? fmtT(p.savedAt) : ''}</span></label>`; }).join('');
+    const rows = () => [...list.children];
+    const vis = r => r.style.display !== 'none';
+    const cnt = () => { g('sx-cnt').textContent = rows().filter(r => r.querySelector('.sx-ck').checked).length + ' / ' + rows().length + ' 件を選択'; };
+    const filt = () => { const q = g('sx-q').value.toLowerCase(), c = catSel.value; rows().forEach(r => { r.style.display = (r.dataset.k.toLowerCase().includes(q) && (c === 'all' || r.dataset.c === c)) ? '' : 'none'; }); };
+    g('sx-q').oninput = filt; catSel.onchange = filt; list.onchange = cnt;
+    g('sx-all').onclick = () => { rows().filter(vis).forEach(r => r.querySelector('.sx-ck').checked = true); cnt(); };
+    g('sx-none').onclick = () => { rows().filter(vis).forEach(r => r.querySelector('.sx-ck').checked = false); cnt(); };
+    g('sx-close').onclick = () => ov.remove(); cnt();
+    g('sx-go').onclick = () => {
+      const sel = [...list.querySelectorAll('.sx-ck')].filter(c => c.checked).map(c => c.value);
+      if (!sel.length) return alert('書き出すプレーを選んでください。');
+      const nm = g('sx-name').value.trim(); try { localStorage.setItem('gps_user_name', nm); } catch (e) {}
+      const plays = {}; sel.forEach(k => { const p = JSON.parse(JSON.stringify(savedPlays[k])); if (!p.savedBy) p.savedBy = nm; if (!p.savedAt) p.savedAt = Date.now(); plays[k] = p; });
+      const data = { share: true, app: 'PlayDrawLab', exportedBy: nm, exportedAt: Date.now(), plays, cats: customCats };
+      if (g('sx-forms').checked) { data.offForms = offFormations; data.defForms = defFormations; }
+      if (g('sx-cover').checked) { try { data.cover = JSON.parse(localStorage.getItem(COVER_KEY) || 'null'); } catch (e) {} }
+      const d = new Date(), z = n => String(n).padStart(2, '0');
+      const link = document.createElement('a');
+      link.download = 'PlayDrawLab_' + (nm || 'share').replace(/[\\/:*?"<>|\s]/g, '_') + '_' + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + '_' + z(d.getHours()) + z(d.getMinutes()) + '.json';
+      link.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+      link.click(); ov.remove(); toast(sel.length + '件を書き出しました', 2500);
+    };
+  }
+  function applyImport(data, mode, withCover) {
+    const st = { add: 0, over: 0, ren: 0, skip: 0, keep: 0 };
+    Object.entries(data.plays || {}).forEach(([k, v]) => {
+      const cur = savedPlays[k];
+      if (!cur) { savedPlays[k] = v; st.add++; return; }
+      if (mode === 'skip') { st.skip++; return; }
+      if (mode === 'rename') { const by = v.savedBy || '共有'; let nm = k + ' (' + by + ')', n = 2; while (savedPlays[nm]) nm = k + ' (' + by + ' ' + (n++) + ')'; savedPlays[nm] = v; st.ren++; return; }
+      if (mode === 'newer') { if ((v.savedAt || 0) >= (cur.savedAt || 0)) { savedPlays[k] = v; st.over++; } else st.keep++; return; }
+      savedPlays[k] = v; st.over++;
+    });
+    if (data.offForms) offFormations = { ...offFormations, ...data.offForms };
+    if (data.defForms) defFormations = { ...defFormations, ...data.defForms };
+    if (!data.share) {
+      if (data.offPalette) offPalette = data.offPalette;
+      if (data.defPalette) defPalette = data.defPalette;
+      if (data.groupNames) groupNames = { ...DEFAULT_GROUP_NAMES, ...data.groupNames };
+    }
+    if (Array.isArray(data.cats)) { data.cats.forEach(c => { if (c && c.k && c.l && !customCats.some(x => x.k === c.k)) customCats.push(c); }); saveCats(); fillCatSelects(); }
+    if (withCover && data.cover) { try { localStorage.setItem(COVER_KEY, JSON.stringify(data.cover)); restoreCover(); } catch (e) {} }
+    persistPlays(); persistFormations(); refreshFormationSelects('off'); refreshFormationSelects('def'); renderPalettes(); updatePlayList();
+    const parts = [];
+    if (st.add) parts.push('追加 ' + st.add + '件'); if (st.over) parts.push('上書き ' + st.over + '件'); if (st.ren) parts.push('別名で追加 ' + st.ren + '件'); if (st.keep) parts.push('自分の方が新しいので残した ' + st.keep + '件'); if (st.skip) parts.push('スキップ ' + st.skip + '件');
+    alert('読み込み完了しました！\n' + (parts.join(' / ') || '変更はありません。'));
+  }
   function importJSON(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -4043,22 +4239,27 @@ const GridironApp = (() => {
     reader.onload = e => {
       try {
         const data = JSON.parse(e.target.result);
-        if (data.plays) savedPlays = { ...savedPlays, ...data.plays };
-        if (data.offForms) offFormations = { ...offFormations, ...data.offForms };
-        if (data.defForms) defFormations = { ...defFormations, ...data.defForms };
-        if (data.offPalette) offPalette = data.offPalette;
-        if (data.defPalette) defPalette = data.defPalette;
-        if (data.groupNames) groupNames = { ...DEFAULT_GROUP_NAMES, ...data.groupNames };
-        if (Array.isArray(data.cats)) { data.cats.forEach(c => { if (c && c.k && c.l && !customCats.some(x => x.k === c.k)) customCats.push(c); }); saveCats(); fillCatSelects(); }
-        
-        persistPlays();
-        persistFormations();
-        refreshFormationSelects('off');
-        refreshFormationSelects('def');
-        renderPalettes();
-        updatePlayList();
-        alert('読み込み完了しました！');
+        const ks = Object.keys(data.plays || {}), conf = ks.filter(k => savedPlays[k]);
+        const hasCover = !!data.cover;
+        if (!conf.length && !hasCover) { applyImport(data, 'overwrite', false); return; }
+        const who = data.exportedBy ? esc(data.exportedBy) + ' さんのファイル' : 'このファイル';
+        const ov = shareModal(`<div style="font-weight:bold; font-size:14px; margin-bottom:8px;">📥 読み込み（${who}）</div>
+          <div style="margin-bottom:6px; color:#d4d4d8;">ファイルのプレー ${ks.length}件のうち、<b>同じ名前がすでにあるもの: ${conf.length}件</b></div>
+          ${conf.length ? `<div style="border:1px solid #3f3f46; border-radius:6px; max-height:170px; overflow:auto; padding:4px; margin-bottom:8px; font-size:11.5px;">${conf.map(k => { const a = data.plays[k], b = savedPlays[k]; return `<div style="padding:2px 0; border-bottom:1px solid #3f3f46;"><b>${esc(k)}</b><br><span style="color:#a1a1aa;">ファイル: ${esc(a.savedBy || '?')} ${fmtT(a.savedAt)} ／ 今の自分: ${esc(b.savedBy || '?')} ${fmtT(b.savedAt)}</span></div>`; }).join('')}</div>
+          <div style="margin-bottom:8px;"><div style="font-weight:bold; margin-bottom:3px;">同じ名前のプレーは、どうしますか？</div>
+            <label style="display:block;"><input type="radio" name="im-mode" value="newer" checked style="width:auto;"> 新しい方を残す（更新日時で比べる／日時がなければファイルを優先）</label>
+            <label style="display:block;"><input type="radio" name="im-mode" value="overwrite" style="width:auto;"> ファイルの内容で上書きする</label>
+            <label style="display:block;"><input type="radio" name="im-mode" value="rename" style="width:auto;"> 別名で追加する（両方残す／名前の後ろに更新者名が付きます）</label>
+            <label style="display:block;"><input type="radio" name="im-mode" value="skip" style="width:auto;"> 読み込まない（自分のものを残す）</label></div>` : ''}
+          ${hasCover ? `<label style="display:block; margin-bottom:8px;"><input id="im-cover" type="checkbox" style="width:auto;"> Play Bookの表紙・出力設定も取り込む（今の設定は置き換わります）</label>` : ''}
+          <div style="display:flex; gap:8px; justify-content:flex-end;"><button id="im-cancel" type="button">やめる</button><button id="im-go" type="button" style="background:#2563eb; border-color:#3b82f6; font-weight:bold;">読み込む</button></div>`, true);
+        ov.querySelector('#im-cancel').onclick = () => ov.remove();
+        ov.querySelector('#im-go').onclick = () => {
+          const m = ov.querySelector('input[name="im-mode"]:checked'); const wc = ov.querySelector('#im-cover');
+          ov.remove(); applyImport(data, m ? m.value : 'overwrite', !!(wc && wc.checked));
+        };
       } catch (err) { alert('読み込みに失敗しました。'); }
+      event.target.value = '';
     };
     reader.readAsText(file);
   }
@@ -4066,7 +4267,7 @@ const GridironApp = (() => {
   return {
     init, setMode, undo, redo, toast, toggleBlockEnd, openFontDialog, deleteSelected, addPlayer, clearField, render,
     selectGroup, applySelectedOff, applySelectedDef, renameFormation, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
-    flipOffDefPositions, flipLR, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition, changeDefHashPosition, alignSide,
+    flipOffDefPositions, flipLR, togglePenOnly, shareExport, editTextContent, textEditStart, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition, changeDefHashPosition, alignSide,
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
