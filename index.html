@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v79)</title>
+<title>Play Draw Lab (Pro Edition v81)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
   :root {
@@ -284,7 +284,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v79</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v81</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -544,7 +544,7 @@
         <button type="button" onclick="GridironApp.pnFromField()" style="flex:1;" title="今、フィールドにいる選手の名前から行を作ります">選手から作成</button>
         <button type="button" onclick="GridironApp.pnReset()" style="flex:1;" title="標準のポジション一覧に戻します(メモは消えます)">標準に戻す</button>
       </div>
-      <div style="font-size:9.5px; color:#a1a1aa; margin-top:3px;">ポジション名はいつでも書き換えられます。プレイ保存で、一緒に保存されます。</div>
+      <div style="font-size:9.5px; color:#a1a1aa; margin-top:3px;">ポジション名はいつでも書き換えられます。Save Playで、一緒に保存されます。</div>
     </div>
 
     <div class="tool-group">
@@ -663,6 +663,8 @@
         <input type="text" id="call-motion" placeholder="例: Z Orbit / Jet" oninput="GridironApp.syncPlayTitle()" style="flex:1;">
         <span class="field-tag">PLAY CALL:</span>
         <input type="text" id="call-play" value="Mesh" placeholder="例: Mesh / Inside Zone" oninput="GridironApp.syncPlayTitle()" style="flex:1.2;">
+        <span class="field-tag" title="相手の守備(Coverage・Frontなど)。同じPLAY CALLでも、相手が違うときの区別に使います">VS (相手Def):</span>
+        <input type="text" id="call-vs" placeholder="例: Cover 3 / 4-3 Over" oninput="GridironApp.syncPlayTitle()" style="flex:1;">
       </div>
       <div class="call-row">
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">種類:</span>
@@ -670,7 +672,8 @@
         <button onclick="GridironApp.manageCats()" title="種類の追加・名前変更・削除" style="padding:2px 7px;">✎</button>
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">保存タイトル:</span>
         <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" oninput="var t=document.getElementById('title-auto');if(t)t.checked=false;" style="flex:1; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label>
-        <button onclick="GridironApp.savePlay()" style="background: #10b981; border-color: #059669; font-weight: bold; white-space:nowrap;">💾 プレイ保存</button>
+        <button onclick="GridironApp.savePlay()" style="background: #10b981; border-color: #059669; font-weight: bold; white-space:nowrap;">💾 Save Play</button>
+        <button onclick="GridironApp.savePlayAs()" title="同じ名前があっても上書きせず、(2)(3)をつけて別のプレーとして保存します" style="white-space:nowrap;">＋ 別名で保存</button>
         <button onclick="GridironApp.exportPNG()" style="background: var(--accent); border-color: #3b82f6; white-space:nowrap;">🖼 PNG出力</button>
         <button onclick="GridironApp.clearField()" class="danger" style="white-space:nowrap;">全クリア</button>
       </div>
@@ -708,7 +711,7 @@
 
     <div style="flex:1; display:flex; flex-direction:column;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
-        <h4 style="font-size: 10.5px; color: var(--text-muted);">保存済みプレイ一覧</h4>
+        <h4 style="font-size: 10.5px; color: #ffffff;">Saved Plays (保存済み)</h4>
         <span id="play-count" style="font-size:10.5px; color:#ffffff;">0件</span>
       </div>
       <select id="play-catf" onchange="GridironApp.updatePlayList()" style="margin-bottom:3px;"><option value="all">種類: すべて</option><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
@@ -1614,7 +1617,8 @@ const GridironApp = (() => {
     const form = document.getElementById('call-formation').value.trim();
     const mot = document.getElementById('call-motion').value.trim();
     const call = document.getElementById('call-play').value.trim();
-    const fullTitle = [[form, mot].filter(Boolean).join(' '), call].filter(Boolean).join(' - ');
+    const vsEl = document.getElementById('call-vs'), vs = vsEl ? vsEl.value.trim() : '';
+    const fullTitle = [[form, mot].filter(Boolean).join(' '), call].filter(Boolean).join(' - ') + (vs && (form || mot || call) ? ' vs ' + vs : (vs ? 'vs ' + vs : ''));
     if (fullTitle) document.getElementById('play-name').value = fullTitle;
   }
 
@@ -3003,8 +3007,18 @@ const GridironApp = (() => {
     buildAssign(rows);
   }
 
-  function savePlay() {
+  let curPlayName = null;
+  function savePlayAs() {
+    const base = document.getElementById('play-name').value.trim() || 'Untitled Play';
+    let n = 2, nm = base; while (savedPlays[nm]) { nm = base + ' (' + n + ')'; n++; }
+    document.getElementById('play-name').value = nm;
+    const ta = document.getElementById('title-auto'); if (ta) ta.checked = false;
+    savePlay(true);
+  }
+  function savePlay(force) {
     const name = document.getElementById('play-name').value.trim() || 'Untitled Play';
+    if (!force && savedPlays[name] && name !== curPlayName && !confirm('「' + name + '」は、すでに保存されています。\n\nOK ＝ 上書きして保存します。\nキャンセル ＝ 保存しません（「別名で保存」を使うと、別のプレーとして残せます）')) return;
+    curPlayName = name;
     render(true);
 
     savedPlays[name] = {
@@ -3017,7 +3031,8 @@ const GridironApp = (() => {
       callInfo: {
         formation: document.getElementById('call-formation').value.trim(),
         motion: document.getElementById('call-motion').value.trim(),
-        play: document.getElementById('call-play').value.trim()
+        play: document.getElementById('call-play').value.trim(),
+        vs: (document.getElementById('call-vs') || {}).value ? document.getElementById('call-vs').value.trim() : ''
       },
       defPersonnel: document.getElementById('def-personnel-input').value.trim(),
       offPersonnel: document.getElementById('off-personnel-input').value.trim(),
@@ -3134,7 +3149,9 @@ const GridironApp = (() => {
         document.getElementById('call-formation').value = pData.callInfo?.formation || '';
         document.getElementById('call-motion').value = pData.callInfo?.motion || '';
         document.getElementById('call-play').value = pData.callInfo?.play || '';
-        { const ta = document.getElementById('title-auto'); if (ta) { const f = pData.callInfo?.formation || '', m = pData.callInfo?.motion || '', c = pData.callInfo?.play || ''; ta.checked = ([[f, m].filter(Boolean).join(' '), c].filter(Boolean).join(' - ') === name); } }
+        { const vv = document.getElementById('call-vs'); if (vv) vv.value = pData.callInfo?.vs || ''; }
+        curPlayName = name;
+        { const ta = document.getElementById('title-auto'); if (ta) { const f = pData.callInfo?.formation || '', m = pData.callInfo?.motion || '', c = pData.callInfo?.play || '', vq = (pData.callInfo?.vs || '').trim(); ta.checked = (([[f, m].filter(Boolean).join(' '), c].filter(Boolean).join(' - ') + (vq ? (f || m || c ? ' vs ' : 'vs ') + vq : '')) === name); } }
         document.getElementById('play-notes').value = pData.notes || '';
         pnLoad(pData.pnotes);
 
@@ -4007,7 +4024,7 @@ const GridironApp = (() => {
   return {
     init, setMode, undo, redo, toast, toggleBlockEnd, openFontDialog, deleteSelected, addPlayer, clearField, render,
     selectGroup, applySelectedOff, applySelectedDef, renameFormation, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
-    flipOffDefPositions, flipLR, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition,
+    flipOffDefPositions, flipLR, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition,
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
