@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
+  <Id>6f1d2a54-8b7c-4e1a-9a3f-2c5d7e8b9a10</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Play Draw Lab</ProviderName>
+  <DefaultLocale>ja-JP</DefaultLocale>
+  <DisplayName DefaultValue="Play Draw Lab"/>
+  <Description DefaultValue="プレー図を描いて、Play Bookの雛形に自動で入れます"/>
+  <IconUrl DefaultValue="https://shaq-tanaka.github.io/Playbook/icons/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://shaq-tanaka.github.io/Playbook/icons/icon-64.png"/>
+  <SupportUrl DefaultValue="https://shaq-tanaka.github.io/Playbook/"/>
+  <AppDomains><AppDomain>https://shaq-tanaka.github.io</AppDomain></AppDomains>
+  <Hosts><Host Name="Presentation"/></Hosts>
+  <DefaultSettings><SourceLocation DefaultValue="https://shaq-tanaka.github.io/Playbook/index.html?addin=1"/></DefaultSettings>
+  <Permissions>ReadWriteDocument</Permissions>
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Presentation">
+        <DesktopFormFactor>
+          <GetStarted>
+            <Title resid="GS.Title"/>
+            <Description resid="GS.Desc"/>
+            <LearnMoreUrl resid="Url.Home"/>
+          </GetStarted>
+          <FunctionFile resid="Url.Func"/>
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <OfficeTab id="TabHome">
+              <Group id="PDL.Group">
+                <Label resid="Group.Label"/>
+                <Icon><bt:Image size="16" resid="Icon16"/><bt:Image size="32" resid="Icon32"/><bt:Image size="80" resid="Icon80"/></Icon>
+                <Control xsi:type="Button" id="PDL.Open">
+                  <Label resid="Btn.Label"/>
+                  <Supertip><Title resid="Btn.Label"/><Description resid="Btn.Tip"/></Supertip>
+                  <Icon><bt:Image size="16" resid="Icon16"/><bt:Image size="32" resid="Icon32"/><bt:Image size="80" resid="Icon80"/></Icon>
+                  <Action xsi:type="ShowTaskpane"><TaskpaneId>PDLPane</TaskpaneId><SourceLocation resid="Url.Pane"/></Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon16" DefaultValue="https://shaq-tanaka.github.io/Playbook/icons/icon-16.png"/>
+        <bt:Image id="Icon32" DefaultValue="https://shaq-tanaka.github.io/Playbook/icons/icon-32.png"/>
+        <bt:Image id="Icon80" DefaultValue="https://shaq-tanaka.github.io/Playbook/icons/icon-80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Url.Pane" DefaultValue="https://shaq-tanaka.github.io/Playbook/index.html?addin=1"/>
+        <bt:Url id="Url.Func" DefaultValue="https://shaq-tanaka.github.io/Playbook/index.html?addin=1"/>
+        <bt:Url id="Url.Home" DefaultValue="https://shaq-tanaka.github.io/Playbook/"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="GS.Title" DefaultValue="Play Draw Lab"/>
+        <bt:String id="Group.Label" DefaultValue="Play Draw Lab"/>
+        <bt:String id="Btn.Label" DefaultValue="プレー作成"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="GS.Desc" DefaultValue="Home タブの「プレー作成」で、右側にプレー図の作成画面が開きます"/>
+        <bt:String id="Btn.Tip" DefaultValue="プレー図を描いて、Play Bookの雛形に挿入します"/>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>

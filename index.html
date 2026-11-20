@@ -37,8 +37,9 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v86)</title>
+<title>Play Draw Lab (Pro Edition v87)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
   :root {
     --bg-dark: #18181b;
@@ -3190,13 +3191,54 @@ const GridironApp = (() => {
     const ta = document.getElementById('title-auto'); if (ta) ta.checked = false;
     savePlay(true);
   }
-  function savePlay(force) {
-    const name = document.getElementById('play-name').value.trim() || 'Untitled Play';
-    if (!force && savedPlays[name] && name !== curPlayName && !confirm('「' + name + '」は、すでに保存されています。\n\nOK ＝ 上書きして保存します。\nキャンセル ＝ 保存しません（「別名で保存」を使うと、別のプレーとして残せます）')) return;
-    curPlayName = name;
-    render(true);
+  function loadPlayObj(name, pData) {
+    fieldLinesOff = !!pData.fieldLinesOff; const pl = fieldLen; fieldLen = pData.fieldLen || 30; resizeCanvas(); losY = H / 2; if (pl !== fieldLen) setTimeout(fitView, 0);
+    if (pData.yardStartMode) yardStartMode = pData.yardStartMode;
+    numLos = pData.numLos !== undefined ? pData.numLos : 30; numGoal = pData.numGoal || 'down'; numArrow = pData.numArrow !== false;
+    yardLines = pData.yardLines === 'none' ? 'none' : '10'; ezTop = !!pData.ezTop; ezBottom = !!pData.ezBottom; slLeft = !!pData.slLeft; slRight = !!pData.slRight;
+    syncFieldControls();
+    if (pData.offSize) { document.getElementById('off-size-range').value = pData.offSize; document.getElementById('off-size-val').innerText = pData.offSize; }
+    if (pData.defSize) { document.getElementById('def-size-range').value = pData.defSize; document.getElementById('def-size-val').innerText = pData.defSize; }
+    if (pData.showHash !== undefined) document.getElementById('show-hash').checked = pData.showHash;
+    if (pData.showGoalPost !== undefined) document.getElementById('show-goalpost').checked = pData.showGoalPost;
+    if (pData.offHashPos) { document.getElementById('off-hash-pos').value = pData.offHashPos; }
+    { const dh = document.getElementById('def-hash-pos'); if (dh) dh.value = pData.defHashPos || 'middle'; }
 
-    savedPlays[name] = {
+    document.getElementById('def-personnel-input').value = pData.defPersonnel || '';
+    document.getElementById('off-personnel-input').value = pData.offPersonnel || '';
+    setAssign(pData.assign || [], pData.assignCols);
+    document.getElementById('off-form-select').value = pData.offFormationSelect || '';
+    document.getElementById('def-form-select').value = pData.defFormationSelect || '';
+
+    changeFieldSettings();
+    players = JSON.parse(JSON.stringify(pData.players || []));
+    lines = JSON.parse(JSON.stringify(pData.lines || []));
+    zones = JSON.parse(JSON.stringify(pData.zones || []));
+    texts = JSON.parse(JSON.stringify(pData.texts || []));
+
+    document.getElementById('play-name').value = name;
+    document.getElementById('play-cat').value = pData.cat || 'play';
+    document.getElementById('call-formation').value = pData.callInfo?.formation || '';
+    document.getElementById('call-motion').value = pData.callInfo?.motion || '';
+    document.getElementById('call-play').value = pData.callInfo?.play || '';
+    { const vv = document.getElementById('call-vs'); if (vv) vv.value = pData.callInfo?.vs || ''; }
+    curPlayName = name;
+    { const ta = document.getElementById('title-auto'); if (ta) { const f = pData.callInfo?.formation || '', m = pData.callInfo?.motion || '', c = pData.callInfo?.play || '', vq = (pData.callInfo?.vs || '').trim(); ta.checked = (([[f, m].filter(Boolean).join(' '), c].filter(Boolean).join(' - ') + (vq ? (f || m || c ? ' vs ' : 'vs ') + vq : '')) === name); } }
+    document.getElementById('play-notes').value = pData.notes || '';
+    pnLoad(pData.pnotes);
+
+    APP_CONFIG.metaFields.forEach(f => {
+      const el = document.getElementById('meta-' + f.key);
+      if (el) el.value = pData.meta?.[f.key] || '';
+    });
+
+    selectedObj = null; currentLine = null;
+    render(); updatePlayList();
+  }
+
+  function buildPlayObj() {
+    render(true);
+    const o = {
       cat: document.getElementById('play-cat').value || 'play',
       savedAt: Date.now(), savedBy: shareUser(),
       pnotes: pnClone(),
@@ -3226,6 +3268,17 @@ const GridironApp = (() => {
       defHashPos: (document.getElementById('def-hash-pos') || {}).value || 'middle',
       image: canvas.toDataURL('image/png'), imgH: H
     };
+    render(false);
+    return o;
+  }
+
+  function savePlay(force) {
+    const name = document.getElementById('play-name').value.trim() || 'Untitled Play';
+    if (!force && savedPlays[name] && name !== curPlayName && !confirm('「' + name + '」は、すでに保存されています。\n\nOK ＝ 上書きして保存します。\nキャンセル ＝ 保存しません（「別名で保存」を使うと、別のプレーとして残せます）')) return;
+    curPlayName = name;
+    render(true);
+
+    savedPlays[name] = buildPlayObj();
     persistPlays().then(() => toast(`「${name}」を保存しました`)).catch(() => alert('保存に失敗しました。JSON保存でバックアップしてください。'));
     render(false);
     updatePlayList();
@@ -3297,51 +3350,7 @@ const GridironApp = (() => {
       const cc = savedPlays[name].cat || 'play';
       { const sp = savedPlays[name]; div.title = sp.savedAt ? ('更新: ' + (sp.savedBy || '(名前なし)') + '  ' + fmtT(sp.savedAt)) : ''; }
       div.innerHTML = `${cc === 'play' ? '' : `<span class="catbadge">${esc(CAT_SHORT[cc] || catLabel(cc))}</span>`}<span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${name}</span><span class="del" title="削除">×</span>`;
-      div.onclick = () => {
-        const pData = savedPlays[name];
-        fieldLinesOff = !!pData.fieldLinesOff; const pl = fieldLen; fieldLen = pData.fieldLen || 30; resizeCanvas(); losY = H / 2; if (pl !== fieldLen) setTimeout(fitView, 0);
-        if (pData.yardStartMode) yardStartMode = pData.yardStartMode;
-        numLos = pData.numLos !== undefined ? pData.numLos : 30; numGoal = pData.numGoal || 'down'; numArrow = pData.numArrow !== false;
-        yardLines = pData.yardLines === 'none' ? 'none' : '10'; ezTop = !!pData.ezTop; ezBottom = !!pData.ezBottom; slLeft = !!pData.slLeft; slRight = !!pData.slRight;
-        syncFieldControls();
-        if (pData.offSize) { document.getElementById('off-size-range').value = pData.offSize; document.getElementById('off-size-val').innerText = pData.offSize; }
-        if (pData.defSize) { document.getElementById('def-size-range').value = pData.defSize; document.getElementById('def-size-val').innerText = pData.defSize; }
-        if (pData.showHash !== undefined) document.getElementById('show-hash').checked = pData.showHash;
-        if (pData.showGoalPost !== undefined) document.getElementById('show-goalpost').checked = pData.showGoalPost;
-        if (pData.offHashPos) { document.getElementById('off-hash-pos').value = pData.offHashPos; }
-        { const dh = document.getElementById('def-hash-pos'); if (dh) dh.value = pData.defHashPos || 'middle'; }
-
-        document.getElementById('def-personnel-input').value = pData.defPersonnel || '';
-        document.getElementById('off-personnel-input').value = pData.offPersonnel || '';
-        setAssign(pData.assign || [], pData.assignCols);
-        document.getElementById('off-form-select').value = pData.offFormationSelect || '';
-        document.getElementById('def-form-select').value = pData.defFormationSelect || '';
-
-        changeFieldSettings();
-        players = JSON.parse(JSON.stringify(pData.players || []));
-        lines = JSON.parse(JSON.stringify(pData.lines || []));
-        zones = JSON.parse(JSON.stringify(pData.zones || []));
-        texts = JSON.parse(JSON.stringify(pData.texts || []));
-
-        document.getElementById('play-name').value = name;
-        document.getElementById('play-cat').value = pData.cat || 'play';
-        document.getElementById('call-formation').value = pData.callInfo?.formation || '';
-        document.getElementById('call-motion').value = pData.callInfo?.motion || '';
-        document.getElementById('call-play').value = pData.callInfo?.play || '';
-        { const vv = document.getElementById('call-vs'); if (vv) vv.value = pData.callInfo?.vs || ''; }
-        curPlayName = name;
-        { const ta = document.getElementById('title-auto'); if (ta) { const f = pData.callInfo?.formation || '', m = pData.callInfo?.motion || '', c = pData.callInfo?.play || '', vq = (pData.callInfo?.vs || '').trim(); ta.checked = (([[f, m].filter(Boolean).join(' '), c].filter(Boolean).join(' - ') + (vq ? (f || m || c ? ' vs ' : 'vs ') + vq : '')) === name); } }
-        document.getElementById('play-notes').value = pData.notes || '';
-        pnLoad(pData.pnotes);
-
-        APP_CONFIG.metaFields.forEach(f => {
-          const el = document.getElementById('meta-' + f.key);
-          if (el) el.value = pData.meta?.[f.key] || '';
-        });
-
-        selectedObj = null; currentLine = null;
-        render(); updatePlayList();
-      };
+      div.onclick = () => loadPlayObj(name, savedPlays[name]);
       div.querySelector('.del').onclick = (e) => {
         e.stopPropagation();
         if (confirm(`「${name}」を削除しますか？`)) {
@@ -4284,11 +4293,251 @@ const GridironApp = (() => {
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
     savePlay, manageCats, setZoneSize, updatePlayList, exportPNG, generatePlayBookTemplate, exportPPTX, setPbLogo, pbTemplateChanged, changeSideLine, setLinesMode, addAssignRow, addAssignCol, clearAssignRows, setAssign, assignPreset, exportJSON, importJSON, syncMetaToHeader, syncPersonnelToHeader,
-    addOffPaletteItem, addDefPaletteItem
+    addOffPaletteItem, addDefPaletteItem, buildPlayObj, loadPlayObj, curName: () => curPlayName
   };
 })();
 
 window.addEventListener('DOMContentLoaded', GridironApp.init);
+</script>
+<script>
+/* Play Draw Lab - PowerPoint add-in bridge (task pane mode: ?addin=1) */
+(function () {
+  if (!/[?&]addin=1/.test(location.search)) return;
+  const TPL = [
+    { k: 'grid4', label: '1枚に図4つ (2x2)', file: 'templates/PDL_2x2.pptx' },
+    { k: 'assign', label: '図1つ + アサインメント', file: 'templates/PDL_Assign.pptx' }
+  ];
+  const PFX = 'PDL_';
+  let target = null;           // id of the placed figure being edited
+  let selId = null;            // id of figure currently selected on the slide
+  let busy = false;
+  const $ = id => document.getElementById(id);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const bar = document.createElement('div');
+  bar.id = 'pdl-bar';
+  bar.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:99998;background:#0f172a;border-top:2px solid #2563eb;color:#e4e4e7;padding:6px 8px;font:12px/1.4 sans-serif;display:flex;flex-direction:column;gap:5px;';
+  bar.innerHTML = '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">' +
+    '<b style="color:#93c5fd">PowerPoint</b>' +
+    '<select id="pdl-tpl" style="flex:1;min-width:120px;background:#27272a;color:#fff;border:1px solid #52525b;border-radius:4px;padding:4px"></select>' +
+    '<button id="pdl-addpage" style="background:#3f3f46;color:#fff;border:0;border-radius:4px;padding:6px 8px">＋雛形ページ</button></div>' +
+    '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+    '<button id="pdl-ins" style="flex:1;background:#2563eb;color:#fff;border:0;border-radius:4px;padding:8px;font-weight:bold">▶ 挿入</button>' +
+    '<button id="pdl-upd" style="flex:1;background:#16a34a;color:#fff;border:0;border-radius:4px;padding:8px;font-weight:bold" disabled>⟳ 更新</button>' +
+    '<button id="pdl-load" style="flex:1;background:#7c3aed;color:#fff;border:0;border-radius:4px;padding:8px;font-weight:bold" disabled>✎ 読込</button></div>' +
+    '<div id="pdl-msg" style="color:#a1a1aa;min-height:16px">準備中…</div>';
+  function mount() {
+    document.body.appendChild(bar);
+    document.body.style.paddingBottom = '92px';
+    const sel = $('pdl-tpl');
+    sel.innerHTML = TPL.map(t => '<option value="' + t.k + '">' + t.label + '</option>').join('');
+    try { const v = localStorage.getItem('pdl_tpl'); if (v) sel.value = v; } catch (e) {}
+    sel.onchange = () => { try { localStorage.setItem('pdl_tpl', sel.value); } catch (e) {} };
+    $('pdl-ins').onclick = () => run(insertPlay);
+    $('pdl-upd').onclick = () => run(updatePlay);
+    $('pdl-load').onclick = () => run(loadSelected);
+    $('pdl-addpage').onclick = () => run(async () => { await addTemplatePage(); msg('雛形ページを追加しました'); });
+  }
+  function msg(t, bad) { const m = $('pdl-msg'); if (m) { m.textContent = t; m.style.color = bad ? '#fca5a5' : '#a1a1aa'; } }
+  function ui() {
+    const u = $('pdl-upd'), l = $('pdl-load'); if (!u) return;
+    u.disabled = !target; l.disabled = !selId;
+    u.style.opacity = target ? 1 : .4; l.style.opacity = selId ? 1 : .4;
+  }
+  async function run(fn) {
+    if (busy) return; busy = true;
+    try { await fn(); } catch (e) { console.error(e); msg('エラー: ' + (e && e.message || e), true); }
+    busy = false; ui();
+  }
+  const supported = v => { try { return Office.context.requirements.isSetSupported('PowerPointApi', v); } catch (e) { return false; } };
+
+  /* ---- helpers over Office.js ---- */
+  const b64 = dataUrl => dataUrl.replace(/^data:image\/\w+;base64,/, '');
+  async function listSlides(ctx) {
+    const slides = ctx.presentation.slides; slides.load('items/id'); await ctx.sync();
+    slides.items.forEach(sl => sl.shapes.load('items/id,items/name,items/left,items/top,items/width,items/height'));
+    await ctx.sync();
+    return slides.items;
+  }
+  async function currentSlideIndex(ctx, items) {
+    if (!supported('1.5')) return 0;
+    try {
+      const ss = ctx.presentation.getSelectedSlides(); ss.load('items/id'); await ctx.sync();
+      if (ss.items.length) { const i = items.findIndex(s => s.id === ss.items[0].id); if (i >= 0) return i; }
+    } catch (e) {}
+    return 0;
+  }
+  function gotoSlide(ctx, slide) {
+    return new Promise(res => {
+      let done = false; const fin = () => { if (!done) { done = true; res(); } };
+      try {
+        if (supported('1.5')) { ctx.presentation.setSelectedSlides([slide.id]); ctx.sync().then(() => sleep(150)).then(fin, fin); return; }
+      } catch (e) {}
+      try { Office.context.document.goToByIdAsync(parseInt(slide.id, 10), Office.GoToType.Slide, () => setTimeout(fin, 150)); } catch (e) { fin(); }
+    });
+  }
+  function putImage(dataUrl, box) {
+    return new Promise((res, rej) => {
+      Office.context.document.setSelectedDataAsync(b64(dataUrl), {
+        coercionType: Office.CoercionType.Image,
+        imageLeft: box.left, imageTop: box.top, imageWidth: box.width, imageHeight: box.height
+      }, r => r.status === Office.AsyncResultStatus.Succeeded ? res() : rej(new Error(r.error && r.error.message)));
+    });
+  }
+  function fit(box, ar) { // keep aspect ratio inside box, centered
+    let w = box.width, h = w / ar;
+    if (h > box.height) { h = box.height; w = h * ar; }
+    return { left: box.left + (box.width - w) / 2, top: box.top + (box.height - h) / 2, width: w, height: h };
+  }
+  const saveSetting = (k, v) => new Promise(res => { const st = Office.context.document.settings; st.set(k, v); st.saveAsync(() => res()); });
+  const getSetting = k => Office.context.document.settings.get(k);
+  function setText(sh, t) { try { sh.textFrame.textRange.text = t; } catch (e) {} }
+
+  /* ---- template pages ---- */
+  async function fetchB64(url) {
+    const r = await fetch(url, { cache: 'no-cache' }); if (!r.ok) throw new Error('雛形が取得できません: ' + url);
+    const buf = new Uint8Array(await r.arrayBuffer()); let s = '';
+    for (let i = 0; i < buf.length; i += 0x8000) s += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
+    return btoa(s);
+  }
+  async function addTemplatePage(afterId) {
+    const t = TPL.find(x => x.k === $('pdl-tpl').value) || TPL[0];
+    const data = await fetchB64(t.file);
+    let last = afterId;
+    if (!last) { await PowerPoint.run(async ctx => { const sl = ctx.presentation.slides; sl.load('items/id'); await ctx.sync(); if (sl.items.length) last = sl.items[sl.items.length - 1].id; }); }
+    await new Promise((res, rej) => {
+      const opt = { formatting: 'KeepSourceFormatting' }; if (last) opt.targetSlideId = last;
+      ctxInsert(data, opt, res, rej);
+    });
+    await sleep(300);
+  }
+  function ctxInsert(data, opt, res, rej) {
+    PowerPoint.run(async ctx => { ctx.presentation.insertSlidesFromBase64(data, opt); await ctx.sync(); }).then(res, rej);
+  }
+
+  /* ---- find first empty slot ---- */
+  const slotNo = n => { const m = /^PDL_SLOT_(\d+)$/.exec(n || ''); return m ? +m[1] : 0; };
+  function findSlot(items, from) {
+    const order = items.map((_, i) => (i + from) % items.length);
+    for (const i of order) {
+      const cand = items[i].shapes.items.filter(s => slotNo(s.name)).sort((a, b) => slotNo(a.name) - slotNo(b.name));
+      if (cand.length) return { slide: items[i], slot: cand[0], no: slotNo(cand[0].name) };
+    }
+    return null;
+  }
+  function planText(p) {
+    const rows = p.assign || [];
+    let t = '';
+    rows.forEach(r => { const pos = r[0] || ''; const rest = r.slice(1).filter(Boolean).join(' / '); t += pos + (rest ? ' : ' + rest : '') + '\n'; });
+    const pn = p.pnotes || {};
+    ['off', 'def'].forEach(sd => { const a = (pn[sd] || []).filter(x => x && x.n && x.n.trim()); if (a.length) { t += '\n' + (sd === 'off' ? 'OFFENSE' : 'DEFENSE') + ' NOTE\n'; a.forEach(x => { t += (x.p || '') + ' : ' + x.n + '\n'; }); } });
+    return t.trim();
+  }
+  const slim = p => { const o = JSON.parse(JSON.stringify(p)); delete o.image; return o; };
+
+  /* ---- insert ---- */
+  async function insertPlay() {
+    const A = GridironApp; const name = ($('play-name').value || '').trim() || 'Untitled Play';
+    const p = A.buildPlayObj(); const ar = 920 / (p.imgH || 560);
+    msg('挿入中…');
+    let found = null;
+    for (let attempt = 0; attempt < 2 && !found; attempt++) {
+      await PowerPoint.run(async ctx => {
+        const items = await listSlides(ctx);
+        if (!items.length) return;
+        const from = await currentSlideIndex(ctx, items);
+        found = findSlot(items, from);
+        if (found) found = { slideId: found.slide.id, slotId: found.slot.id, no: found.no, box: { left: found.slot.left, top: found.slot.top, width: found.slot.width, height: found.slot.height }, others: found.slide.shapes.items.map(s => ({ id: s.id, name: s.name })) };
+      });
+      if (!found) { msg('空き枠がないので雛形ページを追加…'); await addTemplatePage(); }
+    }
+    if (!found) throw new Error('雛形の枠(PDL_SLOT)が見つかりません。雛形ページを追加してください');
+    const id = Date.now().toString(36);
+    const before = new Set(found.others.map(o => o.id));
+    await PowerPoint.run(async ctx => {
+      const items = await listSlides(ctx); const sl = items.find(s => s.id === found.slideId);
+      await gotoSlide(ctx, sl);
+      const slot = sl.shapes.items.find(s => s.id === found.slotId); if (slot) slot.delete();
+      await ctx.sync();
+    });
+    await putImage(p.image, fit(found.box, ar));
+    await sleep(250);
+    await PowerPoint.run(async ctx => {
+      const items = await listSlides(ctx); const sl = items.find(s => s.id === found.slideId);
+      const nw = sl.shapes.items.filter(s => !before.has(s.id));
+      if (nw.length) nw[nw.length - 1].name = PFX + id;
+      const cap = sl.shapes.items.find(s => s.name === 'PDL_CAP_' + found.no); if (cap) setText(cap, name);
+      const memo = sl.shapes.items.find(s => s.name === 'PDL_MEMO_' + found.no); if (memo && p.notes) setText(memo, p.notes);
+      const nt = sl.shapes.items.find(s => s.name === 'PDL_NOTE_' + found.no); if (nt) { const t = planText(p); if (t) setText(nt, t); }
+      await ctx.sync();
+    });
+    await saveSetting('pdl_' + id, JSON.stringify({ name, slot: found.no, play: slim(p) }));
+    target = id; selId = id;
+    msg('「' + name + '」を挿入しました(右の「更新」で、この図を直せます)');
+  }
+
+  /* ---- find placed figure ---- */
+  async function findFigure(id) {
+    let out = null;
+    await PowerPoint.run(async ctx => {
+      const items = await listSlides(ctx);
+      for (const sl of items) { const sh = sl.shapes.items.find(s => s.name === PFX + id); if (sh) { out = { slideId: sl.id, shapeId: sh.id, box: { left: sh.left, top: sh.top, width: sh.width, height: sh.height } }; break; } }
+    });
+    return out;
+  }
+  async function updatePlay() {
+    if (!target) throw new Error('更新する図が選ばれていません。図をクリックして「読込」を押してください');
+    const fig = await findFigure(target); if (!fig) throw new Error('スライド上に、その図が見つかりません');
+    const A = GridironApp; const p = A.buildPlayObj(); const ar = 920 / (p.imgH || 560);
+    const name = ($('play-name').value || '').trim() || 'Untitled Play';
+    msg('更新中…');
+    await PowerPoint.run(async ctx => {
+      const items = await listSlides(ctx); const sl = items.find(s => s.id === fig.slideId);
+      await gotoSlide(ctx, sl);
+      const sh = sl.shapes.items.find(s => s.id === fig.shapeId); if (sh) sh.delete();
+      await ctx.sync();
+    });
+    const before = new Set(); await PowerPoint.run(async ctx => { const items = await listSlides(ctx); const sl = items.find(s => s.id === fig.slideId); sl.shapes.items.forEach(s => before.add(s.id)); });
+    await putImage(p.image, fit(fig.box, ar));
+    await sleep(250);
+    const old = getSetting('pdl_' + target); let slotN = 0; try { slotN = JSON.parse(old).slot || 0; } catch (e) {}
+    await PowerPoint.run(async ctx => {
+      const items = await listSlides(ctx); const sl = items.find(s => s.id === fig.slideId);
+      const nw = sl.shapes.items.filter(s => !before.has(s.id)); if (nw.length) nw[nw.length - 1].name = PFX + target;
+      if (slotN) { const cap = sl.shapes.items.find(s => s.name === 'PDL_CAP_' + slotN); if (cap) setText(cap, name); const nt = sl.shapes.items.find(s => s.name === 'PDL_NOTE_' + slotN); if (nt) { const t = planText(p); if (t) setText(nt, t); } }
+      await ctx.sync();
+    });
+    await saveSetting('pdl_' + target, JSON.stringify({ name, slot: slotN, play: slim(p) }));
+    msg('「' + name + '」を更新しました');
+  }
+  async function loadSelected() {
+    if (!selId) throw new Error('スライド上の図をクリックしてください');
+    const raw = getSetting('pdl_' + selId); if (!raw) throw new Error('この図の元データがありません(この資料で挿入した図のみ読込できます)');
+    const d = JSON.parse(raw);
+    GridironApp.loadPlayObj(d.name, d.play); target = selId;
+    msg('「' + d.name + '」を読み込みました。直して「更新」を押してください');
+  }
+
+  /* ---- selection tracking ---- */
+  async function onSel() {
+    try {
+      if (!supported('1.5')) return;
+      let nm = null;
+      await PowerPoint.run(async ctx => { const ss = ctx.presentation.getSelectedShapes(); ss.load('items/name'); await ctx.sync(); if (ss.items.length === 1) nm = ss.items[0].name; });
+      selId = nm && nm.indexOf(PFX) === 0 && !/^PDL_(SLOT|CAP|MEMO|NOTE|TITLE)/.test(nm) ? nm.slice(PFX.length) : null;
+      if (selId) msg('図を選択中: 「✎ 読込」で、直せます');
+      ui();
+    } catch (e) {}
+  }
+  function start() {
+    mount(); ui();
+    try { Office.context.document.addHandlerAsync(Office.EventType.DocumentSelectionChanged, onSel); } catch (e) {}
+    msg(supported('1.5') ? 'プレーを描いて「挿入」を押してください' : 'PowerPointが古いため、一部機能(図の選択検知など)が使えません');
+  }
+  const wait = () => { if (window.Office && Office.onReady) Office.onReady(() => start()); else setTimeout(wait, 200); };
+  window.__PDL_TEST = { insertPlay, updatePlay, loadSelected, findSlot, planText, setSel: v => { selId = v; }, getTarget: () => target };
+  window.addEventListener('DOMContentLoaded', wait);
+})();
+
 </script>
 </body>
 </html>
