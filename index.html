@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v111)</title>
+<title>Play Draw Lab (Pro Edition v115)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -103,7 +103,7 @@
     border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 5px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.55); width: 920px; max-width: calc(100vw - var(--lw) - var(--rw) - 20px);
   }
-  .call-row { display: flex; gap: 5px; align-items: center; }
+  .call-row { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
   .field-tag { font-size: 10px; color: #fff; font-weight: bold; white-space: nowrap; }
   .status-bar {
     position: fixed; bottom: 8px; z-index: 10; background: rgba(39,39,42,0.95); padding: 4px 12px;
@@ -157,6 +157,13 @@
   .edge-tab:hover { opacity: 1; background: var(--accent); }
   #tab-left { left: var(--lw); }
   #tab-right { right: var(--rw); border-radius: 8px 0 0 8px; }
+  /* 左右パネルの入れ替え(設定) */
+  body.swap .sidebar { order: 3; border-right: none; border-left: 1px solid var(--border); }
+  body.swap .workspace { order: 2; }
+  body.swap .inspector { order: 1; border-left: none; border-right: 1px solid var(--border); }
+  body.swap #tab-left { left: var(--rw); }
+  body.swap #tab-right { right: var(--lw); }
+  #nudge-grip { grid-column: 1 / 4; text-align: center; font-size: 10px; color: #a1a1aa; cursor: grab; user-select: none; line-height: 12px; touch-action: none; }
   body.compact button { padding: 2px 4px; font-size: 10px; }
   body.compact .mini-btn { padding: 1px 4px; font-size: 9.5px; }
   body.compact .tool-group { padding: 4px 7px; }
@@ -181,6 +188,7 @@
     .workspace { position: absolute; inset: 0; padding: 8px; }
     .call-header { width: calc(100vw - 16px); max-width: none; left: 8px; top: calc(6px + env(safe-area-inset-top)); }
     .call-row { flex-wrap: wrap; }
+    #nudge-pad.docked { bottom: 96px !important; }
     .call-row input { min-width: 90px; }
     .status-bar { display: none; }
     #zoom-ctl { right: 8px !important; bottom: calc(66px + env(safe-area-inset-bottom)) !important; }
@@ -285,7 +293,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v111</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v115</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -333,13 +341,7 @@
     <div class="tool-group" id="nudge-group">
       <h4>↕↔ 矢印ボタンで移動</h4>
       <div style="font-size:9.5px; color:#a1a1aa; margin-bottom:3px;">選手(または線・文字・グループ)を選んでから、矢印を押します。キーボードの矢印キーも使えます(Shiftで3倍)。</div>
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:3px; max-width:200px; margin:0 auto 4px;">
-        <span></span><button type="button" onclick="GridironApp.nudgeDir('u')" style="font-size:18px; font-weight:bold;" title="上へ">▲</button><span></span>
-        <button type="button" onclick="GridironApp.nudgeDir('l')" style="font-size:18px; font-weight:bold;" title="左へ">◀</button>
-        <span style="display:flex; align-items:center; justify-content:center; font-size:10px; color:#a1a1aa;">移動</span>
-        <button type="button" onclick="GridironApp.nudgeDir('r')" style="font-size:18px; font-weight:bold;" title="右へ">▶</button>
-        <span></span><button type="button" onclick="GridironApp.nudgeDir('d')" style="font-size:18px; font-weight:bold;" title="下へ">▼</button><span></span>
-      </div>
+      <div style="font-size:10px; color:#6ee7b7; margin-bottom:4px;">▲◀▶▼ のボタンは、図の右下に出ています(位置は、左上の ⚙ で変えられます)。</div>
       <button type="button" onclick="GridironApp.duplicateSelected()" style="width:100%; margin-bottom:4px; font-weight:bold; background:#0f766e; border-color:#14b8a6;" title="選んでいる文字・線・ゾーンを、同じ内容でもう1つ作ります（Ctrl+D）">⧉ 複製（文字・線・ゾーン）</button>
       <div class="prop-row"><label>1回の移動量</label>
         <select id="nudge-step"><option value="2">細かい (約0.1yd)</option><option value="6" selected>標準 (約0.3yd)</option><option value="19">大きい (約1yd)</option><option value="56">とても大きい (約3yd)</option></select>
@@ -689,10 +691,10 @@
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">Category:</span>
         <select id="play-cat" onchange="GridironApp.applyCatUI()" title="Category(Play Book の振り分けに使います)" style="width:auto; font-weight:bold;"><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
         <button onclick="GridironApp.manageCats()" title="Categoryの追加・名前変更・削除" style="padding:2px 7px;">✎</button>
-        <span style="font-size: 10.5px; color: #fff; white-space:nowrap;" title="プレーをまとめる「セットのタイトル」(例: 2x2 Mesh / 2x2 FORMATIONS)。Play Bookでも、このタイトルごとにまとまります">タイトル:</span>
+        <span style="font-size: 10.5px; color: #fff; white-space:nowrap;" title="プレーをまとめる「セットのタイトル」(例: 2x2 Mesh / 2x2 FORMATIONS)。Play Bookでも、このタイトルごとにまとまります">Title:</span>
         <input type="text" id="set-name" placeholder="例: 2x2 Mesh" style="flex:1.4; min-width:120px; font-weight:bold; color:#fcd34d;">
         <span id="wrap-pname" style="display:contents">
-        <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">プレー名:</span>
+        <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">Name:</span>
         <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" oninput="var t=document.getElementById('title-auto');if(t)t.checked=false;GridironApp.updateSaveState();" style="flex:2; min-width:170px; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label></span>
         <button onclick="GridironApp.save()" title="開いているプレーがあれば上書き。New の状態なら、新しいプレーとして保存して、そのまま New に戻ります(連続保存)" style="background:#10b981; border-color:#059669; font-weight:bold; white-space:nowrap;">💾 Save</button>
         <button onclick="GridironApp.saveAs()" title="タイトルを入力して、新しいプレーとして保存します(元のプレーは、そのまま残ります)" style="white-space:nowrap;">Save as…</button>
@@ -734,6 +736,14 @@
     </div>
 
     <canvas id="fieldCanvas"></canvas>
+    <div id="nudge-pad" style="position:absolute; right:16px; bottom:40px; z-index:20; display:grid; grid-template-columns:repeat(3,36px); grid-template-rows:14px repeat(3,32px); gap:3px; padding:4px 6px 6px; background:rgba(24,24,27,.9); border:1px solid #3f3f46; border-radius:10px; box-shadow:0 4px 14px rgba(0,0,0,.5);">
+      <div id="nudge-grip" style="grid-auto-rows:12px; height:12px;" title="ドラッグで、好きな位置に動かせます">⠿ ⠿ ⠿</div>
+      <span></span><button type="button" onclick="GridironApp.nudgeDir('u')" style="font-size:16px; font-weight:bold; padding:0;" title="上へ">▲</button><span></span>
+      <button type="button" onclick="GridironApp.nudgeDir('l')" style="font-size:16px; font-weight:bold; padding:0;" title="左へ">◀</button>
+      <span style="display:flex; align-items:center; justify-content:center; font-size:9px; color:#a1a1aa;">移動</span>
+      <button type="button" onclick="GridironApp.nudgeDir('r')" style="font-size:16px; font-weight:bold; padding:0;" title="右へ">▶</button>
+      <span></span><button type="button" onclick="GridironApp.nudgeDir('d')" style="font-size:16px; font-weight:bold; padding:0;" title="下へ">▼</button><span></span>
+    </div>
 
     <div class="status-bar" id="status-text">
       操作方法: Def Personnel欄追加、各陣形未選択（空欄）対応、Dashed Circle追加完了。
@@ -1081,6 +1091,65 @@ const GridironApp = (() => {
     const r = canvas.getBoundingClientRect(), x = (cx - r.left) / zoom, y = (cy - r.top) / zoom;
     panX += (zoom - nz) * x; panY += (zoom - nz) * y; zoom = nz; applyView();
   }
+  // ===== Layout(ツールバーの位置の設定) =====
+  const LAYOUT_KEY = 'pdl_layout';
+  let layout = { pad: 'rb', padX: null, padY: null, swap: false };
+  try { Object.assign(layout, JSON.parse(localStorage.getItem(LAYOUT_KEY) || '{}')); } catch (e) {}
+  const saveLayout = () => { try { localStorage.setItem(LAYOUT_KEY, JSON.stringify(layout)); } catch (e) {} };
+  function padReserve() {   // 矢印ボタンが、図に重ならないよう、固定位置のときは、その分の余白を空ける
+    const p = document.getElementById('nudge-pad'); if (!p || p.style.display === 'none') return {};
+    const h = p.offsetHeight + 46;
+    if (layout.pad === 'rb' || layout.pad === 'lb') return { bottom: h };
+    if (layout.pad === 'rt' || layout.pad === 'lt') return { top: p.offsetHeight + 8 };
+    return {};
+  }
+  function applyLayout() {
+    document.body.classList.toggle('swap', !!layout.swap);
+    const p = document.getElementById('nudge-pad'); if (!p) return;
+    p.style.display = layout.pad === 'off' ? 'none' : 'grid';
+    ['left', 'right', 'top', 'bottom'].forEach(k => { p.style[k] = 'auto'; });
+    const m = layout.pad;
+    if (m === 'free' && layout.padX != null) { p.style.left = layout.padX + 'px'; p.style.top = layout.padY + 'px'; }
+    else {
+      const top = (m === 'rt' || m === 'lt'), left = (m === 'lb' || m === 'lt');
+      p.style[left ? 'left' : 'right'] = '16px';
+      p.style[top ? 'top' : 'bottom'] = top ? '6px' : '40px';
+    }
+    setTimeout(() => { try { fitView(); } catch (e) {} }, 0);
+  }
+  function initLayout() {
+    const p = document.getElementById('nudge-pad'), g = document.getElementById('nudge-grip'); if (!p || !g) return;
+    let d = null;
+    g.addEventListener('pointerdown', e => { const r = p.getBoundingClientRect(), w = p.offsetParent.getBoundingClientRect(); d = { dx: e.clientX - r.left, dy: e.clientY - r.top, ox: w.left, oy: w.top, ww: w.width, wh: w.height }; g.setPointerCapture(e.pointerId); e.preventDefault(); });
+    g.addEventListener('pointermove', e => {
+      if (!d) return;
+      const x = Math.max(0, Math.min(d.ww - p.offsetWidth, e.clientX - d.dx - d.ox)), y = Math.max(0, Math.min(d.wh - p.offsetHeight, e.clientY - d.dy - d.oy));
+      layout.pad = 'free'; layout.padX = Math.round(x); layout.padY = Math.round(y);
+      ['right', 'bottom'].forEach(k => { p.style[k] = 'auto'; }); p.style.left = x + 'px'; p.style.top = y + 'px';
+    });
+    g.addEventListener('pointerup', () => { if (d) { d = null; saveLayout(); } });
+    applyLayout();
+  }
+  function layoutSettings() {
+    let ov = document.getElementById('layout-modal');
+    if (!ov) { ov = document.createElement('div'); ov.id = 'layout-modal'; ov.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:99999; display:flex; align-items:center; justify-content:center;'; ov.onclick = e => { if (e.target === ov) ov.style.display = 'none'; }; document.body.appendChild(ov); }
+    ov.style.display = 'flex';
+    const opt = (v, l) => `<option value="${v}"${layout.pad === v ? ' selected' : ''}>${l}</option>`;
+    ov.innerHTML = `<div style="background:#18181b; color:#e4e4e7; border:1px solid #3f3f46; border-radius:8px; padding:14px; width:400px; max-width:92vw; font-size:12.5px; line-height:1.6;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><b style="font-size:14px;">Layout(ツールバーの位置)</b><button id="ly-close" style="padding:2px 8px;">✕</button></div>
+      <div style="margin-bottom:3px;">▲◀▶▼ 矢印ボタンの位置</div>
+      <select id="ly-pad" style="width:100%; margin-bottom:4px;">${opt('rb', 'Bottom-Right(標準)')}${opt('lb', 'Bottom-Left')}${opt('rt', 'Top-Right')}${opt('lt', 'Top-Left')}${opt('free', 'Free(ボタン上部の ⠿ をドラッグ)')}${opt('off', 'Hidden(隠す)')}</select>
+      <div style="color:#a1a1aa; font-size:11px; margin-bottom:10px;">四隅を選ぶと、図に重ならないよう、図の位置と大きさが調整されます。Free は、好きな場所に置けます(図に重なることがあります)。</div>
+      <label style="display:flex; gap:6px; align-items:center; margin-bottom:3px;"><input id="ly-swap" type="checkbox" style="width:auto;"${layout.swap ? ' checked' : ''}>左右のパネルを入れ替える(ツール ⇔ 保存一覧・設定)</label>
+      <div style="color:#a1a1aa; font-size:11px; margin-bottom:12px;">標準は、ツールが左、保存一覧・設定が右です。</div>
+      <div style="display:flex; gap:6px;"><button id="ly-reset" style="flex:1;">標準に戻す</button><button id="ly-ok" style="flex:1; background:#059669; border-color:#10b981; font-weight:bold;">OK</button></div></div>`;
+    const done = () => { ov.style.display = 'none'; };
+    ov.querySelector('#ly-close').onclick = done; ov.querySelector('#ly-ok').onclick = done;
+    ov.querySelector('#ly-pad').onchange = e => { layout.pad = e.target.value; saveLayout(); applyLayout(); };
+    ov.querySelector('#ly-swap').onchange = e => { layout.swap = e.target.checked; saveLayout(); applyLayout(); };
+    ov.querySelector('#ly-reset').onclick = () => { layout = { pad: 'rb', padX: null, padY: null, swap: false }; saveLayout(); applyLayout(); layoutSettings(); };
+  }
+
   // 画面にフィールド全体が収まるよう拡大率と位置を自動調整 (最大100%)
   function fitView() {
     const ws = document.querySelector('.workspace');
@@ -1089,7 +1158,8 @@ const GridironApp = (() => {
     zoom = 1; panX = 0; panY = 0; applyView();
     const wr = ws.getBoundingClientRect(), r0 = canvas.getBoundingClientRect();
     const narrow = matchMedia(NARROW_Q).matches, hd = document.querySelector('.call-header');
-    const topPad = hd ? Math.max(90, hd.getBoundingClientRect().bottom - wr.top + 6) : 90, botPad = narrow ? 80 : 70;
+    let topPad = hd ? Math.max(90, hd.getBoundingClientRect().bottom - wr.top + 6) : 90, botPad = narrow ? 80 : 70;
+    { const R = padReserve(); if (R.top) topPad += R.top; if (R.bottom) botPad = Math.max(botPad, R.bottom); }
     const availW = wr.width - (narrow ? 16 : 30), availH = wr.height - topPad - botPad;
     const fz = Math.max(0.15, Math.min(1, availW / W, availH / H));
     zoom = fz;
@@ -1263,8 +1333,8 @@ const GridironApp = (() => {
     ['left', 'right'].forEach(sd => { if (ls.get('gps_hide_' + sd) === '1') document.body.classList.add('hide-' + sd); });
     if (ls.get('gps_compact') === '1') document.body.classList.add('compact');
     apply();
-    tl.addEventListener('click', () => { document.body.classList.toggle('hide-left'); ls.set('gps_hide_left', document.body.classList.contains('hide-left') ? '1' : '0'); apply(); refit(); });
-    tr.addEventListener('click', () => { document.body.classList.toggle('hide-right'); ls.set('gps_hide_right', document.body.classList.contains('hide-right') ? '1' : '0'); apply(); refit(); });
+    tl.addEventListener('click', () => { if (document.body.classList.contains('swap')) { document.body.classList.toggle('hide-right'); ls.set('gps_hide_right', document.body.classList.contains('hide-right') ? '1' : '0'); apply(); refit(); return; } document.body.classList.toggle('hide-left'); ls.set('gps_hide_left', document.body.classList.contains('hide-left') ? '1' : '0'); apply(); refit(); });
+    tr.addEventListener('click', () => { if (document.body.classList.contains('swap')) { document.body.classList.toggle('hide-left'); ls.set('gps_hide_left', document.body.classList.contains('hide-left') ? '1' : '0'); apply(); refit(); return; } document.body.classList.toggle('hide-right'); ls.set('gps_hide_right', document.body.classList.contains('hide-right') ? '1' : '0'); apply(); refit(); });
     { let sv = null; try { sv = localStorage.getItem('gps_big'); } catch (e) {} const on = sv === null ? matchMedia('(pointer: coarse)').matches : sv === '1'; document.body.classList.toggle('big', on); }
     document.getElementById('btn-big').addEventListener('click', () => { document.body.classList.toggle('big'); if (document.body.classList.contains('big')) document.body.classList.remove('compact'); ls.set('gps_big', document.body.classList.contains('big') ? '1' : '0'); refit(); });
     document.getElementById('btn-compact').addEventListener('click', () => { document.body.classList.toggle('compact'); ls.set('gps_compact', document.body.classList.contains('compact') ? '1' : '0'); refit(); });
@@ -1774,11 +1844,19 @@ const GridironApp = (() => {
   };
   function catFields(c) {
     if (CAT_FIELDS[c]) return CAT_FIELDS[c];
-    const cc = allCats().find(x => x.k === c), lab = CAT_INPUT[c] || (cc ? cc.l : 'Name');
-    return { show: ['form'], name: ['call-formation'], lab: { form: lab + ':' } };   // Route Tree / Protection / Other / 追加したCategory
+    if (c === 'other' || !CAT_INPUT[c]) return { show: [], manual: true };   // Other / 追加したCategory: 入力欄はなし。Name(保存名)を自由に付ける
+    return { show: ['form'], name: ['call-formation'], lab: { form: CAT_INPUT[c] + ':' } };   // Route Tree / Protection
   }
+  let lastCat = 'play';
   function applyCatUI() {
+    const sel = document.getElementById('play-cat');
+    if (sel && sel.value === '__add') {   // 分類にない場合は、その場で新しいCategoryを追加できる
+      const nm = prompt('新しいCategoryの名前を入力してください(例: Screen / Special):');
+      if (nm && nm.trim()) { const k = 'c_' + Date.now().toString(36); customCats.push({ k, l: nm.trim() }); saveCats(); fillCatSelects(); sel.value = k; }
+      else sel.value = lastCat;
+    }
     const c = (document.getElementById('play-cat') || {}).value || 'play', cf = catFields(c);
+    lastCat = c;
     ['ps', 'form', 'shift', 'motion', 'play', 'dps', 'front', 'stunts', 'blitz', 'cov'].forEach(k => {
       const w = document.getElementById('f-' + k); if (w) w.style.display = cf.show.includes(k) ? 'contents' : 'none';
     });
@@ -1787,8 +1865,8 @@ const GridironApp = (() => {
     const ro = document.getElementById('row-off'), rd = document.getElementById('row-def');
     if (ro) ro.style.display = cf.show.some(k => ['ps', 'form', 'shift', 'motion', 'play'].includes(k)) ? '' : 'none';
     if (rd) rd.style.display = cf.show.some(k => ['dps', 'front', 'stunts', 'blitz', 'cov'].includes(k)) ? '' : 'none';
-    const wp = document.getElementById('wrap-pname'); if (wp) wp.style.display = c === 'play' ? 'contents' : 'none';   // Play以外は、プレー名の欄は不要(入力欄の内容が、そのまま名前になる)
-    if (c !== 'play') { const ta = document.getElementById('title-auto'); if (ta) ta.checked = true; }
+    const wp = document.getElementById('wrap-pname'); if (wp) wp.style.display = (c === 'play' || cf.manual) ? 'contents' : 'none';   // Play と Other/新規Category は、Name を自分で付ける。それ以外は入力欄の内容が名前
+    { const ta = document.getElementById('title-auto'), tl = ta && ta.closest('label'); if (tl) tl.style.display = cf.manual ? 'none' : ''; if (ta && c !== 'play') ta.checked = !cf.manual; }
     syncPlayTitle();
     setTimeout(() => { try { fitView(); } catch (e) {} }, 0);
   }
@@ -1801,7 +1879,7 @@ const GridironApp = (() => {
       fullTitle = [head, val('call-play')].filter(Boolean).join(' - ');
       const vs = val('call-vs'); if (vs) fullTitle += (fullTitle ? ' vs ' : 'vs ') + vs;
     } else {
-      const cf = catFields(c); fullTitle = cf.name.map(val).filter(Boolean).join(cf.join || ' ');
+      const cf = catFields(c); if (cf.manual) { updateSaveState(); return; } fullTitle = cf.name.map(val).filter(Boolean).join(cf.join || ' ');
     }
     if (fullTitle) document.getElementById('play-name').value = fullTitle;
     updateSaveState();
@@ -3387,7 +3465,7 @@ const GridironApp = (() => {
     { const vv = document.getElementById('call-vs'); if (vv) vv.value = pData.callInfo?.vs || ''; }
     { const sc = pData.scout || {}; [['sc-ballon', 'ballOn'], ['sc-dd', 'dd'], ['sc-no', 'no']].forEach(([id, k]) => { const e = document.getElementById(id); if (e) e.value = sc[k] || ''; }); }
     curPlayName = name; if (!pData.id) pData.id = newId(); curPlayId = pData.id; setTimeout(() => { dirty = false; updateSaveState(); }, 0);
-    { const ta = document.getElementById('title-auto'); if (ta) ta.checked = false; }
+    { const ta = document.getElementById('title-auto'); if (ta) { const cc = pData.cat === 'shift' ? 'motion' : (pData.cat || 'play'); ta.checked = cc !== 'play' && !catFields(cc).manual; } }
     document.getElementById('play-notes').value = pData.notes || '';
     pnLoad(pData.pnotes);
 
@@ -3485,7 +3563,11 @@ const GridironApp = (() => {
     return true;
   }
   const curSet = () => (document.getElementById('set-name').value || '').trim();
-  const curName = () => (document.getElementById('play-name').value || '').trim();
+  const curName = () => {   // Play以外は、入力欄(FORMATION など)に打ち込んだ名称が、そのまま名前になる
+    const c = (document.getElementById('play-cat') || {}).value || 'play';
+    if (c !== 'play') { const cf = catFields(c), n = cf.manual ? '' : cf.name.map(val).filter(Boolean).join(cf.join || ' '); if (n) return n; }
+    return (document.getElementById('play-name').value || '').trim();
+  };
   function save() {
     const k = keyOfId(curPlayId), set = curSet(), name = curName() || 'Untitled Play';
     if (k) {   // 開いているプレーを上書き
@@ -3543,6 +3625,7 @@ const GridironApp = (() => {
       if ([...el.options].some(o => o.value === v)) el.value = v;
     };
     mk2('play-cat', []);
+    { const pc = document.getElementById('play-cat'); if (pc && !pc.querySelector('option[value="__add"]')) { const o = document.createElement('option'); o.value = '__add'; o.textContent = '＋ Add Category…'; pc.appendChild(o); } }
     mk2('play-catf', [['all', 'Category: All'], ['play', 'Play (通常プレイ)']]);
     mk2('pb-cat', [['play', 'Play (通常プレイ)のみ'], ['all', 'All Categories']]);
     buildCatChips();
@@ -3645,7 +3728,7 @@ const GridironApp = (() => {
       div.style.paddingLeft = g ? '18px' : '8px';
       const cc = savedPlays[name].cat || 'play';
       { const sp = savedPlays[name]; div.title = sp.savedAt ? ('更新: ' + (sp.savedBy || '(名前なし)') + '  ' + fmtT(sp.savedAt)) : ''; }
-      div.innerHTML = `<input type="checkbox" class="sel" style="width:auto;margin-right:5px;flex:none"${playSel.has(name) ? ' checked' : ''}>${cc === 'play' ? '' : `<span class="catbadge">${esc(CAT_SHORT[cc] || catLabel(cc))}</span>`}<span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(nameOf(name))}</span><span class="del" title="削除">×</span>`;
+      div.innerHTML = `<input type="checkbox" class="sel" style="width:auto;margin-right:5px;flex:none"${playSel.has(name) ? ' checked' : ''}><span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(nameOf(name))}</span><span class="del" title="削除">×</span>`;
       div.onclick = () => loadPlayObj(name, savedPlays[name]);
       { const cb = div.querySelector('.sel'); cb.onclick = e => { e.stopPropagation(); if (cb.checked) playSel.add(name); else playSel.delete(name); playSelInfo(); }; }
       div.querySelector('.del').onclick = (e) => {
@@ -4590,7 +4673,7 @@ const GridironApp = (() => {
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
-    savePlay, applyCatUI, save, saveAs, closePlay, newPlay, deleteSelected2, selectAllPlays, clearPlaySel, manageCats, setZoneSize, updatePlayList, exportPNG, generatePlayBookTemplate, exportPPTX, setPbLogo, pbTemplateChanged, changeSideLine, setLinesMode, addAssignRow, addAssignCol, asPanel, clearAssignRows, setAssign, assignPreset, exportJSON, importJSON, syncMetaToHeader, syncPersonnelToHeader,
+    savePlay, layoutSettings, initLayout, applyCatUI, save, saveAs, closePlay, newPlay, deleteSelected2, selectAllPlays, clearPlaySel, manageCats, setZoneSize, updatePlayList, exportPNG, generatePlayBookTemplate, exportPPTX, setPbLogo, pbTemplateChanged, changeSideLine, setLinesMode, addAssignRow, addAssignCol, asPanel, clearAssignRows, setAssign, assignPreset, exportJSON, importJSON, syncMetaToHeader, syncPersonnelToHeader,
     addOffPaletteItem, addDefPaletteItem, buildPlayObj, loadPlayObj, updateSaveState, scoutChanged, curName: () => curPlayName
   };
 })();
@@ -4857,5 +4940,6 @@ window.addEventListener('DOMContentLoaded', GridironApp.init);
 document.addEventListener('input',function(e){var t=e.target;if(t&&t.closest&&t.closest('#assign-rows')&&window.GridironApp){GridironApp.render();GridironApp.asPanel();}});
 
 </script>
+<script>window.addEventListener('load',function(){try{GridironApp.initLayout&&GridironApp.initLayout();}catch(e){}});</script>
 </body>
 </html>
