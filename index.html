@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v98)</title>
+<title>Play Draw Lab (Pro Edition v107)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -285,7 +285,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v98</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v107</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -299,7 +299,7 @@
           <button id="grp-all-def" onclick="GridironApp.selectGroup('all_def')" style="color:#ffffff;">DEF全体</button>
           <span class="group-rename-badge" onclick="GridironApp.renameGroup('all_def')">✏️</span>
         </div>
-        <button id="grp-clear" onclick="GridironApp.selectGroup('clear')" style="background:#7f1d1d;">解除</button>
+        <button id="grp-clear" onclick="GridironApp.selectGroup('clear')" style="background:#7f1d1d;">Clear</button>
       </div>
       <div class="btn-grid-3" style="margin-bottom:3px;">
         <div class="group-btn-wrap">
@@ -694,13 +694,28 @@
   <div class="workspace">
     <div class="call-header">
       <div class="call-row">
-        <span class="field-tag">FORM:</span>
+        <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">Category:</span>
+        <select id="play-cat" onchange="GridironApp.applyCatUI()" title="Category(Play Book の振り分けに使います)" style="width:auto; font-weight:bold;"><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
+        <button onclick="GridironApp.manageCats()" title="Categoryの追加・名前変更・削除" style="padding:2px 7px;">✎</button>
+        <span style="font-size: 10.5px; color: #fff; white-space:nowrap;" title="プレーをまとめる「セットのタイトル」(例: 2x2 Mesh / 2x2 FORMATIONS)。Play Bookでも、このタイトルごとにまとまります">タイトル:</span>
+        <input type="text" id="set-name" placeholder="例: 2x2 Mesh" style="flex:1.4; min-width:120px; font-weight:bold; color:#fcd34d;">
+        <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">プレー名:</span>
+        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" oninput="var t=document.getElementById('title-auto');if(t)t.checked=false;GridironApp.updateSaveState();" style="flex:1; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label>
+        <button onclick="GridironApp.save()" title="開いているプレーがあれば上書き。New の状態なら、新しいプレーとして保存して、そのまま New に戻ります(連続保存)" style="background:#10b981; border-color:#059669; font-weight:bold; white-space:nowrap;">💾 Save</button>
+        <button onclick="GridironApp.saveAs()" title="タイトルを入力して、新しいプレーとして保存します(元のプレーは、そのまま残ります)" style="white-space:nowrap;">Save as…</button>
+        <button onclick="GridironApp.closePlay()" title="いまのプレーを閉じて、空の状態に戻します" style="white-space:nowrap;">Close</button>
+        <button onclick="GridironApp.newPlay()" title="新しいプレーを始めます(空の図 / いまの図をコピー を選べます)" style="white-space:nowrap;">New</button>
+        <button onclick="GridironApp.exportPNG()" style="background: var(--accent); border-color: #3b82f6; white-space:nowrap;">🖼 PNG出力</button>
+        <button onclick="GridironApp.clearField()" class="danger" style="white-space:nowrap;">全クリア</button>
+      </div>
+      <div class="call-row">
+        <span class="field-tag" id="lb-form">FORM:</span>
         <input type="text" id="call-formation" placeholder="例: Gun Trips Rt" oninput="GridironApp.syncPlayTitle()" style="flex:1.1;">
-        <span class="field-tag">SHIFT/MOTION:</span>
+        <span class="field-tag" id="lb-motion">SHIFT/MOTION:</span>
         <input type="text" id="call-motion" placeholder="例: Z Orbit / Jet" oninput="GridironApp.syncPlayTitle()" style="flex:1;">
-        <span class="field-tag">PLAY CALL:</span>
+        <span class="field-tag" id="lb-play">PLAY CALL:</span>
         <input type="text" id="call-play" value="Mesh" placeholder="例: Mesh / Inside Zone" oninput="GridironApp.syncPlayTitle()" style="flex:1.2;">
-        <span class="field-tag" title="相手の守備(Coverage・Frontなど)。同じPLAY CALLでも、相手が違うときの区別に使います">VS (相手Def):</span>
+        <span class="field-tag" id="lb-vs" title="相手の守備(Coverage・Frontなど)。同じPLAY CALLでも、相手が違うときの区別に使います">VS (相手Def):</span>
         <input type="text" id="call-vs" placeholder="例: Cover 3 / 4-3 Over" oninput="GridironApp.syncPlayTitle()" style="flex:1;">
       </div>
       <div class="call-row">
@@ -710,17 +725,6 @@
         <input type="text" id="sc-dd" placeholder="例: 1st & 10" oninput="GridironApp.scoutChanged()" style="flex:1;">
         <span class="field-tag" title="試合中のプレー番号">PLAY No.:</span>
         <input type="text" id="sc-no" placeholder="例: 12" oninput="GridironApp.scoutChanged()" style="flex:.6;">
-      </div>
-      <div class="call-row">
-        <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">種類:</span>
-        <select id="play-cat" title="図の種類（Play Book の振り分けに使います）" style="width:auto; font-weight:bold;"><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
-        <button onclick="GridironApp.manageCats()" title="種類の追加・名前変更・削除" style="padding:2px 7px;">✎</button>
-        <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">保存タイトル:</span>
-        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" oninput="var t=document.getElementById('title-auto');if(t)t.checked=false;GridironApp.updateSaveState();" style="flex:1; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label>
-        <button onclick="GridironApp.savePlay()" style="background: #10b981; border-color: #059669; font-weight: bold; white-space:nowrap;">💾 Save Play</button>
-        <button onclick="GridironApp.savePlayAs()" title="いつも新しいプレーとして保存します(いま開いているプレーは、そのまま残ります)。同じタイトルがあるときは、(2)(3)をつけます" style="white-space:nowrap;">＋ 別名で保存</button>
-        <button onclick="GridironApp.exportPNG()" style="background: var(--accent); border-color: #3b82f6; white-space:nowrap;">🖼 PNG出力</button>
-        <button onclick="GridironApp.clearField()" class="danger" style="white-space:nowrap;">全クリア</button>
       </div>
       <div id="save-state" style="font-size:10.5px; color:#a7f3d0; padding:1px 4px; min-height:14px;"></div>
     </div>
@@ -763,8 +767,14 @@
         <h4 style="font-size: 10.5px; color: #ffffff;">Saved Plays (保存済み)</h4>
         <span id="play-count" style="font-size:10.5px; color:#ffffff;">0件</span>
       </div>
-      <select id="play-catf" onchange="GridironApp.updatePlayList()" style="margin-bottom:3px;"><option value="all">種類: すべて</option><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
+      <select id="play-catf" onchange="GridironApp.updatePlayList()" style="margin-bottom:3px;"><option value="all">Category: All</option><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
       <input type="text" id="play-search" placeholder="🔍 検索..." oninput="GridironApp.updatePlayList()" style="margin-bottom:3px;">
+      <div style="display:flex; gap:3px; align-items:center; margin-bottom:3px;">
+        <button class="mini-btn" onclick="GridironApp.selectAllPlays()" style="flex:1;">Select All</button>
+        <button class="mini-btn" onclick="GridironApp.clearPlaySel()" style="flex:1;">Clear</button>
+        <button class="mini-btn danger" onclick="GridironApp.deleteSelected2()" style="flex:1.4;">🗑 Delete Selected</button>
+        <span id="play-sel-n" style="font-size:10px; color:#a1a1aa; white-space:nowrap;">Selected 0</span>
+      </div>
       <div class="play-list" id="play-list"></div>
     </div>
 
@@ -793,8 +803,8 @@
       </div>
 
       <div>
-        <label style="font-size:9.5px; color:#a1a1aa;">対象の図の種類:</label>
-        <select id="pb-cat"><option value="play">Play (通常プレイ)のみ</option><option value="all">すべての種類</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
+        <label style="font-size:9.5px; color:#a1a1aa;">対象のCategory:</label>
+        <select id="pb-cat"><option value="play">Play (通常プレイ)のみ</option><option value="all">All Categories</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
       </div>
 
       <div>
@@ -933,6 +943,7 @@ const GridironApp = (() => {
   let texts = [];
 
   let savedPlays = {};
+  let dirty = false;
   let offFormations = {};
   let defFormations = {};
   let groupNames = { ...DEFAULT_GROUP_NAMES };
@@ -1091,7 +1102,7 @@ const GridironApp = (() => {
     async set(k, v) { const db = await this.open(); return new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); }
   };
   const newId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-  function ensureIds() { Object.keys(savedPlays).forEach(k => { if (savedPlays[k] && !savedPlays[k].id) savedPlays[k].id = newId(); }); }
+  function ensureIds() { Object.keys(savedPlays).forEach(k => { const p = savedPlays[k]; if (p && !p.id) p.id = newId(); if (p && p.cat === 'shift') p.cat = 'motion'; }); }
   const keyOfId = id => id ? Object.keys(savedPlays).find(k => savedPlays[k] && savedPlays[k].id === id) : undefined;
   function persistPlays() { ensureIds(); return idb.set('plays', savedPlays); }
   let draftTimer = null;
@@ -1754,10 +1765,21 @@ const GridironApp = (() => {
 
   function scoutChanged() { render(); }
 
+  function applyCatUI() {   // 種類ごとに、入力欄を切り替える(Play以外は、その種類の名前の入力欄が1つだけ)
+    const c = document.getElementById('play-cat'); if (!c) return;
+    const nonPlay = c.value !== 'play';
+    const cc = allCats().find(x => x.k === c.value), lab = nonPlay ? (CAT_INPUT[c.value] || (cc ? cc.l : 'Name')) : 'FORM';
+    const show = (id, on) => { const e = document.getElementById(id); if (e) e.style.display = on ? '' : 'none'; };
+    ['lb-motion', 'call-motion', 'lb-play', 'call-play', 'lb-vs', 'call-vs'].forEach(id => show(id, !nonPlay));
+    const lf = document.getElementById('lb-form'); if (lf) lf.textContent = lab + ':';
+    const f = document.getElementById('call-formation'); if (f) f.placeholder = nonPlay ? '例: ' + lab + ' の名前を入力' : '例: Gun Trips Rt';
+    syncPlayTitle();
+  }
   function syncPlayTitle() {
     const ta = document.getElementById('title-auto'); if (ta && !ta.checked) return;
     const form = document.getElementById('call-formation').value.trim();
     const mot = document.getElementById('call-motion').value.trim();
+    if (document.getElementById('play-cat').value !== 'play') { if (form) document.getElementById('play-name').value = form; updateSaveState(); return; }   // Play以外は、1つの入力欄だけが名前になる
     const call = document.getElementById('call-play').value.trim();
     const vsEl = document.getElementById('call-vs'), vs = vsEl ? vsEl.value.trim() : '';
     const fullTitle = [[form, mot].filter(Boolean).join(' '), call].filter(Boolean).join(' - ') + (vs && (form || mot || call) ? ' vs ' + vs : (vs ? 'vs ' + vs : ''));
@@ -1940,6 +1962,7 @@ const GridironApp = (() => {
   }
 
   function pushHistory() {
+    if (typeof markDirty === 'function') markDirty();
     historyStack.push(JSON.stringify({ players, lines, zones, texts }));
     redoStack.length = 0;
     if (historyStack.length > 80) historyStack.shift();
@@ -3334,15 +3357,15 @@ const GridironApp = (() => {
       players.forEach(p => p.y += dy); zones.forEach(z => z.y += dy); texts.forEach(x => x.y += dy); lines.forEach(l => (l.points || []).forEach(pt => pt.y += dy));
     }
 
-    document.getElementById('play-name').value = name;
-    document.getElementById('play-cat').value = pData.cat || 'play';
+    { const pk = pData.pname != null ? { set: pData.set || '', name: pData.pname } : parseKey(name); document.getElementById('set-name').value = pk.set; document.getElementById('play-name').value = pk.name; }
+    document.getElementById('play-cat').value = pData.cat === 'shift' ? 'motion' : (pData.cat || 'play'); applyCatUI();
     document.getElementById('call-formation').value = pData.callInfo?.formation || '';
     document.getElementById('call-motion').value = pData.callInfo?.motion || '';
     document.getElementById('call-play').value = pData.callInfo?.play || '';
     { const vv = document.getElementById('call-vs'); if (vv) vv.value = pData.callInfo?.vs || ''; }
     { const sc = pData.scout || {}; [['sc-ballon', 'ballOn'], ['sc-dd', 'dd'], ['sc-no', 'no']].forEach(([id, k]) => { const e = document.getElementById(id); if (e) e.value = sc[k] || ''; }); }
-    curPlayName = name; if (!pData.id) pData.id = newId(); curPlayId = pData.id;
-    { const ta = document.getElementById('title-auto'); if (ta) { const f = pData.callInfo?.formation || '', m = pData.callInfo?.motion || '', c = pData.callInfo?.play || '', vq = (pData.callInfo?.vs || '').trim(); ta.checked = (([[f, m].filter(Boolean).join(' '), c].filter(Boolean).join(' - ') + (vq ? (f || m || c ? ' vs ' : 'vs ') + vq : '')) === name); } }
+    curPlayName = name; if (!pData.id) pData.id = newId(); curPlayId = pData.id; setTimeout(() => { dirty = false; updateSaveState(); }, 0);
+    { const ta = document.getElementById('title-auto'); if (ta) { const f = pData.callInfo?.formation || '', m = pData.callInfo?.motion || '', c = pData.callInfo?.play || '', vq = (pData.callInfo?.vs || '').trim(); ta.checked = (([[f, m].filter(Boolean).join(' '), c].filter(Boolean).join(' - ') + (vq ? (f || m || c ? ' vs ' : 'vs ') + vq : '')) === document.getElementById('play-name').value); } }
     document.getElementById('play-notes').value = pData.notes || '';
     pnLoad(pData.pnotes);
 
@@ -3393,13 +3416,16 @@ const GridironApp = (() => {
   }
 
   let curPlayId = null;   // いま開いているプレーの、固有ID(タイトルではなく、IDで同じプレーかを判断する)
+  const parseKey = k => { const m = String(k).match(/^(.*?)\s+[-–]\s+(.+)$/); return m ? { set: m[1].trim(), name: m[2].trim() } : { set: '', name: String(k) }; };
+  const setOf = k => { const p = savedPlays[k]; return p && p.set != null ? p.set : parseKey(k).set; };
+  const nameOf = k => { const p = savedPlays[k]; return p && p.pname != null ? p.pname : parseKey(k).name; };
+  const composeKey = (set, name) => (set ? set + ' - ' + name : name);
+  function uniqueKey(set, name) { let n = 2, nm = name; while (savedPlays[composeKey(set, nm)]) { nm = name + ' (' + n + ')'; n++; } return { key: composeKey(set, nm), name: nm }; }
   function uniqueName(base) { let n = 2, nm = base; while (savedPlays[nm]) { nm = base + ' (' + n + ')'; n++; } return nm; }
   function updateSaveState() {
     const el = document.getElementById('save-state'); if (!el) return;
-    const k = keyOfId(curPlayId), nm = (document.getElementById('play-name').value || '').trim();
-    if (!k) el.textContent = '🆕 新規プレー(Save Playで、新しく保存)';
-    else if (k === nm) el.textContent = '✎ 編集中:「' + k + '」(Save Playで、上書き)';
-    else el.textContent = '✎ 編集中:「' + k + '」/ タイトルが変わっています(Save Playで、保存方法を選びます)';
+    const k = keyOfId(curPlayId);
+    el.textContent = (k ? '✎ 「' + k + '」を開いています(Save=このプレーを上書き / Save as=同じタイトルで別のプレーを新規保存)' : '📄 New(Save=新しいプレーとして保存 → 同じタイトルで続けて保存できます。別のタイトルにするときは New)') + (dirty ? '   ● 未保存の変更あり' : '');
   }
   function choose(title, msg, buttons) {
     return new Promise(res => {
@@ -3416,66 +3442,72 @@ const GridironApp = (() => {
       ov.appendChild(box); document.body.appendChild(ov);
     });
   }
-  function commitPlay(name, id, replaceKey) {
-    const pn = document.getElementById('play-name');
-    if (pn.value.trim() !== name) { pn.value = name; const ta = document.getElementById('title-auto'); if (ta) ta.checked = false; }
-    const o = buildPlayObj(); o.id = id;
-    if (replaceKey && replaceKey !== name) delete savedPlays[replaceKey];
-    savedPlays[name] = o; curPlayName = name; curPlayId = id;
-    persistPlays().then(() => toast(`「${name}」を保存しました`)).catch(() => alert('保存に失敗しました。JSON保存でバックアップしてください。'));
+  function commitPlay(key, id, replaceKey, set, pname) {
+    const o = buildPlayObj(); o.id = id; o.set = set; o.pname = pname;
+    if (replaceKey && replaceKey !== key) delete savedPlays[replaceKey];
+    savedPlays[key] = o; curPlayName = key; curPlayId = id; dirty = false;
+    document.getElementById('play-name').value = pname;
+    persistPlays().then(() => toast(`「${key}」を保存しました`)).catch(() => alert('保存に失敗しました。JSON保存でバックアップしてください。'));
     render(false);
     updatePlayList(); updateSaveState();
   }
-  function saveDialog(name, curKey) {
-    return new Promise(res => {
-      const ov = document.createElement('div');
-      ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100000;display:flex;align-items:center;justify-content:center;';
-      const box = document.createElement('div');
-      box.style.cssText = 'background:#18181b;color:#e4e4e7;border:1px solid #3f3f46;border-radius:10px;padding:16px;width:460px;max-width:92vw;font-size:13px;line-height:1.5;';
-      const keys = Object.keys(savedPlays).sort((a, b) => (a === curKey ? -1 : b === curKey ? 1 : a.localeCompare(b, 'ja', { numeric: true })));
-      const opts = '<option value="__new">🆕 新しいプレーとして保存(どれも上書きしません)</option>' + keys.map(k => '<option value="' + esc(k) + '">✎ 上書き: ' + esc(k) + (k === curKey ? '  ← いま開いているプレー' : '') + '</option>').join('');
-      box.innerHTML = '<div style="font-weight:bold;font-size:15px;margin-bottom:8px">保存のしかたを選んでください</div>'
-        + '<div style="margin-bottom:4px;color:#a1a1aa">① 保存先</div><select id="sv-target" style="width:100%;padding:7px;margin-bottom:10px;background:#27272a;color:#fff;border:1px solid #52525b;border-radius:6px">' + opts + '</select>'
-        + '<div style="margin-bottom:4px;color:#a1a1aa">② タイトル</div><input id="sv-name" type="text" style="width:100%;box-sizing:border-box;padding:7px;margin-bottom:8px;background:#27272a;color:#fff;border:1px solid #52525b;border-radius:6px">'
-        + '<div id="sv-note" style="min-height:40px;padding:8px;border-radius:6px;background:#27272a;margin-bottom:10px;white-space:pre-wrap"></div>'
-        + '<label style="display:flex;gap:6px;align-items:center;font-size:12px;color:#a1a1aa;margin-bottom:10px"><input id="sv-skip" type="checkbox" style="width:auto">開いているプレーを、タイトルを変えずに保存するときは、次回から確認しない</label>'
-        + '<div style="display:flex;gap:8px"><button id="sv-ok" style="flex:2;padding:11px;border:0;border-radius:6px;font-weight:bold;color:#fff;background:#10b981">保存する</button><button id="sv-cancel" style="flex:1;padding:11px;border:0;border-radius:6px;color:#fff;background:#52525b">キャンセル</button></div>';
-      ov.appendChild(box); document.body.appendChild(ov);
-      const $ = id => box.querySelector('#' + id);
-      const sel = $('sv-target'), nm = $('sv-name'), note = $('sv-note'), ok = $('sv-ok');
-      sel.value = curKey && savedPlays[curKey] ? curKey : '__new'; nm.value = name;
-      const upd = () => {
-        const t = sel.value, n = nm.value.trim() || 'Untitled Play'; ok.disabled = false; ok.style.opacity = 1;
-        if (t === '__new') {
-          const u = uniqueName(n);
-          note.style.color = '#93c5fd'; note.textContent = '結果: 新しいプレー「' + u + '」が増えます。\n既存のプレーは、そのまま残ります。' + (u !== n ? '\n(同じタイトルがあるので、(2)などを付けました)' : '');
-        } else {
-          const other = savedPlays[n] && n !== t;
-          if (other) { note.style.color = '#fca5a5'; note.textContent = '「' + n + '」は、別のプレーが使っています。タイトルを変えるか、保存先を変えてください。'; ok.disabled = true; ok.style.opacity = .4; }
-          else { note.style.color = '#fcd34d'; note.textContent = '結果: 「' + t + '」を、いまの内容で置き換えます(元には戻せません)。' + (n !== t ? '\nタイトルは「' + n + '」に変わります。' : ''); }
-        }
-      };
-      sel.onchange = () => { if (sel.value !== '__new' && sel.value !== curKey) { /* 別のプレーを選んだら、タイトルはそのプレーの名前に */ nm.value = sel.value; } upd(); };
-      nm.oninput = upd; upd();
-      const done = v => { ov.remove(); res(v); };
-      $('sv-cancel').onclick = () => done(null);
-      ov.onclick = e => { if (e.target === ov) done(null); };
-      ok.onclick = () => { if (ok.disabled) return; try { localStorage.setItem('pdl_skip_save_confirm', $('sv-skip').checked ? '1' : ''); } catch (e) {} done({ target: sel.value, name: nm.value.trim() || 'Untitled Play' }); };
-      setTimeout(() => ok.focus(), 0);
-    });
+  function markDirty() { if (!dirty) { dirty = true; updateSaveState(); } }
+  document.addEventListener('input', e => { if (e.target && e.target.closest && e.target.closest('.call-header')) markDirty(); });
+  async function confirmDirty(action) {   // 保存していない変更があるときだけ、確認する
+    if (!dirty) return true;
+    const c = await choose('保存していない変更があります', action + ' の前に、どうしますか?', [
+      { label: '💾 Save してから進む', color: '#059669' }, { label: 'Don\'t Save(変更を捨てて進む)', color: '#b91c1c' }]);
+    if (c === -1) return false;
+    if (c === 0) { save(); }
+    return true;
   }
-  async function savePlay() {
-    const name = document.getElementById('play-name').value.trim() || 'Untitled Play';
-    const curKey = keyOfId(curPlayId);
-    let skip = false; try { skip = localStorage.getItem('pdl_skip_save_confirm') === '1'; } catch (e) {}
-    if (skip && curKey && curKey === name) { commitPlay(name, curPlayId, null); return; }
-    const r = await saveDialog(name, curKey);
-    if (!r) return;
-    if (r.target === '__new') commitPlay(uniqueName(r.name), newId(), null);
-    else commitPlay(r.name, savedPlays[r.target].id, r.target);
+  const curSet = () => (document.getElementById('set-name').value || '').trim();
+  const curName = () => (document.getElementById('play-name').value || '').trim();
+  function save() {
+    const k = keyOfId(curPlayId), set = curSet(), name = curName() || 'Untitled Play';
+    if (k) {   // 開いているプレーを上書き
+      const want = composeKey(set, name);
+      if (want === k) commitPlay(k, curPlayId, k, set, name);
+      else if (savedPlays[want]) { const u = uniqueKey(set, name); commitPlay(u.key, curPlayId, k, set, u.name); }
+      else commitPlay(want, curPlayId, k, set, name);
+    } else {   // New の状態 → 新しいプレーとして保存し、New に戻る(連続保存)
+      const u = uniqueKey(set, name); commitPlay(u.key, newId(), null, set, u.name);
+      curPlayId = null; curPlayName = ''; dirty = false; updatePlayList(); updateSaveState();
+      toast('「' + u.key + '」を保存しました。続けて、同じタイトルの次のプレーを作れます', 2800);
+    }
   }
+  function saveAs() {
+    const set = curSet();
+    const t = prompt('新しいプレーとして保存します。プレー名を入力してください' + (set ? '(タイトル: ' + set + ')' : '') + ':', curName() || 'Untitled Play');
+    if (t === null) return;
+    const u = uniqueKey(set, t.trim() || 'Untitled Play'); commitPlay(u.key, newId(), null, set, u.name);
+  }
+  function blankAll() {
+    players = []; lines = []; zones = []; texts = []; selectedObj = null; currentLine = null;
+    ['set-name', 'play-name', 'call-formation', 'call-motion', 'call-play', 'call-vs', 'sc-ballon', 'sc-dd', 'sc-no'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+    const ta = document.getElementById('title-auto'); if (ta) ta.checked = true;
+    curPlayId = null; curPlayName = ''; render();
+  }
+  async function closePlay() {
+    if (!(await confirmDirty('Close'))) return;
+    blankAll(); dirty = false; updatePlayList(); updateSaveState();
+    toast('閉じました(空の状態)', 1800);
+  }
+  async function newPlay() {   // 新しいタイトル(セット)を始める
+    if (!(await confirmDirty('New'))) return;
+    const c = await choose('New: 新しいタイトルを始めます', '例: 「2x2 Mesh」のあとに「3x1 Mesh」を始める。\nタイトルとプレー名を空にして、入力位置を「タイトル」に移します。', [
+      { label: '空の図で始める (Blank)', color: '#2563eb' }, { label: 'いまの図をコピーして始める (Copy current)', color: '#4338ca' }]);
+    if (c === -1) return;
+    if (c === 0) blankAll(); else { curPlayId = null; curPlayName = ''; }
+    const sn = document.getElementById('set-name'), pn = document.getElementById('play-name'); if (sn) sn.value = ''; if (pn) pn.value = '';
+    const ta = document.getElementById('title-auto'); if (ta) ta.checked = true;
+    dirty = false; updatePlayList(); updateSaveState();
+    if (sn) sn.focus();
+  }
+  const savePlay = save;
 
-  const BASE_CATS = [['play', 'Play (通常プレイ)'], ['rt', 'Route Tree'], ['form', 'Formation'], ['motion', 'Motion'], ['shift', 'Shift'], ['front', 'Defense Front / ID'], ['blitz', 'Blitz'], ['cov', 'Coverage'], ['prot', 'Protection'], ['other', 'その他']];
+  const BASE_CATS = [['play', 'Play'], ['rt', 'Route Tree'], ['form', 'Formation'], ['front', 'Def Front'], ['stunt', 'Stunts'], ['blitz', 'Blitz'], ['cov', 'Coverage'], ['motion', 'Motion/Shift'], ['prot', 'Protection'], ['other', 'Other']];
+  const CAT_INPUT = { rt: 'Route', form: 'Formation', front: 'Front', stunt: 'Stunts', blitz: 'Blitz', cov: 'Cover', motion: 'Motion/Shift', prot: 'Protection', other: 'Other' };
   let customCats = [];
   try { customCats = JSON.parse(localStorage.getItem('gridiron_cats_v1') || '[]').filter(c => c && c.k && c.l); } catch (e) { customCats = []; }
   const saveCats = () => { try { localStorage.setItem('gridiron_cats_v1', JSON.stringify(customCats)); } catch (e) {} };
@@ -3488,8 +3520,19 @@ const GridironApp = (() => {
       if ([...el.options].some(o => o.value === v)) el.value = v;
     };
     mk2('play-cat', []);
-    mk2('play-catf', [['all', '種類: すべて'], ['play', 'Play (通常プレイ)']]);
-    mk2('pb-cat', [['play', 'Play (通常プレイ)のみ'], ['all', 'すべての種類']]);
+    mk2('play-catf', [['all', 'Category: All'], ['play', 'Play (通常プレイ)']]);
+    mk2('pb-cat', [['play', 'Play (通常プレイ)のみ'], ['all', 'All Categories']]);
+    buildCatChips();
+  }
+  function buildCatChips() {
+    const sel = document.getElementById('play-catf'); if (!sel) return;
+    let box = document.getElementById('play-catchips');
+    if (!box) { box = document.createElement('div'); box.id = 'play-catchips'; box.style.cssText = 'display:flex; flex-wrap:wrap; gap:3px; margin-bottom:4px;'; sel.parentNode.insertBefore(box, sel); sel.style.display = 'none'; }
+    const cnt = {}; Object.values(savedPlays).forEach(p => { const c = p.cat || 'play'; cnt[c] = (cnt[c] || 0) + 1; });
+    const items = [['all', 'All', Object.keys(savedPlays).length]].concat(allCats().map(c => [c.k, c.l, cnt[c.k] || 0]));
+    box.innerHTML = '';
+    items.forEach(([k, l, n]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'mini-btn'; b.textContent = l + (n ? ' ' + n : ''); b.style.cssText = 'padding:2px 7px; font-size:10px;' + (sel.value === k ? 'background:#2563eb; border-color:#60a5fa; color:#fff;' : ''); b.onclick = () => { sel.value = k; updatePlayList(); }; box.appendChild(b); });
+    const ad = document.createElement('button'); ad.type = 'button'; ad.className = 'mini-btn'; ad.textContent = '＋ Category'; ad.title = '新しいCategoryを追加'; ad.style.cssText = 'padding:2px 7px; font-size:10px; background:#059669; border-color:#10b981;'; ad.onclick = manageCats; box.appendChild(ad);
   }
   function manageCats() {
     let ov = document.getElementById('cat-modal');
@@ -3502,11 +3545,11 @@ const GridironApp = (() => {
     ov.style.display = 'flex';
     const draw = () => {
       ov.innerHTML = `<div style="background:#18181b; color:#e4e4e7; border:1px solid #3f3f46; border-radius:8px; padding:14px; width:380px; max-width:92vw; max-height:85vh; overflow:auto; font-size:12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><b style="font-size:14px;">種類の管理</b><button id="cm-close" style="padding:2px 8px;">✕ 閉じる</button></div>
-        <div style="display:flex; gap:4px; margin-bottom:10px;"><input id="cm-new" type="text" placeholder="追加する種類の名前（例: Screen）" style="flex:1;"><button id="cm-add" style="background:#10b981; border-color:#059669; font-weight:bold; white-space:nowrap;">＋ 追加</button></div>
-        <div style="color:#a1a1aa; margin-bottom:4px;">追加した種類（名前を直接書き換えて Enter / ✔）</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><b style="font-size:14px;">Categories</b><button id="cm-close" style="padding:2px 8px;">✕ 閉じる</button></div>
+        <div style="display:flex; gap:4px; margin-bottom:10px;"><input id="cm-new" type="text" placeholder="追加するCategory名（例: Screen）" style="flex:1;"><button id="cm-add" style="background:#10b981; border-color:#059669; font-weight:bold; white-space:nowrap;">＋ 追加</button></div>
+        <div style="color:#a1a1aa; margin-bottom:4px;">追加したCategory(名前を直接書き換えて Enter / ✔)</div>
         ${customCats.length ? customCats.map((c, i) => `<div style="display:flex; gap:4px; margin-bottom:4px;"><input data-i="${i}" class="cm-name" type="text" value="${esc(c.l)}" style="flex:1;"><button data-i="${i}" class="cm-ren">✔ 変更</button><button data-i="${i}" class="cm-del danger">削除</button></div>`).join('') : '<div style="color:#71717a; margin-bottom:6px;">まだありません</div>'}
-        <div style="color:#a1a1aa; margin:8px 0 3px;">初めからある種類（変更不可）</div>
+        <div style="color:#a1a1aa; margin:8px 0 3px;">初めからあるCategory(変更不可)</div>
         <div style="color:#71717a; line-height:1.6;">${BASE_CATS.map(c => esc(c[1])).join(' / ')}</div></div>`;
       const add = () => { const v = ov.querySelector('#cm-new').value.trim(); if (!v) return; const k = 'c_' + Date.now().toString(36); customCats.push({ k, l: v }); saveCats(); fillCatSelects(); document.getElementById('play-cat').value = k; updatePlayList(); draw(); };
       ov.querySelector('#cm-close').onclick = () => { ov.style.display = 'none'; };
@@ -3524,34 +3567,75 @@ const GridironApp = (() => {
     draw();
     setTimeout(() => { const n = ov.querySelector('#cm-new'); if (n) n.focus(); }, 0);
   }
-  const CAT_SHORT = { rt: 'ROUTE', form: 'FORM', motion: 'MOTION', shift: 'SHIFT', front: 'FRONT', blitz: 'BLITZ', cov: 'COV', prot: 'PROT', other: 'ETC' };
+  const CAT_SHORT = { rt: 'ROUTE', form: 'FORM', motion: 'MOTION', shift: 'MOTION', front: 'FRONT', stunt: 'STUNT', blitz: 'BLITZ', cov: 'COV', prot: 'PROT', other: 'ETC' };
+  const playSel = new Set();
+  const collapsedSets = new Set();
+  function visiblePlayKeys() {
+    const filter = (document.getElementById('play-search').value || '').toLowerCase(), cf = document.getElementById('play-catf').value;
+    return Object.keys(savedPlays).filter(k => k.toLowerCase().includes(filter) && (cf === 'all' || (savedPlays[k].cat || 'play') === cf));
+  }
+  function playSelInfo() { const e = document.getElementById('play-sel-n'); if (e) e.textContent = 'Selected ' + [...playSel].filter(k => savedPlays[k]).length; }
+  function selectAllPlays() { visiblePlayKeys().forEach(k => playSel.add(k)); updatePlayList(); }
+  function clearPlaySel() { playSel.clear(); updatePlayList(); }
+  function deleteSelected2() {
+    const ks = [...playSel].filter(k => savedPlays[k]);
+    if (!ks.length) { toast('消すプレーが選択されていません(行の□にチェックを入れてください)', 2800); return; }
+    if (!confirm('選択した ' + ks.length + ' 件を削除します。元には戻せません。\n\n' + ks.slice(0, 8).join('\n') + (ks.length > 8 ? '\n…ほか ' + (ks.length - 8) + ' 件' : '') + '\n\nよろしいですか?')) return;
+    const curK = keyOfId(curPlayId);
+    ks.forEach(k => { delete savedPlays[k]; playSel.delete(k); });
+    if (curK && ks.includes(curK)) { curPlayId = null; curPlayName = ''; }
+    persistPlays(); updatePlayList(); updateSaveState();
+    toast(ks.length + ' 件を削除しました', 2200);
+  }
   function updatePlayList() {
     const list = document.getElementById('play-list');
     const filter = (document.getElementById('play-search').value || '').toLowerCase();
-    const currentName = document.getElementById('play-name').value.trim();
+    const currentName = keyOfId(curPlayId) || '';
     const cf = document.getElementById('play-catf').value;
     const keys = Object.keys(savedPlays).filter(k => k.toLowerCase().includes(filter) && (cf === 'all' || (savedPlays[k].cat || 'play') === cf));
 
     document.getElementById('play-count').innerText = Object.keys(savedPlays).length + '件';
+    buildCatChips();
+    [...playSel].forEach(k => { if (!savedPlays[k]) playSel.delete(k); });
+    playSelInfo();
     list.innerHTML = '';
 
-    keys.forEach(name => {
+    const groups = new Map();
+    keys.sort((x, y) => x.localeCompare(y, 'ja', { numeric: true })).forEach(k => { const g = setOf(k); if (!groups.has(g)) groups.set(g, []); groups.get(g).push(k); });
+    groups.forEach((ks, g) => {
+      const open = !collapsedSets.has(g) || filter;
+      const head = document.createElement('div');
+      head.style.cssText = 'display:flex;align-items:center;gap:5px;padding:5px 7px;background:#27272a;border-bottom:1px solid #3f3f46;font-size:11px;font-weight:bold;color:#fcd34d;cursor:pointer;';
+      const allSel = ks.every(k => playSel.has(k));
+      head.innerHTML = `<input type="checkbox" style="width:auto;flex:none" title="このタイトルのプレーを、まとめて選択"${allSel ? ' checked' : ''}><span style="flex:none">${open ? '▾' : '▸'}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(g || '(タイトルなし)')}</span><span style="color:#a1a1aa;font-weight:normal">${ks.length}</span>`;
+      head.onclick = () => { if (collapsedSets.has(g)) collapsedSets.delete(g); else collapsedSets.add(g); updatePlayList(); };
+      head.querySelector('input').onclick = e => { e.stopPropagation(); ks.forEach(k => { if (e.target.checked) playSel.add(k); else playSel.delete(k); }); updatePlayList(); };
+      list.appendChild(head);
+      if (!open) return;
+      ks.forEach(name => addPlayRow(list, name, currentName, g));
+    });
+  }
+  function addPlayRow(list, name, currentName, g) {
+    {
       const div = document.createElement('div');
       div.className = 'play-item' + (name === currentName ? ' current' : '');
+      div.style.paddingLeft = g ? '18px' : '8px';
       const cc = savedPlays[name].cat || 'play';
       { const sp = savedPlays[name]; div.title = sp.savedAt ? ('更新: ' + (sp.savedBy || '(名前なし)') + '  ' + fmtT(sp.savedAt)) : ''; }
-      div.innerHTML = `${cc === 'play' ? '' : `<span class="catbadge">${esc(CAT_SHORT[cc] || catLabel(cc))}</span>`}<span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${name}</span><span class="del" title="削除">×</span>`;
+      div.innerHTML = `<input type="checkbox" class="sel" style="width:auto;margin-right:5px;flex:none"${playSel.has(name) ? ' checked' : ''}>${cc === 'play' ? '' : `<span class="catbadge">${esc(CAT_SHORT[cc] || catLabel(cc))}</span>`}<span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(nameOf(name))}</span><span class="del" title="削除">×</span>`;
       div.onclick = () => loadPlayObj(name, savedPlays[name]);
+      { const cb = div.querySelector('.sel'); cb.onclick = e => { e.stopPropagation(); if (cb.checked) playSel.add(name); else playSel.delete(name); playSelInfo(); }; }
       div.querySelector('.del').onclick = (e) => {
         e.stopPropagation();
         if (confirm(`「${name}」を削除しますか？`)) {
-          delete savedPlays[name];
+          delete savedPlays[name]; playSel.delete(name);
+          if (keyOfId(curPlayId) === undefined) { curPlayId = null; curPlayName = ''; }
           persistPlays();
-          updatePlayList();
+          updatePlayList(); updateSaveState();
         }
       };
       list.appendChild(div);
-    });
+    }
   }
 
   function formatMetaSummary(play) {
@@ -4129,7 +4213,7 @@ const GridironApp = (() => {
       const p = savedPlays[k]; groups.get(g).push({ key: k, label: m[2].trim(), note: p.notes || '', image: p.image, imgH: p.imgH });
     });
     // 種類(カテゴリ)で振り分け: 名前が「ページ名 - 図名」でなくても、種類に合うセクションの空きに入る
-    const CAT_SEC = { form: ['formation'], motion: ['motions'], shift: ['shifts', 'motions'], front: ['defid', 'fronts'], blitz: ['blitz'], cov: ['cov'], prot: ['prot', 'blocking'] };
+    const CAT_SEC = { form: ['formation'], motion: ['motions'], shift: ['shifts', 'motions'], front: ['defid', 'fronts'], stunt: ['stunts'], blitz: ['blitz'], cov: ['cov'], prot: ['prot', 'blocking'] };
     const catItems = {};
     Object.keys(savedPlays).sort((a, b) => a.localeCompare(b, 'ja', { numeric: true })).forEach(k => {
       const p = savedPlays[k], c = p.cat; if (!CAT_SEC[c]) return;
@@ -4395,7 +4479,7 @@ const GridironApp = (() => {
       <label style="display:block; margin-bottom:8px;"><input id="sx-cover" type="checkbox" style="width:auto;"> Play Bookの表紙・出力設定も入れる</label>
       <div style="display:flex; gap:8px; justify-content:flex-end;"><button id="sx-close" type="button">閉じる</button><button id="sx-go" type="button" style="background:#2563eb; border-color:#3b82f6; font-weight:bold;">📤 書き出す</button></div>`, true);
     const g = id => ov.querySelector('#' + id), list = g('sx-list'), catSel = g('sx-cat');
-    catSel.innerHTML = '<option value="all">種類: すべて</option>' + allCats().map(c => `<option value="${c.k}">${esc(c.l)}</option>`).join('');
+    catSel.innerHTML = '<option value="all">Category: All</option>' + allCats().map(c => `<option value="${c.k}">${esc(c.l)}</option>`).join('');
     list.innerHTML = keys.map(k => { const p = savedPlays[k]; return `<label data-k="${esc(k)}" data-c="${esc(p.cat || 'play')}" style="display:flex; gap:6px; align-items:center; padding:3px 4px; border-bottom:1px solid #3f3f46;"><input type="checkbox" class="sx-ck" value="${esc(k)}" checked style="width:auto; flex:none;"><span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(k)}</span><span style="color:#a1a1aa; font-size:10.5px; flex:none;">${esc(p.savedBy || '')} ${p.savedAt ? fmtT(p.savedAt) : ''}</span></label>`; }).join('');
     const rows = () => [...list.children];
     const vis = r => r.style.display !== 'none';
@@ -4483,7 +4567,7 @@ const GridironApp = (() => {
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
-    savePlay, manageCats, setZoneSize, updatePlayList, exportPNG, generatePlayBookTemplate, exportPPTX, setPbLogo, pbTemplateChanged, changeSideLine, setLinesMode, addAssignRow, addAssignCol, asPanel, clearAssignRows, setAssign, assignPreset, exportJSON, importJSON, syncMetaToHeader, syncPersonnelToHeader,
+    savePlay, applyCatUI, save, saveAs, closePlay, newPlay, deleteSelected2, selectAllPlays, clearPlaySel, manageCats, setZoneSize, updatePlayList, exportPNG, generatePlayBookTemplate, exportPPTX, setPbLogo, pbTemplateChanged, changeSideLine, setLinesMode, addAssignRow, addAssignCol, asPanel, clearAssignRows, setAssign, assignPreset, exportJSON, importJSON, syncMetaToHeader, syncPersonnelToHeader,
     addOffPaletteItem, addDefPaletteItem, buildPlayObj, loadPlayObj, updateSaveState, scoutChanged, curName: () => curPlayName
   };
 })();
