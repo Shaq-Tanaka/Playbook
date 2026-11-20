@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v87)</title>
+<title>Play Draw Lab (Pro Edition v88)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -4305,7 +4305,10 @@ window.addEventListener('DOMContentLoaded', GridironApp.init);
   if (!/[?&]addin=1/.test(location.search)) return;
   const TPL = [
     { k: 'grid4', label: '1枚に図4つ (2x2)', file: 'templates/PDL_2x2.pptx' },
-    { k: 'assign', label: '図1つ + アサインメント', file: 'templates/PDL_Assign.pptx' }
+    { k: 'assign', label: '図1つ + アサインメント', file: 'templates/PDL_Assign.pptx' },
+    { k: 'ohio', label: 'Ohio State風 (赤・図4つ+メモ表)', file: 'templates/PDL_Ohio.pptx' },
+    { k: 'rams', label: 'LA Rams風 (青枠・図6つ)', file: 'templates/PDL_Rams.pptx' },
+    { k: 'miami', label: 'Miami風 (説明ヘッダ+図6つ)', file: 'templates/PDL_Miami.pptx' }
   ];
   const PFX = 'PDL_';
   let target = null;           // id of the placed figure being edited
@@ -4326,6 +4329,9 @@ window.addEventListener('DOMContentLoaded', GridironApp.init);
     '<button id="pdl-load" style="flex:1;background:#7c3aed;color:#fff;border:0;border-radius:4px;padding:8px;font-weight:bold" disabled>✎ 読込</button></div>' +
     '<div id="pdl-msg" style="color:#a1a1aa;min-height:16px">準備中…</div>';
   function mount() {
+    const st = document.createElement('style');
+    st.textContent = '@media (max-width:820px),(pointer:coarse){#touch-bar{bottom:104px !important;} #zoom-ctl{bottom:160px !important;}}';
+    document.head.appendChild(st);
     document.body.appendChild(bar);
     document.body.style.paddingBottom = '92px';
     const sel = $('pdl-tpl');
@@ -4432,6 +4438,19 @@ window.addEventListener('DOMContentLoaded', GridironApp.init);
     ['off', 'def'].forEach(sd => { const a = (pn[sd] || []).filter(x => x && x.n && x.n.trim()); if (a.length) { t += '\n' + (sd === 'off' ? 'OFFENSE' : 'DEFENSE') + ' NOTE\n'; a.forEach(x => { t += (x.p || '') + ' : ' + x.n + '\n'; }); } });
     return t.trim();
   }
+  function fillTexts(items, no, p, name) {
+    const by = n => items.find(s => s.name === n);
+    ['PDL_CAP_' + no, 'PDL_CAP2_' + no].forEach(n => { const sh = by(n); if (sh) setText(sh, name); });
+    const memo = by('PDL_MEMO_' + no); if (memo && p.notes) setText(memo, p.notes);
+    const nt = by('PDL_NOTE_' + no); if (nt) { const t = planText(p); if (t) setText(nt, t); }
+    if (no === 1) {
+      const m = p.meta || {}, h = {
+        PERS: p.offPersonnel || '', DESC: p.notes || '', FORM: m.formation || '',
+        COV: [m.coverage, m.blitz].filter(Boolean).join(' / ')
+      };
+      Object.keys(h).forEach(k => { const sh = by('PDL_HDR_' + k); if (sh && h[k]) setText(sh, h[k]); });
+    }
+  }
   const slim = p => { const o = JSON.parse(JSON.stringify(p)); delete o.image; return o; };
 
   /* ---- insert ---- */
@@ -4465,9 +4484,7 @@ window.addEventListener('DOMContentLoaded', GridironApp.init);
       const items = await listSlides(ctx); const sl = items.find(s => s.id === found.slideId);
       const nw = sl.shapes.items.filter(s => !before.has(s.id));
       if (nw.length) nw[nw.length - 1].name = PFX + id;
-      const cap = sl.shapes.items.find(s => s.name === 'PDL_CAP_' + found.no); if (cap) setText(cap, name);
-      const memo = sl.shapes.items.find(s => s.name === 'PDL_MEMO_' + found.no); if (memo && p.notes) setText(memo, p.notes);
-      const nt = sl.shapes.items.find(s => s.name === 'PDL_NOTE_' + found.no); if (nt) { const t = planText(p); if (t) setText(nt, t); }
+      fillTexts(sl.shapes.items, found.no, p, name);
       await ctx.sync();
     });
     await saveSetting('pdl_' + id, JSON.stringify({ name, slot: found.no, play: slim(p) }));
@@ -4503,7 +4520,7 @@ window.addEventListener('DOMContentLoaded', GridironApp.init);
     await PowerPoint.run(async ctx => {
       const items = await listSlides(ctx); const sl = items.find(s => s.id === fig.slideId);
       const nw = sl.shapes.items.filter(s => !before.has(s.id)); if (nw.length) nw[nw.length - 1].name = PFX + target;
-      if (slotN) { const cap = sl.shapes.items.find(s => s.name === 'PDL_CAP_' + slotN); if (cap) setText(cap, name); const nt = sl.shapes.items.find(s => s.name === 'PDL_NOTE_' + slotN); if (nt) { const t = planText(p); if (t) setText(nt, t); } }
+      if (slotN) fillTexts(sl.shapes.items, slotN, p, name);
       await ctx.sync();
     });
     await saveSetting('pdl_' + target, JSON.stringify({ name, slot: slotN, play: slim(p) }));
@@ -4523,7 +4540,7 @@ window.addEventListener('DOMContentLoaded', GridironApp.init);
       if (!supported('1.5')) return;
       let nm = null;
       await PowerPoint.run(async ctx => { const ss = ctx.presentation.getSelectedShapes(); ss.load('items/name'); await ctx.sync(); if (ss.items.length === 1) nm = ss.items[0].name; });
-      selId = nm && nm.indexOf(PFX) === 0 && !/^PDL_(SLOT|CAP|MEMO|NOTE|TITLE)/.test(nm) ? nm.slice(PFX.length) : null;
+      selId = nm && nm.indexOf(PFX) === 0 && !/^PDL_(SLOT|CAP|CAP2|MEMO|NOTE|TITLE|HDR|HDRL|TH|BORDER)/.test(nm) ? nm.slice(PFX.length) : null;
       if (selId) msg('図を選択中: 「✎ 読込」で、直せます');
       ui();
     } catch (e) {}
