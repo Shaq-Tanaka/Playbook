@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v107)</title>
+<title>Play Draw Lab (Pro Edition v110)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -285,7 +285,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v107</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v110</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -494,10 +494,6 @@
 
     <div class="tool-group">
       <h4>3. OFF FORMATION (空欄可)</h4>
-      <div style="margin-bottom:4px;">
-        <label style="font-size:9px; color:#a1a1aa; display:block; margin-bottom:2px;">Offense Personnel:</label>
-        <input type="text" id="off-personnel-input" placeholder="例: 11 (1RB-1TE-3WR) / 21 / 12">
-      </div>
       <div style="display:flex; gap:3px; margin-bottom:4px; align-items:center;">
         <span style="font-size:10px; color:#fff; font-weight:bold; width:46px; flex:none;">Align:</span>
         <button type="button" data-oa="left" onclick="GridironApp.alignSide('off','left')" style="flex:1;" title="オフェンスを左ハッシュに寄せる">◀ L Hash</button>
@@ -521,10 +517,6 @@
 
     <div class="tool-group">
       <h4>4. DEF FRONT</h4>
-      <div style="margin-bottom:4px;">
-        <label style="font-size:9px; color:#a1a1aa; display:block; margin-bottom:2px;">Def Personnel:</label>
-        <input type="text" id="def-personnel-input" placeholder="例: 3DL-3LB-5DB" oninput="GridironApp.syncPersonnelToHeader(this)">
-      </div>
       <div style="display:flex; gap:3px; margin-bottom:4px; align-items:center;">
         <span style="font-size:10px; color:#fff; font-weight:bold; width:46px; flex:none;">Align:</span>
         <button type="button" onclick="GridironApp.alignSide('def','left')" style="flex:1;" title="ディフェンスを左ハッシュに寄せる">◀ L Hash</button>
@@ -700,7 +692,7 @@
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;" title="プレーをまとめる「セットのタイトル」(例: 2x2 Mesh / 2x2 FORMATIONS)。Play Bookでも、このタイトルごとにまとまります">タイトル:</span>
         <input type="text" id="set-name" placeholder="例: 2x2 Mesh" style="flex:1.4; min-width:120px; font-weight:bold; color:#fcd34d;">
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">プレー名:</span>
-        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" oninput="var t=document.getElementById('title-auto');if(t)t.checked=false;GridironApp.updateSaveState();" style="flex:1; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label>
+        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" oninput="var t=document.getElementById('title-auto');if(t)t.checked=false;GridironApp.updateSaveState();" style="flex:2; min-width:170px; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label>
         <button onclick="GridironApp.save()" title="開いているプレーがあれば上書き。New の状態なら、新しいプレーとして保存して、そのまま New に戻ります(連続保存)" style="background:#10b981; border-color:#059669; font-weight:bold; white-space:nowrap;">💾 Save</button>
         <button onclick="GridironApp.saveAs()" title="タイトルを入力して、新しいプレーとして保存します(元のプレーは、そのまま残ります)" style="white-space:nowrap;">Save as…</button>
         <button onclick="GridironApp.closePlay()" title="いまのプレーを閉じて、空の状態に戻します" style="white-space:nowrap;">Close</button>
@@ -708,15 +700,19 @@
         <button onclick="GridironApp.exportPNG()" style="background: var(--accent); border-color: #3b82f6; white-space:nowrap;">🖼 PNG出力</button>
         <button onclick="GridironApp.clearField()" class="danger" style="white-space:nowrap;">全クリア</button>
       </div>
-      <div class="call-row">
-        <span class="field-tag" id="lb-form">FORM:</span>
-        <input type="text" id="call-formation" placeholder="例: Gun Trips Rt" oninput="GridironApp.syncPlayTitle()" style="flex:1.1;">
-        <span class="field-tag" id="lb-motion">SHIFT/MOTION:</span>
-        <input type="text" id="call-motion" placeholder="例: Z Orbit / Jet" oninput="GridironApp.syncPlayTitle()" style="flex:1;">
-        <span class="field-tag" id="lb-play">PLAY CALL:</span>
-        <input type="text" id="call-play" value="Mesh" placeholder="例: Mesh / Inside Zone" oninput="GridironApp.syncPlayTitle()" style="flex:1.2;">
-        <span class="field-tag" id="lb-vs" title="相手の守備(Coverage・Frontなど)。同じPLAY CALLでも、相手が違うときの区別に使います">VS (相手Def):</span>
-        <input type="text" id="call-vs" placeholder="例: Cover 3 / 4-3 Over" oninput="GridironApp.syncPlayTitle()" style="flex:1;">
+      <div class="call-row" id="row-off">
+        <span id="f-ps" style="display:contents"><span class="field-tag" id="lb-ps">PERSONNEL:</span><input type="text" id="off-personnel-input" placeholder="例: 11 / 21 / 12" oninput="GridironApp.syncPlayTitle()" style="flex:0.8; min-width:70px;"></span>
+        <span id="f-form" style="display:contents"><span class="field-tag" id="lb-form">FORMATION:</span><input type="text" id="call-formation" placeholder="例: Gun Trips Rt" oninput="GridironApp.syncPlayTitle()" style="flex:1.2; min-width:70px;"></span>
+        <span id="f-shift" style="display:contents"><span class="field-tag" id="lb-shift">SHIFT:</span><input type="text" id="call-shift" placeholder="例: Trips Rt" oninput="GridironApp.syncPlayTitle()" style="flex:0.9; min-width:70px;"></span>
+        <span id="f-motion" style="display:contents"><span class="field-tag" id="lb-motion">MOTION:</span><input type="text" id="call-motion" placeholder="例: Z Orbit / Jet" oninput="GridironApp.syncPlayTitle()" style="flex:0.9; min-width:70px;"></span>
+        <span id="f-play" style="display:contents"><span class="field-tag" id="lb-play">PLAY:</span><input type="text" id="call-play" placeholder="例: Mesh / Inside Zone" oninput="GridironApp.syncPlayTitle()" style="flex:1.1; min-width:70px;"></span>
+      </div>
+      <div class="call-row" id="row-def">
+        <span id="f-dps" style="display:contents"><span class="field-tag" id="lb-dps">DEF PERSONNEL:</span><input type="text" id="def-personnel-input" placeholder="例: 3DL-3LB-5DB" oninput="GridironApp.syncPlayTitle()" style="flex:0.9; min-width:70px;"></span>
+        <span id="f-front" style="display:contents"><span class="field-tag" id="lb-front">FRONT:</span><input type="text" id="meta-defFront" placeholder="例: 4-2-5 Over" oninput="GridironApp.syncPlayTitle()" style="flex:1; min-width:70px;"></span>
+        <span id="f-stunts" style="display:contents"><span class="field-tag" id="lb-stunts">STUNTS:</span><input type="text" id="meta-stunts" placeholder="例: TEX / Loop" oninput="GridironApp.syncPlayTitle()" style="flex:0.9; min-width:70px;"></span>
+        <span id="f-blitz" style="display:contents"><span class="field-tag" id="lb-blitz">BLITZ:</span><input type="text" id="meta-blitz" placeholder="例: Saw / 6-Man" oninput="GridironApp.syncPlayTitle()" style="flex:0.9; min-width:70px;"></span>
+        <span id="f-cov" style="display:contents"><span class="field-tag" id="lb-cov">COVERAGE:</span><input type="text" id="meta-coverage" placeholder="例: Cover 3" oninput="GridironApp.syncPlayTitle()" style="flex:0.9; min-width:70px;"></span>
       </div>
       <div class="call-row">
         <span class="field-tag" title="スカウティング用: ボールの位置(例: OWN 35 / OPP 40)">BALL ON:</span>
@@ -726,7 +722,14 @@
         <span class="field-tag" title="試合中のプレー番号">PLAY No.:</span>
         <input type="text" id="sc-no" placeholder="例: 12" oninput="GridironApp.scoutChanged()" style="flex:.6;">
       </div>
+      <input type="text" id="call-vs" style="display:none">
       <div id="save-state" style="font-size:10.5px; color:#a7f3d0; padding:1px 4px; min-height:14px;"></div>
+      <div id="btn-help" style="font-size:10px; color:#a1a1aa; line-height:1.55; padding:0 4px 2px;">
+        <b style="color:#6ee7b7">Save</b> 開いているプレーを上書き(New の状態なら、新しいプレーとして保存) ／
+        <b style="color:#e4e4e7">Save as…</b> 同じタイトルの下に、別のプレーとして新規保存(元のプレーは残る) ／
+        <b style="color:#e4e4e7">Close</b> 閉じて空の状態に戻す ／
+        <b style="color:#e4e4e7">New</b> 新しいタイトルを始める(図は 空 / コピー を選べる)
+      </div>
     </div>
 
     <canvas id="fieldCanvas"></canvas>
@@ -1085,7 +1088,7 @@ const GridironApp = (() => {
     zoom = 1; panX = 0; panY = 0; applyView();
     const wr = ws.getBoundingClientRect(), r0 = canvas.getBoundingClientRect();
     const narrow = matchMedia(NARROW_Q).matches, hd = document.querySelector('.call-header');
-    const topPad = narrow && hd ? Math.max(90, hd.getBoundingClientRect().bottom - wr.top + 6) : 90, botPad = narrow ? 80 : 70;
+    const topPad = hd ? Math.max(90, hd.getBoundingClientRect().bottom - wr.top + 6) : 90, botPad = narrow ? 80 : 70;
     const availW = wr.width - (narrow ? 16 : 30), availH = wr.height - topPad - botPad;
     const fz = Math.max(0.15, Math.min(1, availW / W, availH / H));
     zoom = fz;
@@ -1160,6 +1163,7 @@ const GridironApp = (() => {
 
     const metaBox = document.getElementById('dynamic-meta-fields');
     APP_CONFIG.metaFields.forEach(f => {
+      if (['formation', 'defFront', 'stunts', 'blitz', 'coverage'].includes(f.key)) return;   // ヘッダーの入力欄に移動
       const row = document.createElement('div');
       row.className = 'meta-row';
       row.innerHTML = `<label>${f.label}</label><input type="text" id="meta-${f.key}" placeholder="${f.placeholder}" oninput="GridironApp.syncMetaToHeader(this, '${f.key}')">`;
@@ -1478,14 +1482,7 @@ const GridironApp = (() => {
     }
   }
 
-  function syncPersonnelToHeader(el) {
-    const val = el.value.trim();
-    const frontMeta = document.getElementById('meta-defFront');
-    if (frontMeta) {
-      const currentFront = document.getElementById('def-form-select').value;
-      frontMeta.value = val ? (currentFront ? `${val} / ${currentFront}` : val) : currentFront;
-    }
-  }
+  function syncPersonnelToHeader(el) { /* 今は、Personnel と Front は別の入力欄 */ }
 
   function persistFormations() {
     localStorage.setItem(APP_CONFIG.storageKeys.offForms, JSON.stringify(offFormations));
@@ -1577,8 +1574,6 @@ const GridironApp = (() => {
     const personnel = document.getElementById('def-personnel-input').value.trim();
 
     if (!name || !defFormations[name]) {
-      const frontInput = document.getElementById('meta-defFront');
-      if (frontInput) frontInput.value = personnel;
       return;
     }
     if (recordHist) pushHistory();
@@ -1594,7 +1589,7 @@ const GridironApp = (() => {
     applyDefHashShift(false);
     
     const frontInput = document.getElementById('meta-defFront');
-    if (frontInput) frontInput.value = personnel ? `${personnel} / ${name}` : name;
+    if (frontInput) frontInput.value = name;   // FRONT の欄には、選んだ Front の名前だけを入れる
     render();
   }
 
@@ -1765,24 +1760,46 @@ const GridironApp = (() => {
 
   function scoutChanged() { render(); }
 
-  function applyCatUI() {   // 種類ごとに、入力欄を切り替える(Play以外は、その種類の名前の入力欄が1つだけ)
-    const c = document.getElementById('play-cat'); if (!c) return;
-    const nonPlay = c.value !== 'play';
-    const cc = allCats().find(x => x.k === c.value), lab = nonPlay ? (CAT_INPUT[c.value] || (cc ? cc.l : 'Name')) : 'FORM';
-    const show = (id, on) => { const e = document.getElementById(id); if (e) e.style.display = on ? '' : 'none'; };
-    ['lb-motion', 'call-motion', 'lb-play', 'call-play', 'lb-vs', 'call-vs'].forEach(id => show(id, !nonPlay));
-    const lf = document.getElementById('lb-form'); if (lf) lf.textContent = lab + ':';
-    const f = document.getElementById('call-formation'); if (f) f.placeholder = nonPlay ? '例: ' + lab + ' の名前を入力' : '例: Gun Trips Rt';
+  const val = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+  // Category ごとに、表示する入力欄と、名前になる欄
+  const CAT_FIELDS = {
+    play:  { show: ['ps', 'form', 'shift', 'motion', 'play', 'dps', 'front', 'stunts', 'blitz', 'cov'] },
+    form:  { show: ['ps', 'form'], name: ['call-formation'], lab: { form: 'FORMATION:' } },
+    front: { show: ['dps', 'front'], name: ['meta-defFront'] },
+    stunt: { show: ['stunts'], name: ['meta-stunts'] },
+    blitz: { show: ['blitz'], name: ['meta-blitz'] },
+    cov:   { show: ['cov'], name: ['meta-coverage'] },
+    motion:{ show: ['shift', 'motion'], name: ['call-shift', 'call-motion'], join: ' / ' }
+  };
+  function catFields(c) {
+    if (CAT_FIELDS[c]) return CAT_FIELDS[c];
+    const cc = allCats().find(x => x.k === c), lab = CAT_INPUT[c] || (cc ? cc.l : 'Name');
+    return { show: ['form'], name: ['call-formation'], lab: { form: lab + ':' } };   // Route Tree / Protection / Other / 追加したCategory
+  }
+  function applyCatUI() {
+    const c = (document.getElementById('play-cat') || {}).value || 'play', cf = catFields(c);
+    ['ps', 'form', 'shift', 'motion', 'play', 'dps', 'front', 'stunts', 'blitz', 'cov'].forEach(k => {
+      const w = document.getElementById('f-' + k); if (w) w.style.display = cf.show.includes(k) ? 'contents' : 'none';
+    });
+    const L = { ps: 'PERSONNEL:', form: 'FORMATION:', shift: 'SHIFT:', motion: 'MOTION:', play: 'PLAY:', dps: 'DEF PERSONNEL:', front: 'FRONT:', stunts: 'STUNTS:', blitz: 'BLITZ:', cov: 'COVERAGE:' };
+    Object.keys(L).forEach(k => { const e = document.getElementById('lb-' + k); if (e) e.textContent = (cf.lab && cf.lab[k]) || L[k]; });
+    const ro = document.getElementById('row-off'), rd = document.getElementById('row-def');
+    if (ro) ro.style.display = cf.show.some(k => ['ps', 'form', 'shift', 'motion', 'play'].includes(k)) ? '' : 'none';
+    if (rd) rd.style.display = cf.show.some(k => ['dps', 'front', 'stunts', 'blitz', 'cov'].includes(k)) ? '' : 'none';
     syncPlayTitle();
+    setTimeout(() => { try { fitView(); } catch (e) {} }, 0);
   }
   function syncPlayTitle() {
     const ta = document.getElementById('title-auto'); if (ta && !ta.checked) return;
-    const form = document.getElementById('call-formation').value.trim();
-    const mot = document.getElementById('call-motion').value.trim();
-    if (document.getElementById('play-cat').value !== 'play') { if (form) document.getElementById('play-name').value = form; updateSaveState(); return; }   // Play以外は、1つの入力欄だけが名前になる
-    const call = document.getElementById('call-play').value.trim();
-    const vsEl = document.getElementById('call-vs'), vs = vsEl ? vsEl.value.trim() : '';
-    const fullTitle = [[form, mot].filter(Boolean).join(' '), call].filter(Boolean).join(' - ') + (vs && (form || mot || call) ? ' vs ' + vs : (vs ? 'vs ' + vs : ''));
+    const c = (document.getElementById('play-cat') || {}).value || 'play';
+    let fullTitle = '';
+    if (c === 'play') {
+      const head = [val('call-formation'), val('call-shift'), val('call-motion')].filter(Boolean).join(' ');
+      fullTitle = [head, val('call-play')].filter(Boolean).join(' - ');
+      const vs = val('call-vs'); if (vs) fullTitle += (fullTitle ? ' vs ' : 'vs ') + vs;
+    } else {
+      const cf = catFields(c); fullTitle = cf.name.map(val).filter(Boolean).join(cf.join || ' ');
+    }
     if (fullTitle) document.getElementById('play-name').value = fullTitle;
     updateSaveState();
   }
@@ -3258,6 +3275,7 @@ const GridironApp = (() => {
       const el = document.getElementById('meta-' + f.key);
       meta[f.key] = el ? el.value.trim() : '';
     });
+    meta.formation = (document.getElementById('call-formation') || {}).value ? document.getElementById('call-formation').value.trim() : '';
     return meta;
   }
 
@@ -3361,11 +3379,12 @@ const GridironApp = (() => {
     document.getElementById('play-cat').value = pData.cat === 'shift' ? 'motion' : (pData.cat || 'play'); applyCatUI();
     document.getElementById('call-formation').value = pData.callInfo?.formation || '';
     document.getElementById('call-motion').value = pData.callInfo?.motion || '';
+    { const sh = document.getElementById('call-shift'); if (sh) sh.value = pData.callInfo?.shift || ''; }
     document.getElementById('call-play').value = pData.callInfo?.play || '';
     { const vv = document.getElementById('call-vs'); if (vv) vv.value = pData.callInfo?.vs || ''; }
     { const sc = pData.scout || {}; [['sc-ballon', 'ballOn'], ['sc-dd', 'dd'], ['sc-no', 'no']].forEach(([id, k]) => { const e = document.getElementById(id); if (e) e.value = sc[k] || ''; }); }
     curPlayName = name; if (!pData.id) pData.id = newId(); curPlayId = pData.id; setTimeout(() => { dirty = false; updateSaveState(); }, 0);
-    { const ta = document.getElementById('title-auto'); if (ta) { const f = pData.callInfo?.formation || '', m = pData.callInfo?.motion || '', c = pData.callInfo?.play || '', vq = (pData.callInfo?.vs || '').trim(); ta.checked = (([[f, m].filter(Boolean).join(' '), c].filter(Boolean).join(' - ') + (vq ? (f || m || c ? ' vs ' : 'vs ') + vq : '')) === document.getElementById('play-name').value); } }
+    { const ta = document.getElementById('title-auto'); if (ta) ta.checked = false; }
     document.getElementById('play-notes').value = pData.notes || '';
     pnLoad(pData.pnotes);
 
@@ -3391,6 +3410,7 @@ const GridironApp = (() => {
       callInfo: {
         formation: document.getElementById('call-formation').value.trim(),
         motion: document.getElementById('call-motion').value.trim(),
+        shift: (document.getElementById('call-shift') || {}).value ? document.getElementById('call-shift').value.trim() : '',
         play: document.getElementById('call-play').value.trim(),
         vs: (document.getElementById('call-vs') || {}).value ? document.getElementById('call-vs').value.trim() : ''
       },
@@ -3484,7 +3504,7 @@ const GridironApp = (() => {
   }
   function blankAll() {
     players = []; lines = []; zones = []; texts = []; selectedObj = null; currentLine = null;
-    ['set-name', 'play-name', 'call-formation', 'call-motion', 'call-play', 'call-vs', 'sc-ballon', 'sc-dd', 'sc-no'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+    ['set-name', 'play-name', 'off-personnel-input', 'def-personnel-input', 'meta-defFront', 'meta-stunts', 'meta-blitz', 'meta-coverage', 'call-shift', 'call-formation', 'call-motion', 'call-play', 'call-vs', 'sc-ballon', 'sc-dd', 'sc-no'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
     const ta = document.getElementById('title-auto'); if (ta) ta.checked = true;
     curPlayId = null; curPlayName = ''; render();
   }
