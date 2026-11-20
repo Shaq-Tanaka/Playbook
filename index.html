@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v110)</title>
+<title>Play Draw Lab (Pro Edition v111)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -285,7 +285,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v110</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v111</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -691,8 +691,9 @@
         <button onclick="GridironApp.manageCats()" title="Categoryの追加・名前変更・削除" style="padding:2px 7px;">✎</button>
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;" title="プレーをまとめる「セットのタイトル」(例: 2x2 Mesh / 2x2 FORMATIONS)。Play Bookでも、このタイトルごとにまとまります">タイトル:</span>
         <input type="text" id="set-name" placeholder="例: 2x2 Mesh" style="flex:1.4; min-width:120px; font-weight:bold; color:#fcd34d;">
+        <span id="wrap-pname" style="display:contents">
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">プレー名:</span>
-        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" oninput="var t=document.getElementById('title-auto');if(t)t.checked=false;GridironApp.updateSaveState();" style="flex:2; min-width:170px; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label>
+        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" oninput="var t=document.getElementById('title-auto');if(t)t.checked=false;GridironApp.updateSaveState();" style="flex:2; min-width:170px; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label></span>
         <button onclick="GridironApp.save()" title="開いているプレーがあれば上書き。New の状態なら、新しいプレーとして保存して、そのまま New に戻ります(連続保存)" style="background:#10b981; border-color:#059669; font-weight:bold; white-space:nowrap;">💾 Save</button>
         <button onclick="GridironApp.saveAs()" title="タイトルを入力して、新しいプレーとして保存します(元のプレーは、そのまま残ります)" style="white-space:nowrap;">Save as…</button>
         <button onclick="GridironApp.closePlay()" title="いまのプレーを閉じて、空の状態に戻します" style="white-space:nowrap;">Close</button>
@@ -1786,6 +1787,8 @@ const GridironApp = (() => {
     const ro = document.getElementById('row-off'), rd = document.getElementById('row-def');
     if (ro) ro.style.display = cf.show.some(k => ['ps', 'form', 'shift', 'motion', 'play'].includes(k)) ? '' : 'none';
     if (rd) rd.style.display = cf.show.some(k => ['dps', 'front', 'stunts', 'blitz', 'cov'].includes(k)) ? '' : 'none';
+    const wp = document.getElementById('wrap-pname'); if (wp) wp.style.display = c === 'play' ? 'contents' : 'none';   // Play以外は、プレー名の欄は不要(入力欄の内容が、そのまま名前になる)
+    if (c !== 'play') { const ta = document.getElementById('title-auto'); if (ta) ta.checked = true; }
     syncPlayTitle();
     setTimeout(() => { try { fitView(); } catch (e) {} }, 0);
   }
