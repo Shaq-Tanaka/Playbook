@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v134)</title>
+<title>Play Draw Lab (Pro Edition v137)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -300,7 +300,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v134</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v137</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -4804,7 +4804,24 @@ window.addEventListener('DOMContentLoaded', GridironApp.init);
     { k: 'grid4', label: '1枚に図4つ (2x2)', file: 'templates/PDL_2x2.pptx' },
     { k: 'ohio', label: 'Ohio State風 (赤・図4つ+メモ表)', file: 'templates/PDL_Ohio.pptx' },
     { k: 'rams', label: 'LA Rams風 (青枠・図6つ)', file: 'templates/PDL_Rams.pptx' },
-    { k: 'miami', label: 'Miami風 (説明ヘッダ+図6つ)', file: 'templates/PDL_Miami.pptx' }
+    { k: 'miami', label: 'Miami風 (説明ヘッダ+図6つ)', file: 'templates/PDL_Miami.pptx' },
+    { k: 'play', label: '解説+図4つ (文章欄+2x2)', file: 'templates/PDL_Play.pptx' },
+    { k: 'terms', label: '用語説明+図5つ縦並び', file: 'templates/PDL_Terms.pptx' },
+    { k: 'protect', label: 'プロテクション解説 (文章+図4+注釈)', file: 'templates/PDL_Protect.pptx' },
+    { k: 'pass', label: 'パスプレー (大きな図+ルート表+QB READ)', file: 'templates/PDL_Pass.pptx' },
+    { k: 'half', label: 'ハーフフィールド (図4+ルール欄)', file: 'templates/PDL_Half.pptx' },
+    { k: 'route', label: 'ルートツリー表 (各行に図)', file: 'templates/PDL_Route.pptx' },
+    { k: 'form8', label: 'フォーメーション8枠', file: 'templates/PDL_Form8.pptx' },
+    { k: 'day', label: '日程・文章ページ', file: 'templates/PDL_Day.pptx' },
+    { k: 'cover', label: '表紙・区切り', file: 'templates/PDL_Cover.pptx' },
+    { k: 'playertbl', label: 'パス (大きな図+選手別アサイン表)', file: 'templates/PDL_PlayerTbl.pptx' },
+    { k: 'aladual', label: '図2+ポジション別アサイン表', file: 'templates/PDL_AlaDual.pptx' },
+    { k: 'prottbl', label: 'プロテクション (図2+左右アサイン表 x2)', file: 'templates/PDL_ProtTbl.pptx' },
+    { k: 'calls', label: 'コール一覧 (4列x2段)', file: 'templates/PDL_Calls.pptx' },
+    { k: 'install', label: 'インストール表 (項目/内容)', file: 'templates/PDL_Install.pptx' },
+    { k: 'stack3', label: '図3つ縦並び (横長)', file: 'templates/PDL_Stack3.pptx' },
+    { k: 'form10', label: 'バリエーション10枠', file: 'templates/PDL_Form10.pptx' },
+    { k: 'concept', label: 'コンセプト1つ (横長+解説)', file: 'templates/PDL_Concept.pptx' }
   ];
   const PFX = 'PDL_';
   let target = null;           // id of the placed figure being edited
