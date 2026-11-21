@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v115)</title>
+<title>Play Draw Lab (Pro Edition v129)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -104,6 +104,7 @@
     box-shadow: 0 4px 14px rgba(0,0,0,0.55); width: 920px; max-width: calc(100vw - var(--lw) - var(--rw) - 20px);
   }
   .call-row { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+  .call-header.hdr-min > :not(:first-child) { display: none !important; }
   .field-tag { font-size: 10px; color: #fff; font-weight: bold; white-space: nowrap; }
   .status-bar {
     position: fixed; bottom: 8px; z-index: 10; background: rgba(39,39,42,0.95); padding: 4px 12px;
@@ -293,7 +294,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v115</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v129</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -569,6 +570,25 @@
       <div style="font-size:9.5px; color:#a1a1aa; margin-top:3px;">ポジション名はいつでも書き換えられます。Save Playで、一緒に保存されます。</div>
     </div>
 
+    <div class="tool-group" id="roster-group">
+      <h4>★ SCOUT ROSTER (相手の名簿)</h4>
+      <div class="prop-row" style="gap:4px; flex-wrap:wrap;">
+        <button type="button" onclick="GridironApp.rosterImport()" title="名簿のCSV(Excel可)を読み込みます" style="flex:1;">📥 CSV読込</button>
+        <button type="button" onclick="GridironApp.rosterSample()" title="書式のサンプルCSVをダウンロード" style="flex:1;">書式サンプル</button>
+        <input type="file" id="roster-file" accept=".csv,.tsv,.txt,text/csv" style="display:none">
+      </div>
+      <div class="prop-row"><label>Team:</label><select id="roster-team" onchange="GridironApp.rosterRender()"></select><button type="button" onclick="GridironApp.rosterDelTeam()" title="このチームの名簿を削除" style="padding:2px 6px;">🗑</button></div>
+      <div class="prop-row" style="gap:4px;"><select id="roster-side" onchange="GridironApp.rosterRender()" style="width:70px;"><option value="">All</option><option value="OFF">OFF</option><option value="DEF">DEF</option></select><input type="text" id="roster-q" oninput="GridironApp.rosterRender()" placeholder="検索(番号 / 名前 / Pos)" style="flex:1; min-width:0;"></div>
+      <div id="roster-list" style="max-height:190px; overflow:auto; border:1px solid #3f3f46; border-radius:4px; font-size:11px;"></div>
+      <div style="font-size:9.5px; color:#a1a1aa; margin:3px 0;">① 図の選手をクリックで選択 → ② 名簿の行をクリックで割当</div>
+      <div class="prop-row" style="gap:4px; flex-wrap:wrap;">
+        <button type="button" onclick="GridironApp.rosterManual()" title="名簿に無い選手を、背番号・名前で直接入れる" style="flex:1;">✎ 手入力</button>
+        <button type="button" onclick="GridironApp.rosterClearSel()" title="選択中の選手の背番号を外す" style="flex:1;">割当を外す</button>
+      </div>
+      <div class="prop-row" style="gap:10px;"><label class="chk-label"><input type="checkbox" id="roster-showno" checked onchange="GridironApp.rosterOpts()"> 背番号を図に表示</label><label class="chk-label"><input type="checkbox" id="roster-showname" onchange="GridironApp.rosterOpts()"> 名前も</label></div>
+      <div id="roster-assign" style="font-size:11px; margin-top:4px;"></div>
+    </div>
+
     <div class="tool-group">
       <h4>6. FIELD SITUATION</h4>
       <div class="prop-row">
@@ -595,6 +615,7 @@
           <option value="25">25 yards</option>
           <option value="30" selected>30 yards (標準)</option>
           <option value="40">40 yards</option>
+          <option value="45">45 yards</option>
           <option value="50">50 yards</option>
           <option value="75">75 yards</option>
           <option value="100">100 yards</option>
@@ -635,7 +656,41 @@
           <label class="chk-label"><input type="checkbox" id="ez-none" checked onchange="GridironApp.changeEndZone('none')"> None</label>
           <label class="chk-label"><input type="checkbox" id="ez-top" onchange="GridironApp.changeEndZone('top')"> Top Endzone</label>
           <label class="chk-label"><input type="checkbox" id="ez-bottom" onchange="GridironApp.changeEndZone('bottom')"> Bottom Endzone</label>
+          <label class="chk-label" style="width:100%; border-top:1px dashed #52525b; padding-top:4px; margin-top:2px;" title="End Zoneの4隅にオレンジのパイロンを置く(✓で表示 / 外すと消える)"><input type="checkbox" id="pylons-on" onchange="GridironApp.changeFieldSettings()"> 🟧 Pylons パイロン (4隅・オレンジ)</label>
         </div>
+      </div>
+      <div class="prop-row">
+        <label>Field Fill:</label>
+        <select id="field-color" onchange="GridironApp.changeFieldSettings()" title="フィールドの塗り(パターン / 色)を選びます">
+          <option value="none">None (白・標準)</option>
+          <optgroup label="Patterns">
+            <option value="hatchA">▨ 斜線 ／ (広い間隔)</option>
+            <option value="hatchC">▧ 斜線 ＼ (広い間隔)</option>
+            <option value="hatchD">▨ 斜線 ／ (細かい)</option>
+            <option value="hatchB">▧ 斜線 ＼ (細かい)</option>
+            <option value="dotsD">▩ 網(濃い)</option>
+            <option value="dotsL">▒ 網(うすい)</option>
+          </optgroup>
+          <optgroup label="Colors">
+            <option value="grass">Grass Green</option>
+            <option value="tan">Court Tan</option>
+            <option value="rzred">Red Zone Red</option>
+            <option value="silver">Silver</option>
+            <option value="black">Black</option>
+            <option value="white">White</option>
+            <option value="red">Red</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+            <option value="navy">Navy Blue</option>
+            <option value="cyan">Cyan</option>
+            <option value="yellow">Yellow</option>
+            <option value="orange">Orange</option>
+            <option value="gold">Gold</option>
+            <option value="brown">Brown</option>
+            <option value="maroon">Maroon</option>
+            <option value="purple">Purple</option>
+          </optgroup>
+        </select>
       </div>
 
       <div class="prop-row">
@@ -688,6 +743,7 @@
   <div class="workspace">
     <div class="call-header">
       <div class="call-row">
+        <button id="btn-hdr" type="button" onclick="GridironApp.toggleHeader()" title="入力欄を小さくたたむ / 開く(図を大きく使いたいとき)" style="padding:2px 7px;">▲</button>
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">Category:</span>
         <select id="play-cat" onchange="GridironApp.applyCatUI()" title="Category(Play Book の振り分けに使います)" style="width:auto; font-weight:bold;"><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
         <button onclick="GridironApp.manageCats()" title="Categoryの追加・名前変更・削除" style="padding:2px 7px;">✎</button>
@@ -745,9 +801,6 @@
       <span></span><button type="button" onclick="GridironApp.nudgeDir('d')" style="font-size:16px; font-weight:bold; padding:0;" title="下へ">▼</button><span></span>
     </div>
 
-    <div class="status-bar" id="status-text">
-      操作方法: Def Personnel欄追加、各陣形未選択（空欄）対応、Dashed Circle追加完了。
-    </div>
   </div>
 
   <!-- 右インスペクター -->
@@ -946,6 +999,8 @@ const GridironApp = (() => {
   let losY = 280;
   let fieldYards = '5'; // 5ヤード固定      
   let yardStartMode = '+20', numLos = 30, numGoal = 'down', numArrow = true, fieldLinesOff = false; 
+  let fieldFill = 'none', pylonsOn = false;
+  try { fieldFill = localStorage.getItem('pdl_fieldfill') || (localStorage.getItem('pdl_fieldcolor') === 'green' ? 'grass' : 'none'); } catch (e) {}
   let yardLines = '10', ezTop = false, ezBottom = false, slLeft = false, slRight = false;
   const SL_W = 56; // サイドライン外側(アウトオブバウンズ)の幅 ≒3yd
 
@@ -1158,16 +1213,149 @@ const GridironApp = (() => {
     zoom = 1; panX = 0; panY = 0; applyView();
     const wr = ws.getBoundingClientRect(), r0 = canvas.getBoundingClientRect();
     const narrow = matchMedia(NARROW_Q).matches, hd = document.querySelector('.call-header');
-    let topPad = hd ? Math.max(90, hd.getBoundingClientRect().bottom - wr.top + 6) : 90, botPad = narrow ? 80 : 70;
+    let topPad = hd ? Math.max(90, hd.getBoundingClientRect().bottom - wr.top + 2) : 90, botPad = narrow ? 76 : 58;
     { const R = padReserve(); if (R.top) topPad += R.top; if (R.bottom) botPad = Math.max(botPad, R.bottom); }
-    const availW = wr.width - (narrow ? 16 : 30), availH = wr.height - topPad - botPad;
-    const fz = Math.max(0.15, Math.min(1, availW / W, availH / H));
+    const availW = wr.width - (narrow ? 12 : 12), availH = wr.height - topPad - botPad;
+    const fz = Math.max(0.15, Math.min(1.5, availW / W, availH / H));   // 余白を詰め、空きがあれば100%より大きく表示(図のサイズ自体は変わらない)
     zoom = fz;
     panX = (wr.left + wr.width / 2 - (W * fz) / 2) - r0.left;
     panY = (wr.top + topPad + (availH - H * fz) / 2) - r0.top;
     applyView();
   }
+
+  // ===== SCOUT ROSTER(相手チームの名簿: CSV読込 → 図の選手に背番号を割当) =====
+  let roster = {}, rosterShowNo = true, rosterShowName = false;
+  try { roster = JSON.parse(localStorage.getItem('pdl_roster_v1') || '{}') || {}; const o = JSON.parse(localStorage.getItem('pdl_roster_opts') || '{}'); if (o.n !== undefined) rosterShowNo = !!o.n; if (o.m !== undefined) rosterShowName = !!o.m; } catch (e) { roster = {}; }
+  const rosterSave = () => { try { localStorage.setItem('pdl_roster_v1', JSON.stringify(roster)); } catch (e) { toast('名簿を保存できませんでした(容量不足)'); } };
+  function parseCSV(text) {
+    text = text.replace(/^﻿/, '');
+    const first = text.split(/\r?\n/)[0] || '';
+    const d = (first.split('\t').length > first.split(',').length) ? '\t' : ',';
+    const rows = []; let row = [], cur = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) { if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += c; }
+      else if (c === '"') q = true;
+      else if (c === d) { row.push(cur); cur = ''; }
+      else if (c === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
+      else if (c !== '\r') cur += c;
+    }
+    if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+    return rows.filter(r => r.some(x => String(x).trim() !== ''));
+  }
+  const HDR_ALIAS = { team: ['team', 'チーム', 'チーム名'], side: ['side', 'サイド', '攻守', 'unit'], pos: ['pos', 'position', 'ポジション'], slot: ['slot', 'スロット', '番手'], no: ['no', 'no.', 'number', '背番号', '番号', '#'], name: ['name', '名前', '氏名', '選手名'], grade: ['grade', '学年'], height: ['height', '身長'], weight: ['weight', '体重'], note: ['note', 'memo', 'メモ', '備考', '特徴'] };
+  function normSide(v) { v = String(v || '').trim().toUpperCase(); if (['OFF', 'O', 'OFFENSE', '攻撃', 'オフェンス', 'オフ'].includes(v)) return 'OFF'; if (['DEF', 'D', 'DEFENSE', '守備', 'ディフェンス', 'ディフ'].includes(v)) return 'DEF'; return v; }
+  function importRosterText(text, fname) {
+    const rows = parseCSV(text);
+    if (rows.length < 2) { toast('名簿の行が見つかりません'); return; }
+    const hdr = rows[0].map(h => String(h).trim().toLowerCase()), idx = {};
+    Object.keys(HDR_ALIAS).forEach(k => { idx[k] = hdr.findIndex(h => HDR_ALIAS[k].includes(h)); });
+    if (idx.no < 0) { toast('見出しに「No」(背番号)の列がありません。書式サンプルを見てください', 4000); return; }
+    const g = (r, k) => idx[k] >= 0 ? String(r[idx[k]] || '').trim() : '';
+    const byTeam = {}; let n = 0;
+    rows.slice(1).forEach(r => {
+      const no = g(r, 'no'); if (!no) return;
+      const team = g(r, 'team') || (fname || 'Team').replace(/\.[^.]+$/, '');
+      (byTeam[team] = byTeam[team] || []).push({ side: normSide(g(r, 'side')), pos: g(r, 'pos'), slot: g(r, 'slot'), no, name: g(r, 'name'), grade: g(r, 'grade'), height: g(r, 'height'), weight: g(r, 'weight'), note: g(r, 'note') }); n++;
+    });
+    Object.keys(byTeam).forEach(t => { roster[t] = byTeam[t]; });
+    rosterSave();
+    const sel = document.getElementById('roster-team'); rosterTeams(Object.keys(byTeam)[0]);
+    toast(`名簿を読み込みました: ${Object.keys(byTeam).length}チーム / ${n}人`, 3000);
+  }
+  function rosterTeams(select) {
+    const sel = document.getElementById('roster-team'); if (!sel) return;
+    const cur = select || sel.value; sel.innerHTML = '';
+    Object.keys(roster).forEach(t => { const o = document.createElement('option'); o.value = o.textContent = t; sel.appendChild(o); });
+    if (cur && roster[cur]) sel.value = cur;
+    rosterRender();
+  }
+  function rosterRender() {
+    const box = document.getElementById('roster-list'); if (!box) return;
+    const team = document.getElementById('roster-team').value, side = document.getElementById('roster-side').value, q = (document.getElementById('roster-q').value || '').trim().toLowerCase();
+    box.innerHTML = '';
+    const list = (roster[team] || []).filter(p => (!side || p.side === side) && (!q || [p.no, p.name, p.pos, p.slot, p.note].join(' ').toLowerCase().includes(q)));
+    if (!list.length) { box.innerHTML = '<div style="padding:6px; color:#a1a1aa;">名簿がありません。「CSV読込」で読み込んでください。</div>'; return; }
+    list.forEach(p => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; gap:6px; padding:3px 6px; cursor:pointer; border-bottom:1px solid #2a2a2e; align-items:baseline;';
+      row.title = [p.note, p.grade && ('学年' + p.grade), p.height && (p.height + 'cm'), p.weight && (p.weight + 'kg')].filter(Boolean).join(' / ');
+      const mk = (t, css) => { const s = document.createElement('span'); s.textContent = t; s.style.cssText = css || ''; row.appendChild(s); };
+      mk('#' + p.no, 'font-weight:bold; min-width:34px; color:#fcd34d;'); mk(p.name || '', 'flex:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;'); mk((p.side ? p.side + ' ' : '') + (p.pos || '') + (p.slot ? ' ' + p.slot : ''), 'color:#a1a1aa; font-size:10px;');
+      row.onmouseenter = () => row.style.background = '#2a2a30'; row.onmouseleave = () => row.style.background = '';
+      row.onclick = () => rosterAssign(p);
+      box.appendChild(row);
+    });
+  }
+  function rosterAssign(p) {
+    if (!selectedObj || selectedObj.type !== 'player') { toast('先に、図の選手をクリックして選んでください', 2500); return; }
+    pushHistory(); selectedObj.item.no = p.no; selectedObj.item.nm = p.name || ''; selectedObj.item.rpos = ((p.side ? p.side + ' ' : '') + (p.pos || '') + (p.slot ? ' ' + p.slot : '')).trim();
+    render(); rosterAssignList(true); toast(`${selectedObj.item.label} ← #${p.no} ${p.name || ''}`);
+  }
+  function rosterManual() {
+    if (!selectedObj || selectedObj.type !== 'player') { toast('先に、図の選手をクリックして選んでください', 2500); return; }
+    const v = prompt('背番号 と 名前(空白で区切る。例: 52 中村)', ((selectedObj.item.no || '') + ' ' + (selectedObj.item.nm || '')).trim());
+    if (v === null) return;
+    const m = v.trim().match(/^(\S+)\s*(.*)$/); pushHistory();
+    selectedObj.item.no = m ? m[1].replace(/^#/, '') : ''; selectedObj.item.nm = m ? m[2] : '';
+    render(); rosterAssignList(true);
+  }
+  function rosterClearSel() {
+    if (!selectedObj || selectedObj.type !== 'player') { toast('先に、図の選手をクリックして選んでください', 2500); return; }
+    pushHistory(); delete selectedObj.item.no; delete selectedObj.item.nm; delete selectedObj.item.rpos; render(); rosterAssignList(true);
+  }
+  function rosterDelTeam() {
+    const t = document.getElementById('roster-team').value; if (!t || !roster[t]) return;
+    if (!confirm(`「${t}」の名簿を削除しますか?`)) return;
+    delete roster[t]; rosterSave(); rosterTeams();
+  }
+  function rosterOpts() {
+    rosterShowNo = document.getElementById('roster-showno').checked; rosterShowName = document.getElementById('roster-showname').checked;
+    try { localStorage.setItem('pdl_roster_opts', JSON.stringify({ n: rosterShowNo, m: rosterShowName })); } catch (e) {}
+    render();
+  }
+  let _assignSig = '';
+  function rosterAssignList(force) {
+    const box = document.getElementById('roster-assign'); if (!box) return;
+    const list = players.filter(p => p.no);
+    const sig = list.map(p => p.label + '|' + p.no + '|' + (p.nm || '')).join(';');
+    if (!force && sig === _assignSig) return; _assignSig = sig;
+    box.innerHTML = '';
+    if (!list.length) return;
+    const h = document.createElement('div'); h.textContent = 'このプレーの割当(スカウティングカード)'; h.style.cssText = 'color:#a1a1aa; font-size:10px; margin-bottom:2px;'; box.appendChild(h);
+    list.forEach(p => {
+      const r = document.createElement('div'); r.style.cssText = 'display:flex; gap:6px; padding:1px 4px; cursor:pointer;';
+      r.textContent = `${p.label}  →  #${p.no} ${p.nm || ''}`; r.title = p.rpos || '';
+      r.onclick = () => { selectedObj = { type: 'player', item: p }; render(); };
+      box.appendChild(r);
+    });
+  }
+  setInterval(() => rosterAssignList(false), 700);
+  function rosterImport() { const f = document.getElementById('roster-file'); f.value = ''; f.click(); }
+  function rosterSample() {
+    const csv = '﻿Team,Side,Pos,Slot,No,Name,Grade,Height,Weight,Note\r\nサンプル高校,OFF,QB,#1,12,山田 太郎,3,178,72,右投げ / 走れる\r\nサンプル高校,OFF,WR,#1,81,鈴木 三郎,3,175,65,スピードあり\r\nサンプル高校,DEF,LB,#1,52,中村 八郎,3,174,78,M(ミドル)\r\nサンプル高校,DEF,DB,#1,21,小林 九郎,2,168,60,CB / 足が速い\r\n';
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'roster_sample.csv'; document.body.appendChild(a); a.click(); a.remove();
+  }
+  document.addEventListener('change', e => {
+    if (!e.target || e.target.id !== 'roster-file' || !e.target.files[0]) return;
+    const f = e.target.files[0], rd = new FileReader();
+    rd.onload = () => {
+      const buf = rd.result; let text;
+      try { text = new TextDecoder('utf-8', { fatal: true }).decode(buf); } catch (err) { try { text = new TextDecoder('shift_jis').decode(buf); } catch (e2) { text = new TextDecoder().decode(buf); } }   // ExcelのCSV(Shift_JIS)にも対応
+      importRosterText(text, f.name);
+    };
+    rd.readAsArrayBuffer(f);
+  });
+  window.addEventListener('load', () => { try { const a = document.getElementById('roster-showno'), b = document.getElementById('roster-showname'); if (a) a.checked = rosterShowNo; if (b) b.checked = rosterShowName; rosterTeams(); } catch (e) {} });
   function resetView() { fitView(); }
+  function toggleHeader(force) {   // 上の入力欄(PERSONNEL〜COVERAGE、説明文)をたたんで、図を大きく使う
+    const hd = document.querySelector('.call-header'); if (!hd) return;
+    const on = force === undefined ? !hd.classList.contains('hdr-min') : !!force;
+    hd.classList.toggle('hdr-min', on);
+    const b = document.getElementById('btn-hdr'); if (b) b.textContent = on ? '▼' : '▲';
+    try { localStorage.setItem('pdl_hdrmin', on ? '1' : '0'); } catch (e) {}
+    setTimeout(fitView, 30);
+  }
 
   const idb = {
     db: null,
@@ -1200,8 +1388,9 @@ const GridironApp = (() => {
   }
 
   const EZ_H = PX_PER_YD * 10;   // エンドゾーン1つぶん(10yd)
-  const calcH = () => Math.round(PX_PER_YD * fieldLen + (ezTop ? EZ_H : 0) + (ezBottom ? EZ_H : 0));   // エンドゾーンは、余白として足す
-  const halfYd = () => fieldLen === 75 ? 37 : fieldLen / 2;
+  const BOT_PAD = PX_PER_YD * 5;   // 下側の余白(5yd)。フィールドの線・数字は、そのまま下へ続ける
+  const calcH = () => Math.round(PX_PER_YD * fieldLen + (ezTop ? EZ_H : 0) + (ezBottom ? EZ_H : 0) + (ezBottom ? 0 : BOT_PAD));   // エンドゾーンは、余白として足す
+  const halfYd = () => (fieldLen === 75 ? 37 : (fieldLen === 45 ? 22 : fieldLen / 2));
   const calcLosY = () => (ezTop ? EZ_H : 0) + PX_PER_YD * halfYd();                                  // LOSは、フィールド(30yd)の中央
   function resizeCanvas() {
     H = calcH();
@@ -1310,7 +1499,7 @@ const GridironApp = (() => {
     // 折りたたみ: 見出し(先頭の要素)を押して開閉。状態は覚えておく
     const blocks = [...sb.querySelectorAll(':scope > .tool-group'), ...ins.querySelectorAll(':scope > div')];
     const keyOf = b => 'gps_acc_' + (b.querySelector('h4') ? b.querySelector('h4').textContent.trim().slice(0, 24) : '');
-    const defOpen = b => /グループ|ルート|ライン設定|選手配置|FIELD|保存済み|プレイ・状況|Players Note|矢印ボタン|Pencil/.test((b.querySelector('h4') || {}).textContent || '');
+    const defOpen = b => /グループ|ルート|ライン設定|選手配置|FIELD|保存済み|プレイ・状況|Players Note|矢印ボタン|Pencil|SCOUT ROSTER/.test((b.querySelector('h4') || {}).textContent || '');
     blocks.forEach(b => {
       const head = b.firstElementChild; if (!head || !b.querySelector('h4')) return;
       head.classList.add('acc-head');
@@ -1889,8 +2078,10 @@ const GridironApp = (() => {
     const n = document.getElementById('ez-none'), t = document.getElementById('ez-top'), b = document.getElementById('ez-bottom');
     if (which === 'none') { t.checked = false; b.checked = false; n.checked = true; }
     else { n.checked = !(t.checked || b.checked); }
-    const prevLos = losY;
+    const prevLos = losY, hadEz = ezTop || ezBottom;
     ezTop = t.checked; ezBottom = b.checked;
+    if (!hadEz && (ezTop || ezBottom)) { pylonsOn = true; document.getElementById('pylons-on').checked = true; }   // End Zoneを付けたとき、パイロンも自動でON(あとでチェックを外せば消える)
+    if (!(ezTop || ezBottom)) { pylonsOn = false; document.getElementById('pylons-on').checked = false; }
     resizeCanvas(); losY = calcLosY();
     const dy = losY - prevLos;
     if (dy !== 0) {
@@ -1923,6 +2114,8 @@ const GridironApp = (() => {
     document.getElementById('ez-top').checked = ezTop;
     document.getElementById('ez-bottom').checked = ezBottom;
     document.getElementById('ez-none').checked = !(ezTop || ezBottom);
+    document.getElementById('field-color').value = fieldFill;
+    document.getElementById('pylons-on').checked = pylonsOn;
   }
 
   function updateLinesSeg() {
@@ -1938,6 +2131,8 @@ const GridironApp = (() => {
     document.getElementById('num-custom').style.display = yardStartMode === 'custom' ? 'flex' : 'none';
     yardLines = document.getElementById('yard-lines-on').checked ? '10' : 'none';
     const prevLen = fieldLen;
+    fieldFill = document.getElementById('field-color').value || 'none'; pylonsOn = document.getElementById('pylons-on').checked;
+    try { localStorage.setItem('pdl_fieldfill', fieldFill); } catch (e) {}
     fieldLen = parseInt(document.getElementById('field-len').value, 10) || 30;
     fieldLinesOff = document.getElementById('field-lines-mode').value === 'off';
     updateLinesSeg();
@@ -2119,8 +2314,55 @@ const GridironApp = (() => {
     return closest;
   }
 
+  const FILL_COLORS = { grass: '#4cc440', tan: '#d2b48c', rzred: '#c0392b', silver: '#c0c0c0', black: '#111111', white: '#ffffff', red: '#e53935', green: '#16a34a', blue: '#2563eb', navy: '#1e3a8a', cyan: '#22d3ee', yellow: '#facc15', orange: '#f97316', gold: '#d4a017', brown: '#8b5a2b', maroon: '#7f1d1d', purple: '#7c3aed' };
+  const fillColor = () => FILL_COLORS[fieldFill] || null;
+  const lumOf = hex => { const n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255; };
+  const darkLook = () => { const c = fillColor(); return !!c && lumOf(c) < 0.6; };   // 濃い色の塗りでは、線・文字を白系にする
+  const patMode = () => ['hatchA', 'hatchB', 'hatchC', 'hatchD', 'dotsD', 'dotsL'].includes(fieldFill);
+  const PAT_LINE = { '#94a3b8': '#0f172a', '#cbd5e1': '#334155', '#f1f5f9': '#64748b', '#475569': '#000000' };   // 模様の上では、ヤード線を濃く
+  const GC = (a, b) => darkLook() ? b : (patMode() ? (PAT_LINE[a] || a) : a);
+  const shade = (hex, f) => { const n = parseInt(hex.slice(1), 16); const q = v => Math.max(0, Math.min(255, Math.round(v * f))).toString(16).padStart(2, '0'); return '#' + q(n >> 16) + q((n >> 8) & 255) + q(n & 255); };
+  const ezFill = () => { const c = fillColor(); return (!c || fieldFill === 'white') ? '#e2e8f0' : shade(c, 0.78); };
+  let _patCache = {};
+  function fillPattern(kind) {
+    if (_patCache[kind]) return _patCache[kind];
+    const wide = kind === 'hatchA' || kind === 'hatchC', fwd = kind === 'hatchA' || kind === 'hatchD';   // wide=広い間隔 / fwd=／向き
+    const n = kind.startsWith('hatch') ? (wide ? 10 : 6) : 6;   // PlayMaker Pro風: 細い黒線を、細かい間隔で
+    const t = document.createElement('canvas'); t.width = t.height = n; const g = t.getContext('2d');
+    g.fillStyle = '#ffffff'; g.fillRect(0, 0, n, n);
+    if (kind.startsWith('hatch')) {
+      g.strokeStyle = '#000000'; g.lineWidth = wide ? 1.3 : 1; g.beginPath();
+      for (let k = -1; k <= 1; k++) {
+        if (fwd) { g.moveTo(k * n, n); g.lineTo(k * n + n, 0); } else { g.moveTo(k * n, 0); g.lineTo(k * n + n, n); }
+      }
+      g.stroke();
+    } else if (kind === 'dotsD') {   // 網(濃い)
+      g.fillStyle = '#c3c8d0'; g.fillRect(0, 0, n, n); g.fillStyle = '#3f4856'; g.fillRect(0, 0, 3, 3); g.fillRect(3, 3, 3, 3);
+    } else {                         // 網(うすい)
+      g.fillStyle = '#f3f4f6'; g.fillRect(0, 0, n, n); g.fillStyle = '#6b7280'; g.fillRect(0, 0, 2, 2); g.fillRect(3, 3, 2, 2);
+    }
+    return (_patCache[kind] = ctx.createPattern(t, 'repeat'));
+  }
+  function paintField() {
+    const c = fillColor();
+    if (c) { ctx.fillStyle = c; ctx.fillRect(0, 0, W, H); }
+    else if (['hatchA', 'hatchB', 'hatchC', 'hatchD', 'dotsD', 'dotsL'].includes(fieldFill)) { ctx.fillStyle = fillPattern(fieldFill); ctx.fillRect(0, 0, W, H); }
+  }
+  function drawPylons(ezH) {
+    const pts = [];
+    if (ezTop) pts.push([11, 0, 'v'], [W - 11, 0, 'v'], [11, ezH, 'g'], [W - 11, ezH, 'g']);
+    if (ezBottom) pts.push([11, H, 'v'], [W - 11, H, 'v'], [11, H - ezH, 'g'], [W - 11, H - ezH, 'g']);
+    pts.forEach(([x, y, k]) => {
+      const cy = k === 'v' ? (y === 0 ? 11 : H - 11) : y;
+      ctx.save(); ctx.fillStyle = '#f97316'; ctx.strokeStyle = '#9a3412'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.rect(x - 10, cy - 10, 20, 20); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.rect(x - 4, cy - 4, 8, 8); ctx.fillStyle = '#fdba74'; ctx.fill();
+      ctx.restore();
+    });
+  }
   function drawField() {
     ctx.clearRect(0, 0, W, H);
+    paintField();
     const showHash = document.getElementById('show-hash').checked;
     const showGoalPost = document.getElementById('show-goalpost').checked;
 
@@ -2145,14 +2387,14 @@ const GridironApp = (() => {
     const ezH = pxPerYd * 10;
     const topY = ezTop ? ezH : 0, botY = ezBottom ? H - ezH : H;
     ctx.save();
-    ctx.fillStyle = '#e2e8f0';
+    ctx.fillStyle = ezFill();
     ctx.font = 'bold 44px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    if (ezTop) { ctx.fillRect(0, 0, W, ezH); ctx.fillStyle = '#cbd5e1'; ctx.fillText('END ZONE', W / 2, ezH / 2 + 10); ctx.fillStyle = '#e2e8f0'; }
-    if (ezBottom) { ctx.fillRect(0, H - ezH, W, ezH); ctx.fillStyle = '#cbd5e1'; ctx.fillText('END ZONE', W / 2, H - ezH / 2); }
+    if (ezTop) { ctx.fillRect(0, 0, W, ezH); ctx.fillStyle = GC('#cbd5e1','#e5e7eb'); ctx.fillText('END ZONE', W / 2, ezH / 2 + 10); ctx.fillStyle = ezFill(); }
+    if (ezBottom) { ctx.fillRect(0, H - ezH, W, ezH); ctx.fillStyle = GC('#cbd5e1','#e5e7eb'); ctx.fillText('END ZONE', W / 2, H - ezH / 2); }
     ctx.restore();
 
     const fL = slLeft ? SL_W : 0, fR = slRight ? W - SL_W : W;
-    ctx.strokeStyle = '#1e293b';
+    ctx.strokeStyle = GC('#1e293b','#ffffff');
     ctx.lineWidth = 2.5;
     if (!fieldLinesOff) ctx.strokeRect(0, 0, W, H);
 
@@ -2162,8 +2404,16 @@ const GridironApp = (() => {
     let stepYds = (fieldYards === '1') ? 1 : ((fieldYards === '5') ? 5 : ((fieldYards === '10') ? 10 : 100000));
     const maxUpYds = Math.ceil(losY / pxPerYd) + 15;
     const maxDownYds = Math.ceil((H - losY) / pxPerYd) + 15;
+    const firstRel = () => stepYds >= 100000 ? -maxDownYds : -maxDownYds + (((stepYds - (((losAbsYd - maxDownYds) % stepYds) + stepYds) % stepYds)) % stepYds);   // 5ydごとの線は、LOSからでなく、ゴールライン基準の位置に揃える
+    if (patMode() && !fieldLinesOff) {   // 模様の上でも線が見えるよう、横線の下に白いふちを引く
+      ctx.save(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 0;
+      const ys = [losY]; for (let r = firstRel(); r <= maxUpYds; r += stepYds) ys.push(losY - r * pxPerYd);
+      ctx.strokeStyle = '#000000'; ctx.lineWidth = 2.4;
+      ys.forEach(y => { if (y < -20 || y > H + 20) return; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); });
+      ctx.restore();
+    }
 
-    for (let relYd = -maxDownYds; relYd <= maxUpYds; relYd += stepYds) {
+    for (let relYd = firstRel(); relYd <= maxUpYds; relYd += stepYds) {
       const y = losY - relYd * pxPerYd;
       if (y < -20 || y > H + 20) continue;
 
@@ -2171,7 +2421,7 @@ const GridironApp = (() => {
       const is10Yd = Math.abs(absYd % 10) === 0;
       const is5Yd = Math.abs(absYd % 5) === 0;
 
-      ctx.strokeStyle = is10Yd ? '#94a3b8' : (is5Yd ? '#cbd5e1' : '#f1f5f9');
+      ctx.strokeStyle = is10Yd ? GC('#94a3b8','#ffffff') : (is5Yd ? GC('#cbd5e1','#e5e7eb') : GC('#f1f5f9','#d1d5db'));
       ctx.lineWidth = is10Yd ? 1.5 : (is5Yd ? 1 : 0.6);
       
       if (!is10Yd && !fieldLinesOff) {
@@ -2188,7 +2438,7 @@ const GridironApp = (() => {
       if (y < -20 || y > H + 20) continue;
       const absYd = losAbsYd + relYd;
       if (!fieldLinesOff && yardLines !== 'none' && Math.abs(absYd % parseInt(yardLines, 10)) === 0) {
-        ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+        ctx.strokeStyle = GC('#94a3b8','#ffffff'); ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
       }
       if (yardStartMode !== 'none' && Math.abs(absYd % 10) === 0) {
@@ -2203,14 +2453,14 @@ const GridironApp = (() => {
       }
     }
 
-    ctx.strokeStyle = '#334155';
+    ctx.strokeStyle = GC('#334155','#ffffff');
     ctx.lineWidth = 1.2;
-    for (let relYd = -maxDownYds; relYd <= maxUpYds; relYd += stepYds) {
+    for (let relYd = firstRel(); relYd <= maxUpYds; relYd += stepYds) {
       const y = losY - relYd * pxPerYd;
       if (y < -20 || y > H + 20) continue;
       
-      const is10 = Math.abs(relYd % 10) === 0;
-      const is5 = Math.abs(relYd % 5) === 0;
+      const is10 = Math.abs((losAbsYd + relYd) % 10) === 0;
+      const is5 = Math.abs((losAbsYd + relYd) % 5) === 0;
       const tickLen = is10 ? 12 : (is5 ? 8 : 4);
       if (fieldLinesOff) continue;
 
@@ -2219,7 +2469,7 @@ const GridironApp = (() => {
     }
 
     if (showHash && !fieldLinesOff) {
-      ctx.strokeStyle = '#94a3b8';
+      ctx.strokeStyle = GC('#94a3b8','#ffffff');
       ctx.lineWidth = 1.3;
       const halfWidthPx = 145; 
       const leftHashX = (W / 2) - halfWidthPx;
@@ -2233,7 +2483,7 @@ const GridironApp = (() => {
     }
 
     if (!fieldLinesOff) {
-    ctx.strokeStyle = '#475569';
+    ctx.strokeStyle = GC('#475569','#ffffff');
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(0, losY);
@@ -2243,13 +2493,14 @@ const GridironApp = (() => {
 
     ctx.restore();
 
-    ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 4;
+    ctx.strokeStyle = GC('#1e293b','#ffffff'); ctx.lineWidth = 4;
     if (slLeft) { ctx.beginPath(); ctx.moveTo(fL, 0); ctx.lineTo(fL, H); ctx.stroke(); }
     if (slRight) { ctx.beginPath(); ctx.moveTo(fR, 0); ctx.lineTo(fR, H); ctx.stroke(); }
     ctx.lineWidth = 3;
     if (ezTop) { ctx.beginPath(); ctx.moveTo(0, ezH); ctx.lineTo(W, ezH); ctx.stroke(); }
     if (ezBottom) { ctx.beginPath(); ctx.moveTo(0, H - ezH); ctx.lineTo(W, H - ezH); ctx.stroke(); }
 
+    if (pylonsOn) drawPylons(ezH);
     drawScoutBanner();
     if (showGoalPost) drawHGoalPost(W / 2, 0);
   }
@@ -2502,6 +2753,14 @@ const GridironApp = (() => {
           const uw = ctx.measureText(p.label).width;
           ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = Math.max(1.5, fontSize / 10);
           ctx.beginPath(); ctx.moveTo(p.x - uw / 2, p.y + fontSize * 0.62); ctx.lineTo(p.x + uw / 2, p.y + fontSize * 0.62); ctx.stroke();
+        }
+        if (rosterShowNo && p.no) {   // スカウティング: 背番号(と名前)のタグ
+          const tag = '#' + p.no + (rosterShowName && p.nm ? ' ' + p.nm : '');
+          ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          const tw = ctx.measureText(tag).width + 8, ty = p.y + r + 10;
+          ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.rect(p.x - tw / 2, ty - 8, tw, 16); ctx.fill(); ctx.stroke();
+          ctx.fillStyle = '#111827'; ctx.fillText(tag, p.x, ty + 0.5);
         }
       } else {
         ctx.strokeStyle = '#94a3b8'; ctx.setLineDash([2, 2]);
@@ -3430,6 +3689,7 @@ const GridironApp = (() => {
     fieldLinesOff = !!pData.fieldLinesOff; const pl = fieldLen, plH = H; fieldLen = pData.fieldLen || 30; ezTop = !!pData.ezTop; ezBottom = !!pData.ezBottom; resizeCanvas(); losY = calcLosY(); if (pl !== fieldLen || plH !== H) setTimeout(fitView, 0);
     if (pData.yardStartMode) yardStartMode = pData.yardStartMode;
     numLos = pData.numLos !== undefined ? pData.numLos : 30; numGoal = pData.numGoal || 'down'; numArrow = pData.numArrow !== false;
+    if (pData.fieldFill) fieldFill = pData.fieldFill; else if (pData.fieldGreen !== undefined) fieldFill = pData.fieldGreen ? 'grass' : 'none'; pylonsOn = !!pData.pylonsOn;
     yardLines = pData.yardLines === 'none' ? 'none' : '10'; ezTop = !!pData.ezTop; ezBottom = !!pData.ezBottom; slLeft = !!pData.slLeft; slRight = !!pData.slRight;
     syncFieldControls();
     if (pData.offSize) { document.getElementById('off-size-range').value = pData.offSize; document.getElementById('off-size-val').innerText = pData.offSize; }
@@ -3503,7 +3763,7 @@ const GridironApp = (() => {
       defFormationSelect: document.getElementById('def-form-select').value,
       meta: collectMetaValues(),
       notes: document.getElementById('play-notes').value.trim(),
-      fieldYards, fieldLen, fieldLinesOff, yardStartMode, numLos, numGoal, numArrow, yardLines, ezTop, ezBottom, ezExt: true, slLeft, slRight,
+      fieldYards, fieldLen, fieldLinesOff, yardStartMode, numLos, numGoal, numArrow, yardLines, ezTop, ezBottom, ezExt: true, slLeft, slRight, fieldFill, pylonsOn,
       offSize: document.getElementById('off-size-range').value,
       defSize: document.getElementById('def-size-range').value,
       showHash: document.getElementById('show-hash').checked,
@@ -4673,7 +4933,7 @@ const GridironApp = (() => {
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
-    savePlay, layoutSettings, initLayout, applyCatUI, save, saveAs, closePlay, newPlay, deleteSelected2, selectAllPlays, clearPlaySel, manageCats, setZoneSize, updatePlayList, exportPNG, generatePlayBookTemplate, exportPPTX, setPbLogo, pbTemplateChanged, changeSideLine, setLinesMode, addAssignRow, addAssignCol, asPanel, clearAssignRows, setAssign, assignPreset, exportJSON, importJSON, syncMetaToHeader, syncPersonnelToHeader,
+    savePlay, layoutSettings, initLayout, toggleHeader, rosterImport, rosterSample, rosterRender, rosterManual, rosterClearSel, rosterDelTeam, rosterOpts, applyCatUI, save, saveAs, closePlay, newPlay, deleteSelected2, selectAllPlays, clearPlaySel, manageCats, setZoneSize, updatePlayList, exportPNG, generatePlayBookTemplate, exportPPTX, setPbLogo, pbTemplateChanged, changeSideLine, setLinesMode, addAssignRow, addAssignCol, asPanel, clearAssignRows, setAssign, assignPreset, exportJSON, importJSON, syncMetaToHeader, syncPersonnelToHeader,
     addOffPaletteItem, addDefPaletteItem, buildPlayObj, loadPlayObj, updateSaveState, scoutChanged, curName: () => curPlayName
   };
 })();
@@ -4940,6 +5200,6 @@ window.addEventListener('DOMContentLoaded', GridironApp.init);
 document.addEventListener('input',function(e){var t=e.target;if(t&&t.closest&&t.closest('#assign-rows')&&window.GridironApp){GridironApp.render();GridironApp.asPanel();}});
 
 </script>
-<script>window.addEventListener('load',function(){try{GridironApp.initLayout&&GridironApp.initLayout();}catch(e){}});</script>
+<script>window.addEventListener('load',function(){try{GridironApp.initLayout&&GridironApp.initLayout(); try{ if(localStorage.getItem('pdl_hdrmin')==='1') GridironApp.toggleHeader(true); }catch(e){}}catch(e){}});</script>
 </body>
 </html>
