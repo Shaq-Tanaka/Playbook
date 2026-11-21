@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v139)</title>
+<title>Play Draw Lab (Pro Edition v140)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -300,7 +300,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v139</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v140</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -3824,7 +3824,37 @@ const GridironApp = (() => {
   let customCats = [];
   try { customCats = JSON.parse(localStorage.getItem('gridiron_cats_v1') || '[]').filter(c => c && c.k && c.l); } catch (e) { customCats = []; }
   const saveCats = () => { try { localStorage.setItem('gridiron_cats_v1', JSON.stringify(customCats)); } catch (e) {} };
-  const allCats = () => BASE_CATS.map(c => ({ k: c[0], l: c[1] })).concat(customCats);
+  let catOrder = [];
+  try { catOrder = JSON.parse(localStorage.getItem('pdl_catorder') || '[]'); if (!Array.isArray(catOrder)) catOrder = []; } catch (e) { catOrder = []; }
+  const saveCatOrder = () => { try { localStorage.setItem('pdl_catorder', JSON.stringify(catOrder)); } catch (e) {} };
+  const allCats = () => {
+    const l = BASE_CATS.map(c => ({ k: c[0], l: c[1] })).concat(customCats);
+    const ix = k => { const i = catOrder.indexOf(k); return i < 0 ? 1e6 : i; };
+    return l.map((c, i) => [c, i]).sort((a, b) => (ix(a[0].k) - ix(b[0].k)) || (a[1] - b[1])).map(a => a[0]);
+  };
+  function moveCat(k, dir) {
+    const l = allCats().map(c => c.k), i = l.indexOf(k), j = i + dir; if (i < 0 || j < 0 || j >= l.length) return;
+    [l[i], l[j]] = [l[j], l[i]]; catOrder = l; saveCatOrder(); fillCatSelects(); updatePlayList();
+  }
+  // ---- プレーの手動並び順 ----
+  let playOrder = [];
+  try { playOrder = JSON.parse(localStorage.getItem('pdl_playorder') || '[]'); if (!Array.isArray(playOrder)) playOrder = []; } catch (e) { playOrder = []; }
+  const savePlayOrder = () => { try { localStorage.setItem('pdl_playorder', JSON.stringify(playOrder)); } catch (e) {} };
+  function sortKeys(keys) {
+    const ix = new Map(playOrder.map((k, i) => [k, i]));
+    return keys.slice().sort((x, y) => { const a = ix.has(x) ? ix.get(x) : 1e9, b = ix.has(y) ? ix.get(y) : 1e9; return (a - b) || x.localeCompare(y, 'ja', { numeric: true }); });
+  }
+  function movePlay(name, ks, dir) {
+    const i = ks.indexOf(name), j = i + dir; if (i < 0 || j < 0 || j >= ks.length) return;
+    const full = sortKeys(Object.keys(savedPlays)), a = full.indexOf(name), b = full.indexOf(ks[j]);
+    [full[a], full[b]] = [full[b], full[a]]; playOrder = full; savePlayOrder(); updatePlayList();
+  }
+  function moveSet(g, visibleGroups, dir) {
+    const vi = visibleGroups.indexOf(g), ng = visibleGroups[vi + dir]; if (ng === undefined) return;
+    const full = sortKeys(Object.keys(savedPlays)), go = [...new Set(full.map(setOf))], a = go.indexOf(g), b = go.indexOf(ng);
+    [go[a], go[b]] = [go[b], go[a]];
+    playOrder = go.flatMap(gg => full.filter(k => setOf(k) === gg)); savePlayOrder(); updatePlayList();
+  }
   const catLabel = k => (allCats().find(c => c.k === k) || { l: k }).l;
   function fillCatSelects() {
     const mk2 = (id, head) => {
@@ -3861,10 +3891,11 @@ const GridironApp = (() => {
       ov.innerHTML = `<div style="background:#18181b; color:#e4e4e7; border:1px solid #3f3f46; border-radius:8px; padding:14px; width:380px; max-width:92vw; max-height:85vh; overflow:auto; font-size:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><b style="font-size:14px;">Categories</b><button id="cm-close" style="padding:2px 8px;">✕ 閉じる</button></div>
         <div style="display:flex; gap:4px; margin-bottom:10px;"><input id="cm-new" type="text" placeholder="追加するCategory名（例: Screen）" style="flex:1;"><button id="cm-add" style="background:#10b981; border-color:#059669; font-weight:bold; white-space:nowrap;">＋ 追加</button></div>
-        <div style="color:#a1a1aa; margin-bottom:4px;">追加したCategory(名前を直接書き換えて Enter / ✔)</div>
-        ${customCats.length ? customCats.map((c, i) => `<div style="display:flex; gap:4px; margin-bottom:4px;"><input data-i="${i}" class="cm-name" type="text" value="${esc(c.l)}" style="flex:1;"><button data-i="${i}" class="cm-ren">✔ 変更</button><button data-i="${i}" class="cm-del danger">削除</button></div>`).join('') : '<div style="color:#71717a; margin-bottom:6px;">まだありません</div>'}
-        <div style="color:#a1a1aa; margin:8px 0 3px;">初めからあるCategory(変更不可)</div>
-        <div style="color:#71717a; line-height:1.6;">${BASE_CATS.map(c => esc(c[1])).join(' / ')}</div></div>`;
+        <div style="color:#a1a1aa; margin-bottom:4px;">Order (▲▼ to reorder) / rename / delete. Built-in categories can be reordered but not renamed.</div>
+        ${allCats().map((c, n, arr) => { const ci = customCats.findIndex(x => x.k === c.k); return `<div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;"><button class="cm-up" data-k="${c.k}" ${n === 0 ? 'disabled' : ''}>▲</button><button class="cm-dn" data-k="${c.k}" ${n === arr.length - 1 ? 'disabled' : ''}>▼</button>${ci >= 0 ? `<input data-i="${ci}" class="cm-name" type="text" value="${esc(c.l)}" style="flex:1;"><button data-i="${ci}" class="cm-ren">✔ Rename</button><button data-i="${ci}" class="cm-del danger">Delete</button>` : `<span style="flex:1; padding:4px 6px; color:#a1a1aa;">${esc(c.l)} <span style="color:#71717a;">(built-in)</span></span>`}</div>`; }).join('')}
+      </div>`;
+      ov.querySelectorAll('.cm-up').forEach(b => b.onclick = () => { moveCat(b.dataset.k, -1); draw(); });
+      ov.querySelectorAll('.cm-dn').forEach(b => b.onclick = () => { moveCat(b.dataset.k, 1); draw(); });
       const add = () => { const v = ov.querySelector('#cm-new').value.trim(); if (!v) return; const k = 'c_' + Date.now().toString(36); customCats.push({ k, l: v }); saveCats(); fillCatSelects(); document.getElementById('play-cat').value = k; updatePlayList(); draw(); };
       ov.querySelector('#cm-close').onclick = () => { ov.style.display = 'none'; };
       ov.querySelector('#cm-add').onclick = add;
@@ -3915,28 +3946,34 @@ const GridironApp = (() => {
     list.innerHTML = '';
 
     const groups = new Map();
-    keys.sort((x, y) => x.localeCompare(y, 'ja', { numeric: true })).forEach(k => { const g = setOf(k); if (!groups.has(g)) groups.set(g, []); groups.get(g).push(k); });
+    sortKeys(keys).forEach(k => { const g = setOf(k); if (!groups.has(g)) groups.set(g, []); groups.get(g).push(k); });
+    const visG = [...groups.keys()];
     groups.forEach((ks, g) => {
       const open = !collapsedSets.has(g) || filter;
       const head = document.createElement('div');
       head.style.cssText = 'display:flex;align-items:center;gap:5px;padding:5px 7px;background:#27272a;border-bottom:1px solid #3f3f46;font-size:11px;font-weight:bold;color:#fcd34d;cursor:pointer;';
       const allSel = ks.every(k => playSel.has(k));
       head.innerHTML = `<input type="checkbox" style="width:auto;flex:none" title="このタイトルのプレーを、まとめて選択"${allSel ? ' checked' : ''}><span style="flex:none">${open ? '▾' : '▸'}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(g || '(タイトルなし)')}</span><span style="color:#a1a1aa;font-weight:normal">${ks.length}</span>`;
+      { const mv = document.createElement('span'); mv.style.cssText = 'flex:none;display:flex;gap:2px;';
+        [['▲', -1, 'Move this set up'], ['▼', 1, 'Move this set down']].forEach(([t, d, ti]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'mini-btn'; b.textContent = t; b.title = ti; b.style.cssText = 'padding:0 5px;font-size:9px;'; b.onclick = e => { e.stopPropagation(); moveSet(g, visG, d); }; mv.appendChild(b); });
+        head.appendChild(mv); }
       head.onclick = () => { if (collapsedSets.has(g)) collapsedSets.delete(g); else collapsedSets.add(g); updatePlayList(); };
       head.querySelector('input').onclick = e => { e.stopPropagation(); ks.forEach(k => { if (e.target.checked) playSel.add(k); else playSel.delete(k); }); updatePlayList(); };
       list.appendChild(head);
       if (!open) return;
-      ks.forEach(name => addPlayRow(list, name, currentName, g));
+      ks.forEach(name => addPlayRow(list, name, currentName, g, ks));
     });
   }
-  function addPlayRow(list, name, currentName, g) {
+  function addPlayRow(list, name, currentName, g, ks) {
     {
       const div = document.createElement('div');
       div.className = 'play-item' + (name === currentName ? ' current' : '');
       div.style.paddingLeft = g ? '18px' : '8px';
       const cc = savedPlays[name].cat || 'play';
       { const sp = savedPlays[name]; div.title = sp.savedAt ? ('更新: ' + (sp.savedBy || '(名前なし)') + '  ' + fmtT(sp.savedAt)) : ''; }
-      div.innerHTML = `<input type="checkbox" class="sel" style="width:auto;margin-right:5px;flex:none"${playSel.has(name) ? ' checked' : ''}><span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(nameOf(name))}</span><span class="del" title="削除">×</span>`;
+      div.innerHTML = `<input type="checkbox" class="sel" style="width:auto;margin-right:5px;flex:none"${playSel.has(name) ? ' checked' : ''}><span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(nameOf(name))}</span><span class="mvb" style="flex:none;display:flex;gap:2px;margin-right:3px;"><button type="button" class="mini-btn mvu" title="Move up" style="padding:0 5px;font-size:9px;">▲</button><button type="button" class="mini-btn mvd" title="Move down" style="padding:0 5px;font-size:9px;">▼</button></span><span class="del" title="削除">×</span>`;
+      div.querySelector('.mvu').onclick = e => { e.stopPropagation(); movePlay(name, ks, -1); };
+      div.querySelector('.mvd').onclick = e => { e.stopPropagation(); movePlay(name, ks, 1); };
       div.onclick = () => loadPlayObj(name, savedPlays[name]);
       { const cb = div.querySelector('.sel'); cb.onclick = e => { e.stopPropagation(); if (cb.checked) playSel.add(name); else playSel.delete(name); playSelInfo(); }; }
       div.querySelector('.del').onclick = (e) => {
@@ -3972,7 +4009,9 @@ const GridironApp = (() => {
 
   function pbKeys() {
     const f = document.getElementById('pb-cat').value;
-    return Object.keys(savedPlays).filter(k => f === 'all' || (savedPlays[k].cat || 'play') === f).sort((x, y) => x.localeCompare(y, 'ja', { numeric: true }));
+    const ci = k => { const c = savedPlays[k].cat || 'play', i = allCats().findIndex(x => x.k === c); return i < 0 ? 999 : i; };
+    const ks = sortKeys(Object.keys(savedPlays).filter(k => f === 'all' || (savedPlays[k].cat || 'play') === f));
+    return f === 'all' ? ks.map((k, i) => [k, i]).sort((a, b) => (ci(a[0]) - ci(b[0])) || (a[1] - b[1])).map(a => a[0]) : ks;
   }
   function pbBuild() {
     const [c, r] = document.getElementById('pb-layout').value.split('x').map(Number);
