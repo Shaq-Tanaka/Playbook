@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v129)</title>
+<title>Play Draw Lab (Pro Edition v134)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -105,6 +105,12 @@
   }
   .call-row { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
   .call-header.hdr-min > :not(:first-child) { display: none !important; }
+  /* 縦幅を小さく(図の作成面を広く) */
+  .call-header { padding: 4px 8px; gap: 3px; }
+  .call-header .call-row { gap: 4px; }
+  .call-header input[type=text], .call-header select { padding: 2px 5px; font-size: 11.5px; min-height: 0; }
+  .call-header button { padding: 2px 6px; font-size: 11px; }
+  .call-header .field-tag { font-size: 9.5px; }
   .field-tag { font-size: 10px; color: #fff; font-weight: bold; white-space: nowrap; }
   .status-bar {
     position: fixed; bottom: 8px; z-index: 10; background: rgba(39,39,42,0.95); padding: 4px 12px;
@@ -294,7 +300,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v129</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v134</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -570,25 +576,6 @@
       <div style="font-size:9.5px; color:#a1a1aa; margin-top:3px;">ポジション名はいつでも書き換えられます。Save Playで、一緒に保存されます。</div>
     </div>
 
-    <div class="tool-group" id="roster-group">
-      <h4>★ SCOUT ROSTER (相手の名簿)</h4>
-      <div class="prop-row" style="gap:4px; flex-wrap:wrap;">
-        <button type="button" onclick="GridironApp.rosterImport()" title="名簿のCSV(Excel可)を読み込みます" style="flex:1;">📥 CSV読込</button>
-        <button type="button" onclick="GridironApp.rosterSample()" title="書式のサンプルCSVをダウンロード" style="flex:1;">書式サンプル</button>
-        <input type="file" id="roster-file" accept=".csv,.tsv,.txt,text/csv" style="display:none">
-      </div>
-      <div class="prop-row"><label>Team:</label><select id="roster-team" onchange="GridironApp.rosterRender()"></select><button type="button" onclick="GridironApp.rosterDelTeam()" title="このチームの名簿を削除" style="padding:2px 6px;">🗑</button></div>
-      <div class="prop-row" style="gap:4px;"><select id="roster-side" onchange="GridironApp.rosterRender()" style="width:70px;"><option value="">All</option><option value="OFF">OFF</option><option value="DEF">DEF</option></select><input type="text" id="roster-q" oninput="GridironApp.rosterRender()" placeholder="検索(番号 / 名前 / Pos)" style="flex:1; min-width:0;"></div>
-      <div id="roster-list" style="max-height:190px; overflow:auto; border:1px solid #3f3f46; border-radius:4px; font-size:11px;"></div>
-      <div style="font-size:9.5px; color:#a1a1aa; margin:3px 0;">① 図の選手をクリックで選択 → ② 名簿の行をクリックで割当</div>
-      <div class="prop-row" style="gap:4px; flex-wrap:wrap;">
-        <button type="button" onclick="GridironApp.rosterManual()" title="名簿に無い選手を、背番号・名前で直接入れる" style="flex:1;">✎ 手入力</button>
-        <button type="button" onclick="GridironApp.rosterClearSel()" title="選択中の選手の背番号を外す" style="flex:1;">割当を外す</button>
-      </div>
-      <div class="prop-row" style="gap:10px;"><label class="chk-label"><input type="checkbox" id="roster-showno" checked onchange="GridironApp.rosterOpts()"> 背番号を図に表示</label><label class="chk-label"><input type="checkbox" id="roster-showname" onchange="GridironApp.rosterOpts()"> 名前も</label></div>
-      <div id="roster-assign" style="font-size:11px; margin-top:4px;"></div>
-    </div>
-
     <div class="tool-group">
       <h4>6. FIELD SITUATION</h4>
       <div class="prop-row">
@@ -748,16 +735,17 @@
         <select id="play-cat" onchange="GridironApp.applyCatUI()" title="Category(Play Book の振り分けに使います)" style="width:auto; font-weight:bold;"><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
         <button onclick="GridironApp.manageCats()" title="Categoryの追加・名前変更・削除" style="padding:2px 7px;">✎</button>
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;" title="プレーをまとめる「セットのタイトル」(例: 2x2 Mesh / 2x2 FORMATIONS)。Play Bookでも、このタイトルごとにまとまります">Title:</span>
-        <input type="text" id="set-name" placeholder="例: 2x2 Mesh" style="flex:1.4; min-width:120px; font-weight:bold; color:#fcd34d;">
+        <input type="text" id="set-name" placeholder="例: 2x2 Mesh" style="flex:1.2; min-width:70px; font-weight:bold; color:#fcd34d;">
         <span id="wrap-pname" style="display:contents">
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">Name:</span>
-        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" oninput="var t=document.getElementById('title-auto');if(t)t.checked=false;GridironApp.updateSaveState();" style="flex:2; min-width:170px; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label></span>
+        <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" oninput="var t=document.getElementById('title-auto');if(t)t.checked=false;GridironApp.updateSaveState();" style="flex:2; min-width:90px; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label></span>
         <button onclick="GridironApp.save()" title="開いているプレーがあれば上書き。New の状態なら、新しいプレーとして保存して、そのまま New に戻ります(連続保存)" style="background:#10b981; border-color:#059669; font-weight:bold; white-space:nowrap;">💾 Save</button>
         <button onclick="GridironApp.saveAs()" title="タイトルを入力して、新しいプレーとして保存します(元のプレーは、そのまま残ります)" style="white-space:nowrap;">Save as…</button>
         <button onclick="GridironApp.closePlay()" title="いまのプレーを閉じて、空の状態に戻します" style="white-space:nowrap;">Close</button>
         <button onclick="GridironApp.newPlay()" title="新しいプレーを始めます(空の図 / いまの図をコピー を選べます)" style="white-space:nowrap;">New</button>
-        <button onclick="GridironApp.exportPNG()" style="background: var(--accent); border-color: #3b82f6; white-space:nowrap;">🖼 PNG出力</button>
-        <button onclick="GridironApp.clearField()" class="danger" style="white-space:nowrap;">全クリア</button>
+        <button onclick="GridironApp.exportPNG()" style="background: var(--accent); border-color: #3b82f6; white-space:nowrap;">🖼 PNG</button>
+        <button onclick="GridironApp.clearField()" class="danger" style="white-space:nowrap;" title="図を全部クリア">クリア</button>
+        <button type="button" onclick="var h=document.getElementById('btn-help');h.style.display=h.style.display==='block'?'none':'block';setTimeout(function(){document.getElementById('z-rst').click()},30)" title="Save / Save as / Close / New の説明を開く・閉じる" style="padding:2px 7px;">?</button>
       </div>
       <div class="call-row" id="row-off">
         <span id="f-ps" style="display:contents"><span class="field-tag" id="lb-ps">PERSONNEL:</span><input type="text" id="off-personnel-input" placeholder="例: 11 / 21 / 12" oninput="GridironApp.syncPlayTitle()" style="flex:0.8; min-width:70px;"></span>
@@ -782,8 +770,8 @@
         <input type="text" id="sc-no" placeholder="例: 12" oninput="GridironApp.scoutChanged()" style="flex:.6;">
       </div>
       <input type="text" id="call-vs" style="display:none">
-      <div id="save-state" style="font-size:10.5px; color:#a7f3d0; padding:1px 4px; min-height:14px;"></div>
-      <div id="btn-help" style="font-size:10px; color:#a1a1aa; line-height:1.55; padding:0 4px 2px;">
+      <div id="save-state" style="font-size:10px; color:#a7f3d0; padding:0 4px; min-height:12px; line-height:1.2;"></div>
+      <div id="btn-help" style="display:none; font-size:10px; color:#a1a1aa; line-height:1.55; padding:0 4px 2px;">
         <b style="color:#6ee7b7">Save</b> 開いているプレーを上書き(New の状態なら、新しいプレーとして保存) ／
         <b style="color:#e4e4e7">Save as…</b> 同じタイトルの下に、別のプレーとして新規保存(元のプレーは残る) ／
         <b style="color:#e4e4e7">Close</b> 閉じて空の状態に戻す ／
@@ -1223,130 +1211,6 @@ const GridironApp = (() => {
     applyView();
   }
 
-  // ===== SCOUT ROSTER(相手チームの名簿: CSV読込 → 図の選手に背番号を割当) =====
-  let roster = {}, rosterShowNo = true, rosterShowName = false;
-  try { roster = JSON.parse(localStorage.getItem('pdl_roster_v1') || '{}') || {}; const o = JSON.parse(localStorage.getItem('pdl_roster_opts') || '{}'); if (o.n !== undefined) rosterShowNo = !!o.n; if (o.m !== undefined) rosterShowName = !!o.m; } catch (e) { roster = {}; }
-  const rosterSave = () => { try { localStorage.setItem('pdl_roster_v1', JSON.stringify(roster)); } catch (e) { toast('名簿を保存できませんでした(容量不足)'); } };
-  function parseCSV(text) {
-    text = text.replace(/^﻿/, '');
-    const first = text.split(/\r?\n/)[0] || '';
-    const d = (first.split('\t').length > first.split(',').length) ? '\t' : ',';
-    const rows = []; let row = [], cur = '', q = false;
-    for (let i = 0; i < text.length; i++) {
-      const c = text[i];
-      if (q) { if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += c; }
-      else if (c === '"') q = true;
-      else if (c === d) { row.push(cur); cur = ''; }
-      else if (c === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
-      else if (c !== '\r') cur += c;
-    }
-    if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
-    return rows.filter(r => r.some(x => String(x).trim() !== ''));
-  }
-  const HDR_ALIAS = { team: ['team', 'チーム', 'チーム名'], side: ['side', 'サイド', '攻守', 'unit'], pos: ['pos', 'position', 'ポジション'], slot: ['slot', 'スロット', '番手'], no: ['no', 'no.', 'number', '背番号', '番号', '#'], name: ['name', '名前', '氏名', '選手名'], grade: ['grade', '学年'], height: ['height', '身長'], weight: ['weight', '体重'], note: ['note', 'memo', 'メモ', '備考', '特徴'] };
-  function normSide(v) { v = String(v || '').trim().toUpperCase(); if (['OFF', 'O', 'OFFENSE', '攻撃', 'オフェンス', 'オフ'].includes(v)) return 'OFF'; if (['DEF', 'D', 'DEFENSE', '守備', 'ディフェンス', 'ディフ'].includes(v)) return 'DEF'; return v; }
-  function importRosterText(text, fname) {
-    const rows = parseCSV(text);
-    if (rows.length < 2) { toast('名簿の行が見つかりません'); return; }
-    const hdr = rows[0].map(h => String(h).trim().toLowerCase()), idx = {};
-    Object.keys(HDR_ALIAS).forEach(k => { idx[k] = hdr.findIndex(h => HDR_ALIAS[k].includes(h)); });
-    if (idx.no < 0) { toast('見出しに「No」(背番号)の列がありません。書式サンプルを見てください', 4000); return; }
-    const g = (r, k) => idx[k] >= 0 ? String(r[idx[k]] || '').trim() : '';
-    const byTeam = {}; let n = 0;
-    rows.slice(1).forEach(r => {
-      const no = g(r, 'no'); if (!no) return;
-      const team = g(r, 'team') || (fname || 'Team').replace(/\.[^.]+$/, '');
-      (byTeam[team] = byTeam[team] || []).push({ side: normSide(g(r, 'side')), pos: g(r, 'pos'), slot: g(r, 'slot'), no, name: g(r, 'name'), grade: g(r, 'grade'), height: g(r, 'height'), weight: g(r, 'weight'), note: g(r, 'note') }); n++;
-    });
-    Object.keys(byTeam).forEach(t => { roster[t] = byTeam[t]; });
-    rosterSave();
-    const sel = document.getElementById('roster-team'); rosterTeams(Object.keys(byTeam)[0]);
-    toast(`名簿を読み込みました: ${Object.keys(byTeam).length}チーム / ${n}人`, 3000);
-  }
-  function rosterTeams(select) {
-    const sel = document.getElementById('roster-team'); if (!sel) return;
-    const cur = select || sel.value; sel.innerHTML = '';
-    Object.keys(roster).forEach(t => { const o = document.createElement('option'); o.value = o.textContent = t; sel.appendChild(o); });
-    if (cur && roster[cur]) sel.value = cur;
-    rosterRender();
-  }
-  function rosterRender() {
-    const box = document.getElementById('roster-list'); if (!box) return;
-    const team = document.getElementById('roster-team').value, side = document.getElementById('roster-side').value, q = (document.getElementById('roster-q').value || '').trim().toLowerCase();
-    box.innerHTML = '';
-    const list = (roster[team] || []).filter(p => (!side || p.side === side) && (!q || [p.no, p.name, p.pos, p.slot, p.note].join(' ').toLowerCase().includes(q)));
-    if (!list.length) { box.innerHTML = '<div style="padding:6px; color:#a1a1aa;">名簿がありません。「CSV読込」で読み込んでください。</div>'; return; }
-    list.forEach(p => {
-      const row = document.createElement('div');
-      row.style.cssText = 'display:flex; gap:6px; padding:3px 6px; cursor:pointer; border-bottom:1px solid #2a2a2e; align-items:baseline;';
-      row.title = [p.note, p.grade && ('学年' + p.grade), p.height && (p.height + 'cm'), p.weight && (p.weight + 'kg')].filter(Boolean).join(' / ');
-      const mk = (t, css) => { const s = document.createElement('span'); s.textContent = t; s.style.cssText = css || ''; row.appendChild(s); };
-      mk('#' + p.no, 'font-weight:bold; min-width:34px; color:#fcd34d;'); mk(p.name || '', 'flex:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;'); mk((p.side ? p.side + ' ' : '') + (p.pos || '') + (p.slot ? ' ' + p.slot : ''), 'color:#a1a1aa; font-size:10px;');
-      row.onmouseenter = () => row.style.background = '#2a2a30'; row.onmouseleave = () => row.style.background = '';
-      row.onclick = () => rosterAssign(p);
-      box.appendChild(row);
-    });
-  }
-  function rosterAssign(p) {
-    if (!selectedObj || selectedObj.type !== 'player') { toast('先に、図の選手をクリックして選んでください', 2500); return; }
-    pushHistory(); selectedObj.item.no = p.no; selectedObj.item.nm = p.name || ''; selectedObj.item.rpos = ((p.side ? p.side + ' ' : '') + (p.pos || '') + (p.slot ? ' ' + p.slot : '')).trim();
-    render(); rosterAssignList(true); toast(`${selectedObj.item.label} ← #${p.no} ${p.name || ''}`);
-  }
-  function rosterManual() {
-    if (!selectedObj || selectedObj.type !== 'player') { toast('先に、図の選手をクリックして選んでください', 2500); return; }
-    const v = prompt('背番号 と 名前(空白で区切る。例: 52 中村)', ((selectedObj.item.no || '') + ' ' + (selectedObj.item.nm || '')).trim());
-    if (v === null) return;
-    const m = v.trim().match(/^(\S+)\s*(.*)$/); pushHistory();
-    selectedObj.item.no = m ? m[1].replace(/^#/, '') : ''; selectedObj.item.nm = m ? m[2] : '';
-    render(); rosterAssignList(true);
-  }
-  function rosterClearSel() {
-    if (!selectedObj || selectedObj.type !== 'player') { toast('先に、図の選手をクリックして選んでください', 2500); return; }
-    pushHistory(); delete selectedObj.item.no; delete selectedObj.item.nm; delete selectedObj.item.rpos; render(); rosterAssignList(true);
-  }
-  function rosterDelTeam() {
-    const t = document.getElementById('roster-team').value; if (!t || !roster[t]) return;
-    if (!confirm(`「${t}」の名簿を削除しますか?`)) return;
-    delete roster[t]; rosterSave(); rosterTeams();
-  }
-  function rosterOpts() {
-    rosterShowNo = document.getElementById('roster-showno').checked; rosterShowName = document.getElementById('roster-showname').checked;
-    try { localStorage.setItem('pdl_roster_opts', JSON.stringify({ n: rosterShowNo, m: rosterShowName })); } catch (e) {}
-    render();
-  }
-  let _assignSig = '';
-  function rosterAssignList(force) {
-    const box = document.getElementById('roster-assign'); if (!box) return;
-    const list = players.filter(p => p.no);
-    const sig = list.map(p => p.label + '|' + p.no + '|' + (p.nm || '')).join(';');
-    if (!force && sig === _assignSig) return; _assignSig = sig;
-    box.innerHTML = '';
-    if (!list.length) return;
-    const h = document.createElement('div'); h.textContent = 'このプレーの割当(スカウティングカード)'; h.style.cssText = 'color:#a1a1aa; font-size:10px; margin-bottom:2px;'; box.appendChild(h);
-    list.forEach(p => {
-      const r = document.createElement('div'); r.style.cssText = 'display:flex; gap:6px; padding:1px 4px; cursor:pointer;';
-      r.textContent = `${p.label}  →  #${p.no} ${p.nm || ''}`; r.title = p.rpos || '';
-      r.onclick = () => { selectedObj = { type: 'player', item: p }; render(); };
-      box.appendChild(r);
-    });
-  }
-  setInterval(() => rosterAssignList(false), 700);
-  function rosterImport() { const f = document.getElementById('roster-file'); f.value = ''; f.click(); }
-  function rosterSample() {
-    const csv = '﻿Team,Side,Pos,Slot,No,Name,Grade,Height,Weight,Note\r\nサンプル高校,OFF,QB,#1,12,山田 太郎,3,178,72,右投げ / 走れる\r\nサンプル高校,OFF,WR,#1,81,鈴木 三郎,3,175,65,スピードあり\r\nサンプル高校,DEF,LB,#1,52,中村 八郎,3,174,78,M(ミドル)\r\nサンプル高校,DEF,DB,#1,21,小林 九郎,2,168,60,CB / 足が速い\r\n';
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'roster_sample.csv'; document.body.appendChild(a); a.click(); a.remove();
-  }
-  document.addEventListener('change', e => {
-    if (!e.target || e.target.id !== 'roster-file' || !e.target.files[0]) return;
-    const f = e.target.files[0], rd = new FileReader();
-    rd.onload = () => {
-      const buf = rd.result; let text;
-      try { text = new TextDecoder('utf-8', { fatal: true }).decode(buf); } catch (err) { try { text = new TextDecoder('shift_jis').decode(buf); } catch (e2) { text = new TextDecoder().decode(buf); } }   // ExcelのCSV(Shift_JIS)にも対応
-      importRosterText(text, f.name);
-    };
-    rd.readAsArrayBuffer(f);
-  });
-  window.addEventListener('load', () => { try { const a = document.getElementById('roster-showno'), b = document.getElementById('roster-showname'); if (a) a.checked = rosterShowNo; if (b) b.checked = rosterShowName; rosterTeams(); } catch (e) {} });
   function resetView() { fitView(); }
   function toggleHeader(force) {   // 上の入力欄(PERSONNEL〜COVERAGE、説明文)をたたんで、図を大きく使う
     const hd = document.querySelector('.call-header'); if (!hd) return;
@@ -1499,7 +1363,7 @@ const GridironApp = (() => {
     // 折りたたみ: 見出し(先頭の要素)を押して開閉。状態は覚えておく
     const blocks = [...sb.querySelectorAll(':scope > .tool-group'), ...ins.querySelectorAll(':scope > div')];
     const keyOf = b => 'gps_acc_' + (b.querySelector('h4') ? b.querySelector('h4').textContent.trim().slice(0, 24) : '');
-    const defOpen = b => /グループ|ルート|ライン設定|選手配置|FIELD|保存済み|プレイ・状況|Players Note|矢印ボタン|Pencil|SCOUT ROSTER/.test((b.querySelector('h4') || {}).textContent || '');
+    const defOpen = b => /グループ|ルート|ライン設定|選手配置|FIELD|保存済み|プレイ・状況|Players Note|矢印ボタン|Pencil/.test((b.querySelector('h4') || {}).textContent || '');
     blocks.forEach(b => {
       const head = b.firstElementChild; if (!head || !b.querySelector('h4')) return;
       head.classList.add('acc-head');
@@ -2753,14 +2617,6 @@ const GridironApp = (() => {
           const uw = ctx.measureText(p.label).width;
           ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = Math.max(1.5, fontSize / 10);
           ctx.beginPath(); ctx.moveTo(p.x - uw / 2, p.y + fontSize * 0.62); ctx.lineTo(p.x + uw / 2, p.y + fontSize * 0.62); ctx.stroke();
-        }
-        if (rosterShowNo && p.no) {   // スカウティング: 背番号(と名前)のタグ
-          const tag = '#' + p.no + (rosterShowName && p.nm ? ' ' + p.nm : '');
-          ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          const tw = ctx.measureText(tag).width + 8, ty = p.y + r + 10;
-          ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.rect(p.x - tw / 2, ty - 8, tw, 16); ctx.fill(); ctx.stroke();
-          ctx.fillStyle = '#111827'; ctx.fillText(tag, p.x, ty + 0.5);
         }
       } else {
         ctx.strokeStyle = '#94a3b8'; ctx.setLineDash([2, 2]);
@@ -4933,7 +4789,7 @@ const GridironApp = (() => {
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
-    savePlay, layoutSettings, initLayout, toggleHeader, rosterImport, rosterSample, rosterRender, rosterManual, rosterClearSel, rosterDelTeam, rosterOpts, applyCatUI, save, saveAs, closePlay, newPlay, deleteSelected2, selectAllPlays, clearPlaySel, manageCats, setZoneSize, updatePlayList, exportPNG, generatePlayBookTemplate, exportPPTX, setPbLogo, pbTemplateChanged, changeSideLine, setLinesMode, addAssignRow, addAssignCol, asPanel, clearAssignRows, setAssign, assignPreset, exportJSON, importJSON, syncMetaToHeader, syncPersonnelToHeader,
+    savePlay, layoutSettings, initLayout, toggleHeader, applyCatUI, save, saveAs, closePlay, newPlay, deleteSelected2, selectAllPlays, clearPlaySel, manageCats, setZoneSize, updatePlayList, exportPNG, generatePlayBookTemplate, exportPPTX, setPbLogo, pbTemplateChanged, changeSideLine, setLinesMode, addAssignRow, addAssignCol, asPanel, clearAssignRows, setAssign, assignPreset, exportJSON, importJSON, syncMetaToHeader, syncPersonnelToHeader,
     addOffPaletteItem, addDefPaletteItem, buildPlayObj, loadPlayObj, updateSaveState, scoutChanged, curName: () => curPlayName
   };
 })();
