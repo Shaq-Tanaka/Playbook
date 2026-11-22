@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v147)</title>
+<title>Play Draw Lab (Pro Edition v148)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -206,6 +206,26 @@
     #touch-bar button { padding: 9px 10px; font-size: 13px; white-space: nowrap; }
   }
   @media (max-width: 520px) { #touch-bar { gap: 3px; padding: 4px; overflow-x: auto; } #touch-bar button { padding: 9px 6px; font-size: 11.5px; min-height: 0; } }
+  /* ===== スマホ(縦・横)で見やすく: 上の入力欄は普段は細い1行、開いたときは図に重ねて表示 ===== */
+  @media (max-width: 820px), (pointer: coarse) and (max-height: 520px) {
+    .workspace { padding: 0; }
+    .call-header { padding: 3px 6px !important; gap: 3px !important; top: calc(3px + env(safe-area-inset-top)) !important; max-height: calc(100vh - 120px); overflow-y: auto; z-index: 120; }
+    .call-header button { min-height: 34px !important; padding: 3px 9px !important; font-size: 12.5px !important; }
+    .call-header input[type=text], .call-header select { min-height: 34px !important; font-size: 16px !important; padding: 3px 6px !important; }
+    .call-header.hdr-min .call-row:first-child > :nth-child(2), .call-header.hdr-min .call-row:first-child > :nth-child(3), .call-header.hdr-min .call-row:first-child > :nth-child(4),
+    .call-header.hdr-min .call-row:first-child > :nth-child(5), .call-header.hdr-min .call-row:first-child > :nth-child(6), .call-header.hdr-min .call-row:first-child > :nth-child(9),
+    .call-header.hdr-min .call-row:first-child > :nth-child(10), .call-header.hdr-min .call-row:first-child > :nth-child(12), .call-header.hdr-min .call-row:first-child > :nth-child(13),
+    .call-header.hdr-min .call-row:first-child > :nth-child(14) { display: none !important; }
+    .call-header.hdr-min #wrap-pname > span, .call-header.hdr-min #wrap-pname > label { display: none !important; }
+    .call-header.hdr-min .call-row { flex-wrap: nowrap; }
+    .call-header.hdr-min #play-name { min-width: 0; flex: 1; }
+  }
+  @media (pointer: coarse) and (max-height: 520px) {
+    #touch-bar { padding: 3px 5px; bottom: calc(3px + env(safe-area-inset-bottom)); }
+    #touch-bar button { padding: 4px 9px !important; font-size: 12px !important; min-height: 32px !important; }
+    #zoom-ctl { bottom: calc(44px + env(safe-area-inset-bottom)) !important; transform: scale(.8); transform-origin: right bottom; }
+  }
+  canvas { touch-action: none; }
   button, input, select, label { touch-action: manipulation; }
   body.big button { min-height: 50px !important; font-size: 15px !important; padding: 12px 8px !important; }
   body.big .mini-btn { min-height: 44px !important; padding: 10px 12px !important; }
@@ -300,7 +320,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v147</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v148</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -1167,7 +1187,7 @@ const GridironApp = (() => {
   // ===== Layout(ツールバーの位置の設定) =====
   const LAYOUT_KEY = 'pdl_layout';
   let layout = { pad: 'rb', padX: null, padY: null, swap: false };
-  try { Object.assign(layout, JSON.parse(localStorage.getItem(LAYOUT_KEY) || '{}')); } catch (e) {}
+  try { Object.assign(layout, JSON.parse(localStorage.getItem(LAYOUT_KEY) || '{}')); if (!localStorage.getItem(LAYOUT_KEY) && matchMedia('(max-width: 820px), (pointer: coarse) and (max-height: 520px)').matches) layout.pad = 'off'; } catch (e) {}
   const saveLayout = () => { try { localStorage.setItem(LAYOUT_KEY, JSON.stringify(layout)); } catch (e) {} };
   function padReserve() {   // 矢印ボタンが、図に重ならないよう、固定位置のときは、その分の余白を空ける
     const p = document.getElementById('nudge-pad'); if (!p || p.style.display === 'none') return {};
@@ -1231,7 +1251,9 @@ const GridironApp = (() => {
     zoom = 1; panX = 0; panY = 0; applyView();
     const wr = ws.getBoundingClientRect(), r0 = canvas.getBoundingClientRect();
     const narrow = matchMedia(NARROW_Q).matches, hd = document.querySelector('.call-header');
+    const phone = matchMedia(PHONE_Q).matches, lsPhone = matchMedia('(pointer: coarse) and (max-height: 520px)').matches;
     let topPad = hd ? Math.max(90, hd.getBoundingClientRect().bottom - wr.top + 2) : 90, botPad = narrow ? 76 : 58;
+    if (phone) { topPad = 46; botPad = lsPhone ? 46 : 70; }   // スマホ: 入力欄は図に重ねて開く(図を広く使う)
     { const R = padReserve(); if (R.top) topPad += R.top; if (R.bottom) botPad = Math.max(botPad, R.bottom); }
     const availW = wr.width - (narrow ? 12 : 12), availH = wr.height - topPad - botPad;
     const fz = Math.max(0.15, Math.min(1.5, availW / W, availH / H));   // 余白を詰め、空きがあれば100%より大きく表示(図のサイズ自体は変わらない)
@@ -1425,6 +1447,7 @@ const GridironApp = (() => {
     const ad = document.getElementById('line-arc-dir'); if (ad && ad.closest('.prop-row')) ad.closest('.prop-row').style.display = 'none';
     refit();
   }
+  const PHONE_Q = '(max-width: 820px), (pointer: coarse) and (max-height: 520px)';
   const NARROW_Q = '(max-width: 820px), (pointer: coarse) and (max-width: 1280px)';
   function initTouchUI() {
     const bar = document.createElement('div'); bar.id = 'touch-bar';
@@ -3613,6 +3636,33 @@ const GridironApp = (() => {
     }, true);
     window.addEventListener('pointermove', e => { if (pan) { panX += e.clientX - pan.x; panY += e.clientY - pan.y; pan = { x: e.clientX, y: e.clientY }; applyView(); } });
     window.addEventListener('pointerup', () => { if (pan) { pan = null; suppress = true; setTimeout(() => suppress = false, 50); canvas.style.cursor = spaceDown ? 'grab' : 'crosshair'; } });
+    // ===== スマホ: 2本指で、拡大縮小(ピンチ)と移動 =====
+    { const tp = new Map(); let g = null, swallow = false;
+      const mid = () => { const v = [...tp.values()], a = v[0], b = v[1]; return { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; };
+      window.addEventListener('pointerdown', e => {
+        if (e.pointerType !== 'touch') return;
+        if (e.target !== canvas && tp.size === 0) return;
+        tp.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (tp.size >= 2) {
+          if (!g) { try { currentLine = null; if (selectedObj && selectedObj.dragging) selectedObj.dragging = false; dragLastPos = null; } catch (er) {} g = mid(); swallow = true; }
+          e.stopImmediatePropagation(); e.preventDefault();
+        }
+      }, true);
+      window.addEventListener('pointermove', e => {
+        if (e.pointerType !== 'touch' || !tp.has(e.pointerId)) return;
+        tp.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (g && tp.size >= 2) { const m = mid(); zoomAt(m.x, m.y, zoom * m.d / g.d); panX += m.x - g.x; panY += m.y - g.y; g = m; applyView(); }
+        if (g || swallow) { e.stopImmediatePropagation(); e.preventDefault(); }
+      }, true);
+      const up = e => {
+        if (e.pointerType !== 'touch' || !tp.has(e.pointerId)) return;
+        if (g || swallow) e.stopImmediatePropagation();
+        tp.delete(e.pointerId);
+        if (tp.size < 2) g = null;
+        if (tp.size === 0) { swallow = false; } 
+      };
+      window.addEventListener('pointerup', up, true); window.addEventListener('pointercancel', up, true);
+    }
     window.addEventListener('keydown', e => {
       if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
       if (e.code === 'Space') { e.preventDefault(); spaceDown = true; if (!pan) canvas.style.cursor = 'grab'; }
@@ -5403,6 +5453,6 @@ window.addEventListener('DOMContentLoaded', GridironApp.init);
 document.addEventListener('input',function(e){var t=e.target;if(t&&t.closest&&t.closest('#assign-rows')&&window.GridironApp){GridironApp.render();GridironApp.asPanel();}});
 
 </script>
-<script>window.addEventListener('load',function(){try{GridironApp.initLayout&&GridironApp.initLayout(); try{ if(localStorage.getItem('pdl_hdrmin')==='1') GridironApp.toggleHeader(true); }catch(e){}}catch(e){}});</script>
+<script>window.addEventListener('load',function(){try{GridironApp.initLayout&&GridironApp.initLayout(); try{ var hv=localStorage.getItem('pdl_hdrmin'); if(hv==='1'||(hv===null&&matchMedia('(max-width: 820px), (pointer: coarse) and (max-height: 520px)').matches)) GridironApp.toggleHeader(true); }catch(e){}}catch(e){}});</script>
 </body>
 </html>
