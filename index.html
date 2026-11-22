@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v146)</title>
+<title>Play Draw Lab (Pro Edition v147)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -300,7 +300,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v146</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v147</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -535,6 +535,7 @@
         <input type="text" id="new-off-name" placeholder="新規OFF陣形名..." style="flex:1;">
         <button onclick="GridironApp.createNewFormation('off')" style="background:#059669; border-color:#10b981; white-space:nowrap;">+ 新規登録</button>
       </div>
+      <button onclick="GridironApp.placeOff11()" style="width:100%; margin-bottom:4px; background:#064e3b; border-color:#10b981; font-weight:bold;" title="OFFを11人(OL5・QB・RB・TE・WR3)で、標準の位置に一度に出します。Formationを選ばなくても使えます(今いるOFFは入れ替わります。Ctrl+Zで戻せます)">＋ OFF 11人を出す</button>
       <button onclick="GridironApp.clearOffOnly()" style="width:100%; font-size:10.5px; color:#fca5a5;">OFF選手のみクリア</button>
     </div>
 
@@ -1904,6 +1905,20 @@ const GridironApp = (() => {
     toast('左右を反転しました（OLは LT/LG=左、RG/RT=右 に固定）', 2800);
   }
 
+  // OFF 標準11人(x=キャンバス上の位置, relY=LOSからの距離px)
+  const OFF11 = [
+    ['LT', 'circle', 390, 15], ['LG', 'circle', 420, 15], ['C', 'square', 450, 15], ['RG', 'circle', 480, 15], ['RT', 'circle', 510, 15],
+    ['QB', 'circle', 450, 75], ['R', 'circle', 450, 115],
+    ['X', 'circle', 130, 15], ['S', 'circle', 310, 28], ['Y', 'circle', 545, 15], ['Z', 'circle', 770, 28]
+  ];
+  function placeOff11() {
+    pushHistory();
+    const defPlayers = players.filter(p => p.side === 'def');
+    const off = OFF11.map(([label, shape, x, relY]) => ({ label, shape, side: 'off', x, y: losY + relY, strokeColor: '#000000', fillColor: '#ffffff', visible: true }));
+    players = [...defPlayers, ...off];
+    applyOffHashShift(false);
+    render();
+  }
   function applySelectedOff(recordHist = true) {
     const name = document.getElementById('off-form-select').value;
     if (!name || !offFormations[name]) {
@@ -5099,7 +5114,7 @@ const GridironApp = (() => {
 
   return {
     init, setMode, undo, redo, toast, toggleBlockEnd, openFontDialog, deleteSelected, addPlayer, clearField, render,
-    selectGroup, applySelectedOff, applySelectedDef, renameFormation, moveFormation, openFormOrder, openFormPicker, placeDef43, assignFormCat, catAdd, catRename, catDelete, catMove, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
+    selectGroup, applySelectedOff, applySelectedDef, renameFormation, moveFormation, openFormOrder, openFormPicker, placeDef43, placeOff11, assignFormCat, catAdd, catRename, catDelete, catMove, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
     flipOffDefPositions, flipLR, duplicateSelected, togglePenOnly, shareExport, editTextContent, textEditStart, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition, changeDefHashPosition, alignSide,
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
