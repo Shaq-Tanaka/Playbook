@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v148)</title>
+<title>Play Draw Lab (Pro Edition v150)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -225,6 +225,32 @@
     #touch-bar button { padding: 4px 9px !important; font-size: 12px !important; min-height: 32px !important; }
     #zoom-ctl { bottom: calc(44px + env(safe-area-inset-bottom)) !important; transform: scale(.8); transform-origin: right bottom; }
   }
+  /* ===== スマホ専用の画面(全体を小さく。図を広く) ===== */
+  body.phone button { min-height: 28px !important; padding: 3px 7px !important; font-size: 11.5px !important; }
+  body.phone .mini-btn { min-height: 26px !important; padding: 2px 6px !important; font-size: 11px !important; }
+  body.phone input, body.phone select, body.phone textarea { font-size: 12px !important; padding: 3px 5px !important; min-height: 26px !important; }
+  body.phone input[type=checkbox], body.phone input[type=radio] { min-height: 0 !important; width: 16px !important; height: 16px !important; }
+  body.phone .menu-item { padding: 8px 10px; font-size: 12px; }
+  body.phone .tool-group { padding: 4px 7px; }
+  body.phone .tool-group h4 { font-size: 10px; }
+  body.phone .call-header button { min-height: 28px !important; font-size: 11.5px !important; }
+  body.phone .call-header input[type=text], body.phone .call-header select { min-height: 28px !important; font-size: 12.5px !important; }
+  /* スマホ: 開いた入力欄は、全部が画面に収まるよう小さくする */
+  body.phone .call-header:not(.hdr-min) { padding: 2px 4px !important; gap: 2px !important; }
+  body.phone .call-header:not(.hdr-min) .call-row { gap: 3px !important; }
+  body.phone .call-header:not(.hdr-min) button { min-height: 22px !important; padding: 1px 6px !important; font-size: 10px !important; }
+  body.phone .call-header:not(.hdr-min) input[type=text], body.phone .call-header:not(.hdr-min) select { min-height: 22px !important; font-size: 11px !important; padding: 1px 4px !important; }
+  body.phone .call-header:not(.hdr-min) .field-tag, body.phone .call-header:not(.hdr-min) span { font-size: 8.5px !important; }
+  body.phone .call-header:not(.hdr-min) input[type=checkbox] { width: 13px !important; height: 13px !important; }
+  body.phone .call-header:not(.hdr-min) .call-row input[type=text] { min-width: 52px !important; }
+  body.phone .call-header:not(.hdr-min) { max-height: calc(100vh - 8px); }
+  body.phone #touch-bar button { min-height: 30px !important; padding: 3px 8px !important; font-size: 11.5px !important; }
+  body.phone #zoom-ctl button { min-width: 30px !important; min-height: 28px !important; }
+  @media (pointer: coarse) and (max-height: 520px) {
+    body.phone .call-header { left: 96px !important; width: calc(100vw - 102px) !important; }
+    body.phone #touch-bar { flex-direction: column; left: 4px !important; transform: none !important; top: calc(6px + env(safe-area-inset-top)); bottom: auto !important; max-width: none; max-height: calc(100vh - 12px); overflow-y: auto; padding: 3px; gap: 3px; }
+    body.phone #touch-bar button { min-width: 62px; padding: 3px 4px !important; font-size: 11px !important; }
+  }
   canvas { touch-action: none; }
   button, input, select, label { touch-action: manipulation; }
   body.big button { min-height: 50px !important; font-size: 15px !important; padding: 12px 8px !important; }
@@ -320,7 +346,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v148</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v150</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -1253,12 +1279,13 @@ const GridironApp = (() => {
     const narrow = matchMedia(NARROW_Q).matches, hd = document.querySelector('.call-header');
     const phone = matchMedia(PHONE_Q).matches, lsPhone = matchMedia('(pointer: coarse) and (max-height: 520px)').matches;
     let topPad = hd ? Math.max(90, hd.getBoundingClientRect().bottom - wr.top + 2) : 90, botPad = narrow ? 76 : 58;
-    if (phone) { topPad = 46; botPad = lsPhone ? 46 : 70; }   // スマホ: 入力欄は図に重ねて開く(図を広く使う)
+    let leftPad = 0;
+    if (phone) { topPad = 40; botPad = lsPhone ? 10 : 56; if (lsPhone) leftPad = 94; }   // スマホ: 入力欄は図に重ねて開く(図を広く使う) / 横向きは左に縦のボタン列
     { const R = padReserve(); if (R.top) topPad += R.top; if (R.bottom) botPad = Math.max(botPad, R.bottom); }
-    const availW = wr.width - (narrow ? 12 : 12), availH = wr.height - topPad - botPad;
+    const availW = wr.width - leftPad - (narrow ? 12 : 12), availH = wr.height - topPad - botPad;
     const fz = Math.max(0.15, Math.min(1.5, availW / W, availH / H));   // 余白を詰め、空きがあれば100%より大きく表示(図のサイズ自体は変わらない)
     zoom = fz;
-    panX = (wr.left + wr.width / 2 - (W * fz) / 2) - r0.left;
+    panX = (wr.left + leftPad + (wr.width - leftPad) / 2 - (W * fz) / 2) - r0.left;
     panY = (wr.top + topPad + (availH - H * fz) / 2) - r0.top;
     applyView();
   }
@@ -1436,11 +1463,12 @@ const GridironApp = (() => {
     document.body.appendChild(tl); document.body.appendChild(tr);
     const apply = () => { tl.textContent = document.body.classList.contains('hide-left') ? '▶' : '◀'; tr.textContent = document.body.classList.contains('hide-right') ? '◀' : '▶'; tl.title = '左パネルを隠す / 表示'; tr.title = '右パネルを隠す / 表示'; };
     ['left', 'right'].forEach(sd => { if (ls.get('gps_hide_' + sd) === '1') document.body.classList.add('hide-' + sd); });
-    if (ls.get('gps_compact') === '1') document.body.classList.add('compact');
+    { const cv = ls.get('gps_compact'); if (cv === '1' || (cv === null && matchMedia('(max-width: 520px), (pointer: coarse) and (max-height: 520px)').matches)) document.body.classList.add('compact'); }
+    { const ph = () => { document.body.classList.toggle('phone', matchMedia('(max-width: 520px), (pointer: coarse) and (max-height: 520px)').matches); }; ph(); window.addEventListener('resize', ph); window.addEventListener('orientationchange', () => setTimeout(ph, 100)); }
     apply();
     tl.addEventListener('click', () => { if (document.body.classList.contains('swap')) { document.body.classList.toggle('hide-right'); ls.set('gps_hide_right', document.body.classList.contains('hide-right') ? '1' : '0'); apply(); refit(); return; } document.body.classList.toggle('hide-left'); ls.set('gps_hide_left', document.body.classList.contains('hide-left') ? '1' : '0'); apply(); refit(); });
     tr.addEventListener('click', () => { if (document.body.classList.contains('swap')) { document.body.classList.toggle('hide-left'); ls.set('gps_hide_left', document.body.classList.contains('hide-left') ? '1' : '0'); apply(); refit(); return; } document.body.classList.toggle('hide-right'); ls.set('gps_hide_right', document.body.classList.contains('hide-right') ? '1' : '0'); apply(); refit(); });
-    { let sv = null; try { sv = localStorage.getItem('gps_big'); } catch (e) {} const on = sv === null ? matchMedia('(pointer: coarse)').matches : sv === '1'; document.body.classList.toggle('big', on); }
+    { let sv = null; try { sv = localStorage.getItem('gps_big'); } catch (e) {} const on = sv === null ? (matchMedia('(pointer: coarse)').matches && !matchMedia('(max-width: 520px), (pointer: coarse) and (max-height: 520px)').matches) : sv === '1'; document.body.classList.toggle('big', on); }
     document.getElementById('btn-big').addEventListener('click', () => { document.body.classList.toggle('big'); if (document.body.classList.contains('big')) document.body.classList.remove('compact'); ls.set('gps_big', document.body.classList.contains('big') ? '1' : '0'); refit(); });
     document.getElementById('btn-compact').addEventListener('click', () => { document.body.classList.toggle('compact'); ls.set('gps_compact', document.body.classList.contains('compact') ? '1' : '0'); refit(); });
     // 弧は使わない: Arc Bend 設定を隠す
