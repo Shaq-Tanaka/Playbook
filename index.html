@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v144)</title>
+<title>Play Draw Lab (Pro Edition v145)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -300,7 +300,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v144</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v145</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -510,16 +510,6 @@
         <button type="button" data-oa="right" onclick="GridironApp.alignSide('off','right')" style="flex:1;" title="オフェンスを右ハッシュに寄せる">R Hash ▶</button>
       </div>
       <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
-        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Formation:</span>
-        <button type="button" id="off-form-btn" onclick="GridironApp.openFormPicker('off')" style="flex:1; min-width:0; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:4px 22px 4px 8px; position:relative; background:#18181b;" title="Click to choose. In the list: drag a formation to reorder or move it to another category."><span id="off-form-btn-t">(未選択 / 空欄)</span><span style="position:absolute; right:7px; top:50%; transform:translateY(-50%); color:#a1a1aa;">▾</span></button>
-        <select id="off-form-select" style="display:none;" onchange="GridironApp.applySelectedOff()">
-          <option value="">(未選択 / 空欄)</option>
-        </select>
-        <button class="mini-btn" onclick="GridironApp.renameFormation('off')" title="名称修正">✏️</button>
-        <button class="mini-btn" onclick="GridironApp.overwriteFormation('off')" title="上書き">💾</button>
-        <button class="mini-btn danger" onclick="GridironApp.deleteFormation('off')" title="削除">🗑</button>
-      </div>
-      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
         <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Category:</span>
         <select id="off-cat-select" style="flex:1;" onchange="GridironApp.assignFormCat('off')" title="Category of the selected formation (choose to assign)"><option value="">(No category)</option></select>
         <button class="mini-btn" onclick="GridironApp.catRename('off')" title="Rename category">✏️</button>
@@ -529,6 +519,16 @@
         <span style="width:58px; flex:none;"></span>
         <input type="text" id="new-off-cat" placeholder="New category (e.g. Gun / Under Center)..." style="flex:1;">
         <button onclick="GridironApp.catAdd('off')" style="white-space:nowrap;">+ Add</button>
+      </div>
+      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Formation:</span>
+        <button type="button" id="off-form-btn" onclick="GridironApp.openFormPicker('off')" style="flex:1; min-width:0; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:4px 22px 4px 8px; position:relative; background:#18181b;" title="Click to choose. In the list: drag a formation to reorder or move it to another category."><span id="off-form-btn-t">(未選択 / 空欄)</span><span style="position:absolute; right:7px; top:50%; transform:translateY(-50%); color:#a1a1aa;">▾</span></button>
+        <select id="off-form-select" style="display:none;" onchange="GridironApp.applySelectedOff()">
+          <option value="">(未選択 / 空欄)</option>
+        </select>
+        <button class="mini-btn" onclick="GridironApp.renameFormation('off')" title="名称修正">✏️</button>
+        <button class="mini-btn" onclick="GridironApp.overwriteFormation('off')" title="上書き">💾</button>
+        <button class="mini-btn danger" onclick="GridironApp.deleteFormation('off')" title="削除">🗑</button>
       </div>
       <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
         <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Name:</span>
@@ -547,16 +547,6 @@
         <button type="button" onclick="GridironApp.alignSide('def','right')" style="flex:1;" title="ディフェンスを右ハッシュに寄せる">R Hash ▶</button>
       </div>
       <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
-        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Formation:</span>
-        <button type="button" id="def-form-btn" onclick="GridironApp.openFormPicker('def')" style="flex:1; min-width:0; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:4px 22px 4px 8px; position:relative; background:#18181b;" title="Click to choose. In the list: drag a formation to reorder or move it to another category."><span id="def-form-btn-t">(未選択 / 空欄)</span><span style="position:absolute; right:7px; top:50%; transform:translateY(-50%); color:#a1a1aa;">▾</span></button>
-        <select id="def-form-select" style="display:none;" onchange="GridironApp.applySelectedDef()">
-          <option value="">(未選択 / 空欄)</option>
-        </select>
-        <button class="mini-btn" onclick="GridironApp.renameFormation('def')" title="名称修正">✏️</button>
-        <button class="mini-btn" onclick="GridironApp.overwriteFormation('def')" title="上書き">💾</button>
-        <button class="mini-btn danger" onclick="GridironApp.deleteFormation('def')" title="削除">🗑</button>
-      </div>
-      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
         <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Category:</span>
         <select id="def-cat-select" style="flex:1;" onchange="GridironApp.assignFormCat('def')" title="Category of the selected formation (choose to assign)"><option value="">(No category)</option></select>
         <button class="mini-btn" onclick="GridironApp.catRename('def')" title="Rename category">✏️</button>
@@ -566,6 +556,16 @@
         <span style="width:58px; flex:none;"></span>
         <input type="text" id="new-def-cat" placeholder="New category (e.g. Gun / Under Center)..." style="flex:1;">
         <button onclick="GridironApp.catAdd('def')" style="white-space:nowrap;">+ Add</button>
+      </div>
+      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Formation:</span>
+        <button type="button" id="def-form-btn" onclick="GridironApp.openFormPicker('def')" style="flex:1; min-width:0; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:4px 22px 4px 8px; position:relative; background:#18181b;" title="Click to choose. In the list: drag a formation to reorder or move it to another category."><span id="def-form-btn-t">(未選択 / 空欄)</span><span style="position:absolute; right:7px; top:50%; transform:translateY(-50%); color:#a1a1aa;">▾</span></button>
+        <select id="def-form-select" style="display:none;" onchange="GridironApp.applySelectedDef()">
+          <option value="">(未選択 / 空欄)</option>
+        </select>
+        <button class="mini-btn" onclick="GridironApp.renameFormation('def')" title="名称修正">✏️</button>
+        <button class="mini-btn" onclick="GridironApp.overwriteFormation('def')" title="上書き">💾</button>
+        <button class="mini-btn danger" onclick="GridironApp.deleteFormation('def')" title="削除">🗑</button>
       </div>
       <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
         <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Name:</span>
