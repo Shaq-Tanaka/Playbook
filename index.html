@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v183)</title>
+<title>Play Draw Lab (Pro Edition v184)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -352,8 +352,8 @@
   <!-- 左サイドバー -->
   <div class="sidebar">
     <div class="sidebar-header">
-      <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><button type="button" id="btn-update" title="最新版に更新（保存したデータは消えません）" style="padding:1px 6px; font-size:10px;">🔄 更新</button><span id="ver-badge" style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v183</span></span>
+      <span style="white-space:nowrap; font-size:13px;">Play Draw Lab</span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><button type="button" id="btn-update" title="最新版に更新（保存したデータは消えません）" style="padding:1px 5px; font-size:10px; white-space:nowrap;">🔄</button><span id="ver-badge" style="font-size:9.5px; white-space:nowrap; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v184</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -1504,7 +1504,7 @@ const GridironApp = (() => {
   const lsDump = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (BK_PREFIX.test(k)) o[k] = localStorage.getItem(k); } } catch (e) {} return o; };
   async function backupAll() {
     try { await persistPlays(); } catch (e) {}
-    const data = { app: 'PlayDrawLab', ver: 'v183', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
+    const data = { app: 'PlayDrawLab', ver: 'v184', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }), a = document.createElement('a'), d = new Date(), z = n => String(n).padStart(2, '0');
     a.href = URL.createObjectURL(blob); a.download = `PlayDrawLab_backup_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -1681,7 +1681,7 @@ const GridironApp = (() => {
       const r = await fetch(location.pathname + '?c=' + Date.now(), { cache: 'no-store' }); if (!r.ok) return;
       const t = await r.text(), m = t.match(/PRO v(\d+)<\/span>/); if (!m) return;
       const b = document.getElementById('btn-update');
-      if (+m[1] > +cur && b) { b.textContent = '🔄 新版あり v' + m[1]; b.style.background = '#f59e0b'; b.style.color = '#000'; b.style.fontWeight = 'bold'; try { toast('新しい版 v' + m[1] + ' があります。「🔄 新版あり」を押すと更新できます', 5000); } catch (e) {} }
+      if (+m[1] > +cur && b) { b.textContent = '🔄 新'; b.title = '新しい版 v' + m[1] + ' があります。押すと更新します'; b.style.background = '#f59e0b'; b.style.color = '#000'; b.style.fontWeight = 'bold'; try { toast('新しい版 v' + m[1] + ' があります。オレンジの「🔄 新」を押すと更新できます', 5000); } catch (e) {} }
     } catch (e) {}
   }
   try { const ub = document.getElementById('btn-update'); if (ub) ub.onclick = appUpdate; setTimeout(appCheckUpdate, 3000); } catch (e) {}
