@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v172)</title>
+<title>Play Draw Lab (Pro Edition v173)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -346,7 +346,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v172</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v173</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -724,6 +724,32 @@
       </div>
     </div>
 
+    <div class="tool-group">
+      <h4>🕘 履歴・自動保存 (HISTORY)</h4>
+      <div style="display:flex; gap:4px; align-items:center; margin-bottom:4px;">
+        <button class="mini-btn" onclick="GridironApp.histNow()" style="flex:1; font-size:10.5px;" title="いまの状態(保存済みプレー・Formation・編集中の図)を、履歴に控えます">＋ 今すぐ保存</button>
+        <label class="chk-label" style="display:flex; gap:4px; align-items:center; font-size:10px; color:#e4e4e7; white-space:nowrap;"><input type="checkbox" id="hist-auto" checked style="width:auto; display:inline-block;" onchange="GridironApp.histAutoChanged()"> 5分ごとに自動</label>
+      </div>
+      <div style="font-size:10px; color:#a1a1aa; margin-bottom:4px;">変更があったときだけ、控えが増えます(最大30件)。「復元」で、その時点に戻せます(戻す前の状態も、控えに残ります)。</div>
+      <div id="hist-list" style="max-height:150px; overflow:auto; border:1px solid #3f3f46; border-radius:4px;"></div>
+    </div>
+
+    <div class="tool-group">
+      <h4>🖼 下絵 (なぞり書き)</h4>
+      <div style="display:flex; gap:4px; margin-bottom:4px;">
+        <button class="mini-btn" onclick="document.getElementById('ul-file').click()" style="flex:1; font-size:10.5px;" title="手持ちのプレーブック(PNG/JPG/PDF)を、図の上に薄く敷きます。PNG/PDFの書き出し・選手用ファイルには入りません">📂 画像／PDFを読み込む</button>
+        <button class="mini-btn danger" onclick="GridironApp.ulClear()" style="font-size:10.5px;">外す</button>
+        <input type="file" id="ul-file" accept="image/*,application/pdf,.pdf" style="display:none;" onchange="GridironApp.ulLoad(event)">
+      </div>
+      <label class="chk-label" style="display:flex; gap:5px; align-items:center; font-size:10.5px; color:#e4e4e7; margin-bottom:3px;"><input type="checkbox" id="ul-on" checked style="width:auto; display:inline-block;" onchange="GridironApp.ulOp()"> 下絵を表示する</label>
+      <div class="prop-row"><label style="width:46px;">濃さ</label><input type="range" id="ul-op" min="5" max="90" value="35" oninput="GridironApp.ulOp()" style="flex:1;"></div>
+      <div class="prop-row"><label style="width:46px;">大きさ</label><input type="range" id="ul-sc" min="20" max="300" value="100" oninput="GridironApp.ulOp()" style="flex:1;"></div>
+      <div class="prop-row"><label style="width:46px;">横</label><input type="range" id="ul-x" min="-600" max="600" value="0" oninput="GridironApp.ulOp()" style="flex:1;"></div>
+      <div class="prop-row"><label style="width:46px;">縦</label><input type="range" id="ul-y" min="-600" max="600" value="0" oninput="GridironApp.ulOp()" style="flex:1;"></div>
+      <div style="display:flex; gap:4px; margin-top:3px;"><button class="mini-btn" onclick="GridironApp.ulReset()" style="flex:1; font-size:10px;">位置・大きさをリセット</button></div>
+      <div style="font-size:10px; color:#a1a1aa; margin-top:4px;">下絵は図の上に重ねて見えるだけで、描いた図には含まれません。PDFの読み込みは、ネット接続が必要です(使えないときは PNG/JPG にしてください)。</div>
+    </div>
+
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
       <h4 style="color:#ffffff;">Player Size 調整</h4>
       <div class="prop-row">
@@ -1012,6 +1038,19 @@
         <button class="mini-btn" onclick="GridironApp.clearPlaySel()" style="flex:1;">Clear</button>
         <button class="mini-btn danger" onclick="GridironApp.deleteSelected2()" style="flex:1.4;">🗑 Delete Selected</button>
         <span id="play-sel-n" style="font-size:10px; color:#a1a1aa; white-space:nowrap;">Selected 0</span>
+      </div>
+      <div style="border:1px solid #3f3f46; border-radius:5px; padding:5px; margin-bottom:4px; background:#1b1b1f;">
+        <div style="font-size:10.5px; font-weight:bold; color:#fcd34d; margin-bottom:3px;">📤 選んだプレーをまとめて出力 / 配る</div>
+        <input type="text" id="sh-title" placeholder="資料名(例: 2026 Spring Game Plan)" style="margin-bottom:3px;">
+        <div style="display:flex; gap:3px; margin-bottom:3px;">
+          <select id="sh-per" style="flex:1;"><option value="1">1ページに 1枚</option><option value="2" selected>1ページに 2枚</option><option value="4">1ページに 4枚</option></select>
+          <select id="sh-ori" style="flex:1;"><option value="landscape" selected>A4 横</option><option value="portrait">A4 縦</option></select>
+        </div>
+        <div style="display:flex; gap:3px;">
+          <button class="mini-btn" onclick="GridironApp.pdfExport()" style="flex:1; font-size:10.5px;" title="一覧の□で選んだプレーを、1つのPDFにまとめます">📄 PDFにまとめる</button>
+          <button class="mini-btn" onclick="GridironApp.playerFileExport()" style="flex:1; font-size:10.5px;" title="選手に配るための、1つのファイル(HTML)を作ります。LINE・メール・AirDropで送れて、スマホ/タブレットで開くだけで見られます">👥 選手用ファイル</button>
+        </div>
+        <div style="font-size:10px; color:#a1a1aa; margin-top:3px;">一覧の□(または Select All)で、出したいプレーを選んでから押します。</div>
       </div>
       <div class="play-list" id="play-list"></div>
     </div>
@@ -1324,6 +1363,7 @@ const GridironApp = (() => {
   function applyView() {
     canvas.style.transformOrigin = '0 0';
     canvas.style.transform = `translate(${panX}px,${panY}px) scale(${zoom})`;
+    try { ulSync(); } catch (e) {}
     const z = document.getElementById('zoom-val'); if (z) z.textContent = Math.round(zoom * 100) + '%';
   }
   function zoomAt(cx, cy, nz) {
@@ -1457,7 +1497,7 @@ const GridironApp = (() => {
   const lsDump = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (BK_PREFIX.test(k)) o[k] = localStorage.getItem(k); } } catch (e) {} return o; };
   async function backupAll() {
     try { await persistPlays(); } catch (e) {}
-    const data = { app: 'PlayDrawLab', ver: 'v172', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
+    const data = { app: 'PlayDrawLab', ver: 'v173', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }), a = document.createElement('a'), d = new Date(), z = n => String(n).padStart(2, '0');
     a.href = URL.createObjectURL(blob); a.download = `PlayDrawLab_backup_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -1488,6 +1528,177 @@ const GridironApp = (() => {
       Object.keys(b.ls).forEach(k => { if (BK_PREFIX.test(k)) localStorage.setItem(k, b.ls[k]); });
       sessionStorage.setItem('pdl_restored', '1'); location.reload();
     } catch (e) {}
+  }
+
+
+  // ===== 履歴 / 自動保存 =====
+  const HIST_MAX = 30;
+  idb.del = async function (k) { const db = await this.open(); return new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').delete(k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); };
+  const hHash = str => { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return (h >>> 0).toString(36) + ':' + str.length; };
+  const hDraft = () => ({ pnotes, players, lines, zones, texts, name: (document.getElementById('play-name') || {}).value || '' });
+  async function histSnapshot(label, force) {
+    try {
+      await persistPlays();
+      const ls = lsDump(), draft = hDraft();
+      const sig = hHash(JSON.stringify({ p: savedPlays, ls, d: draft }));
+      const idx = (await idb.get('hist_index')) || [];
+      if (!force && idx.length && idx[0].sig === sig) return false;
+      const id = newId();
+      await idb.set('hist_' + id, { plays: savedPlays, ls, draft });
+      idx.unshift({ id, t: Date.now(), label, sig, np: Object.keys(savedPlays).length });
+      while (idx.length > HIST_MAX) { const o = idx.pop(); try { await idb.del('hist_' + o.id); } catch (e) {} }
+      await idb.set('hist_index', idx);
+      histRender(idx); return true;
+    } catch (e) { console.warn('histSnapshot', e); return false; }
+  }
+  const hFmt = t => { const d = new Date(t), z = n => String(n).padStart(2, '0'); return `${d.getMonth() + 1}/${d.getDate()} ${z(d.getHours())}:${z(d.getMinutes())}`; };
+  function histRender(idx) {
+    const el = document.getElementById('hist-list'); if (!el) return;
+    if (!idx || !idx.length) { el.innerHTML = '<div style="padding:6px; font-size:10.5px; color:#a1a1aa;">まだ履歴はありません</div>'; return; }
+    el.innerHTML = '';
+    idx.forEach(h => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; gap:4px; align-items:center; padding:3px 5px; border-bottom:1px solid #27272a; font-size:10.5px; color:#e4e4e7;';
+      row.innerHTML = `<span style="flex:1; min-width:0;">${hFmt(h.t)} <span style="color:#a1a1aa;">${h.label} ・プレー${h.np}件</span></span>`;
+      const b = document.createElement('button'); b.className = 'mini-btn'; b.textContent = '復元'; b.onclick = () => histRestore(h.id);
+      const x = document.createElement('button'); x.className = 'mini-btn danger'; x.textContent = '×'; x.title = 'この履歴を削除'; x.onclick = () => histDel(h.id);
+      row.appendChild(b); row.appendChild(x); el.appendChild(row);
+    });
+  }
+  async function histNow() { const ok = await histSnapshot('手動', true); toast(ok ? '履歴に保存しました' : '履歴に保存できませんでした', 1800); }
+  async function histDel(id) {
+    if (!confirm('この履歴を削除します。よろしいですか？')) return;
+    try { const idx = ((await idb.get('hist_index')) || []).filter(h => h.id !== id); await idb.del('hist_' + id); await idb.set('hist_index', idx); histRender(idx); } catch (e) {}
+  }
+  async function histRestore(id) {
+    try {
+      const idx = (await idb.get('hist_index')) || [], h = idx.find(x => x.id === id), snap = await idb.get('hist_' + id);
+      if (!h || !snap) return alert('この履歴を読み込めませんでした。');
+      if (!confirm(hFmt(h.t) + ' の状態(プレー ' + h.np + '件・Formation・編集中の図)に戻します。\n\n今の状態も、「復元前」として履歴に残します。\nよろしいですか？')) return;
+      await histSnapshot('復元前', true);
+      Object.keys(snap.ls || {}).forEach(k => { if (BK_PREFIX.test(k)) localStorage.setItem(k, snap.ls[k]); });
+      savedPlays = snap.plays || {}; await persistPlays();
+      if (snap.draft) await idb.set('draft', snap.draft);
+      alert('復元しました。画面を更新します。'); location.reload();
+    } catch (e) { alert('復元に失敗しました: ' + e.message); }
+  }
+  function histAutoChanged() { try { localStorage.setItem('pdl_histauto', document.getElementById('hist-auto').checked ? '1' : '0'); } catch (e) {} }
+  async function histInit() {
+    try { const el = document.getElementById('hist-auto'); if (el && localStorage.getItem('pdl_histauto') === '0') el.checked = false; } catch (e) {}
+    try { histRender((await idb.get('hist_index')) || []); } catch (e) {}
+    const tick = () => { const el = document.getElementById('hist-auto'); if (el && el.checked) histSnapshot('自動', false); };
+    setInterval(tick, 5 * 60 * 1000); setTimeout(tick, 20000);
+  }
+
+  // ===== 下絵(なぞり書き) =====
+  const ul = { img: null, ver: 0 };
+  let ulCv = null, ulKey = '';
+  const ulVals = () => ({ on: document.getElementById('ul-on').checked, op: +document.getElementById('ul-op').value, sc: +document.getElementById('ul-sc').value, x: +document.getElementById('ul-x').value, y: +document.getElementById('ul-y').value });
+  function ulSync() {
+    if (!ul.img) { if (ulCv) ulCv.style.display = 'none'; return; }
+    const v = ulVals();
+    if (!ulCv) { ulCv = document.createElement('canvas'); ulCv.id = 'underlayCanvas'; ulCv.style.cssText = 'position:absolute; pointer-events:none; mix-blend-mode:multiply; transform-origin:0 0;'; canvas.parentNode.insertBefore(ulCv, canvas.nextSibling); }
+    if (!v.on) { ulCv.style.display = 'none'; return; }
+    ulCv.style.display = 'block'; ulCv.style.left = canvas.offsetLeft + 'px'; ulCv.style.top = canvas.offsetTop + 'px';
+    ulCv.style.width = canvas.offsetWidth + 'px'; ulCv.style.height = canvas.offsetHeight + 'px';
+    ulCv.style.transform = canvas.style.transform; ulCv.style.opacity = v.op / 100;
+    const key = [canvas.width, canvas.height, v.sc, v.x, v.y, ul.ver].join(',');
+    if (key !== ulKey) {
+      ulKey = key; ulCv.width = canvas.width; ulCv.height = canvas.height;
+      const c = ulCv.getContext('2d'), iw = ul.img.naturalWidth || ul.img.width, ih = ul.img.naturalHeight || ul.img.height, s = (canvas.width / iw) * v.sc / 100;
+      c.drawImage(ul.img, v.x, v.y, iw * s, ih * s);
+    }
+  }
+  function ulSaveParams() { try { localStorage.setItem('pdl_ul', JSON.stringify(ulVals())); } catch (e) {} }
+  function ulOp() { ul.ver++; ulSaveParams(); ulSync(); }
+  function ulReset() { document.getElementById('ul-sc').value = 100; document.getElementById('ul-x').value = 0; document.getElementById('ul-y').value = 0; ulOp(); }
+  function ulSetImage(url, persist = true) {
+    return new Promise(res => { const im = new Image(); im.onload = () => { ul.img = im; ul.ver++; if (persist) idb.set('underlay', url).catch(() => {}); ulSync(); res(true); }; im.onerror = () => { toast('画像を読み込めませんでした', 2600); res(false); }; im.src = url; });
+  }
+  const shLoadScript = src => new Promise((res, rej) => { const e = document.createElement('script'); e.src = src; e.onload = res; e.onerror = () => rej(new Error('script')); document.head.appendChild(e); });
+  async function ulFromPdf(file) {
+    try {
+      if (!window.pdfjsLib) { await shLoadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'); window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; }
+      const doc = await window.pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+      let pg = parseInt(prompt('PDFの何ページ目を使いますか？(全 ' + doc.numPages + ' ページ)', '1'), 10) || 1; pg = Math.max(1, Math.min(doc.numPages, pg));
+      const page = await doc.getPage(pg), v0 = page.getViewport({ scale: 1 }), vp = page.getViewport({ scale: Math.min(3, 2000 / v0.width) });
+      const cv = document.createElement('canvas'); cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
+      await page.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise;
+      await ulSetImage(cv.toDataURL('image/png')); toast('PDFの ' + pg + ' ページ目を、下絵にしました', 2600);
+    } catch (e) { toast('PDFを読み込めませんでした(ネット接続が必要です)。PNG/JPG にして読み込んでください', 4600); }
+  }
+  function ulLoad(ev) {
+    const f = ev.target.files && ev.target.files[0]; if (!f) return;
+    if (/pdf/i.test(f.type) || /\.pdf$/i.test(f.name)) { ulFromPdf(f); ev.target.value = ''; return; }
+    const rd = new FileReader(); rd.onload = async () => { document.getElementById('ul-on').checked = true; ulReset(); if (await ulSetImage(rd.result)) toast('下絵を読み込みました(濃さ・大きさ・位置は、下絵メニューで調整)', 2800); }; rd.readAsDataURL(f); ev.target.value = '';
+  }
+  function ulClear() { ul.img = null; ul.ver++; idb.del('underlay').catch(() => {}); ulSync(); toast('下絵を外しました', 1600); }
+  async function ulInit() {
+    try { const p = JSON.parse(localStorage.getItem('pdl_ul') || 'null'); if (p) { document.getElementById('ul-on').checked = p.on !== false; ['op', 'sc', 'x', 'y'].forEach(k => { if (p[k] != null) document.getElementById('ul-' + k).value = p[k]; }); } } catch (e) {}
+    try { const u = await idb.get('underlay'); if (u) await ulSetImage(u, false); } catch (e) {}
+  }
+
+  // ===== まとめてPDF / 選手用ファイル =====
+  const shKeys = () => sortKeys([...playSel].filter(k => savedPlays[k] && savedPlays[k].image));
+  const shLoadImg = src => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = src; });
+  const shDate = () => { const d = new Date(), z = n => String(n).padStart(2, '0'); return `${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}`; };
+  function shDl(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800); }
+  function shBuildPdf(pages, pw, ph) {   // JPEG画像だけの、シンプルなPDFを作る(外部ライブラリ不要)
+    const enc = new TextEncoder(), chunks = [], offs = []; let len = 0;
+    const push = u => { chunks.push(u); len += u.length; }, str = t => push(enc.encode(t)), n = pages.length;
+    const obj = (id, fn) => { offs[id] = len; str(id + ' 0 obj\n'); fn(); str('endobj\n'); };
+    str('%PDF-1.4\n');
+    obj(1, () => str('<< /Type /Catalog /Pages 2 0 R >>\n'));
+    obj(2, () => str('<< /Type /Pages /Kids [' + pages.map((_, i) => (3 + i * 3) + ' 0 R').join(' ') + '] /Count ' + n + ' >>\n'));
+    pages.forEach((p, i) => {
+      const pid = 3 + i * 3, cid = pid + 1, iid = pid + 2, cs = `q ${pw} 0 0 ${ph} 0 0 cm /Im0 Do Q`;
+      obj(pid, () => str(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pw} ${ph}] /Resources << /XObject << /Im0 ${iid} 0 R >> >> /Contents ${cid} 0 R >>\n`));
+      obj(cid, () => str(`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream\n`));
+      obj(iid, () => { str(`<< /Type /XObject /Subtype /Image /Width ${p.w} /Height ${p.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpeg.length} >>\nstream\n`); push(p.jpeg); str('\nendstream\n'); });
+    });
+    const total = 3 + n * 3, xo = len;
+    str(`xref\n0 ${total}\n0000000000 65535 f \n`);
+    for (let i = 1; i < total; i++) str(String(offs[i]).padStart(10, '0') + ' 00000 n \n');
+    str(`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xo}\n%%EOF`);
+    return new Blob(chunks, { type: 'application/pdf' });
+  }
+  async function pdfExport() {
+    const ks = shKeys(); if (!ks.length) return toast('PDFにするプレーを、一覧の□で選んでください(Select All も使えます)', 3400);
+    toast('PDFを作っています… (' + ks.length + '枚)', 2400);
+    try {
+      const per = +document.getElementById('sh-per').value, land = document.getElementById('sh-ori').value === 'landscape', title = document.getElementById('sh-title').value.trim();
+      const PW = land ? 842 : 595, PH = land ? 595 : 842, S = 2.5, cols = per === 1 ? 1 : per === 2 ? (land ? 2 : 1) : 2, rows = per === 1 ? 1 : per === 2 ? (land ? 1 : 2) : 2;
+      const totalPages = Math.ceil(ks.length / per), pages = [], FONT = '"Yu Gothic","Meiryo","Hiragino Sans",sans-serif';
+      for (let i = 0; i < ks.length; i += per) {
+        const cv = document.createElement('canvas'); cv.width = Math.round(PW * S); cv.height = Math.round(PH * S);
+        const c = cv.getContext('2d'); c.fillStyle = '#fff'; c.fillRect(0, 0, cv.width, cv.height);
+        const m = 26 * S, headH = (title ? 20 : 0) * S, footH = 14 * S;
+        if (title) { c.fillStyle = '#111'; c.font = `bold ${13 * S}px ${FONT}`; c.textBaseline = 'alphabetic'; c.fillText(title, m, m + 10 * S); }
+        const cw = (cv.width - 2 * m) / cols, ch = (cv.height - 2 * m - headH - footH) / rows;
+        for (let j = 0; j < per && i + j < ks.length; j++) {
+          const k = ks[i + j], im = await shLoadImg(savedPlays[k].image), x0 = m + (j % cols) * cw, y0 = m + headH + Math.floor(j / cols) * ch, lab = 13 * S;
+          c.fillStyle = '#111'; c.font = `bold ${10.5 * S}px ${FONT}`; let t = k; while (c.measureText(t).width > cw - 10 * S && t.length > 3) t = t.slice(0, -2);
+          if (t !== k) t += '…'; c.fillText(t, x0 + 4 * S, y0 + 10 * S);
+          const aw = cw - 8 * S, ah = ch - lab - 6 * S, sc = Math.min(aw / im.width, ah / im.height), dw = im.width * sc, dh = im.height * sc, dx = x0 + (cw - dw) / 2, dy = y0 + lab;
+          c.drawImage(im, dx, dy, dw, dh); c.strokeStyle = '#cbd5e1'; c.lineWidth = 1; c.strokeRect(dx, dy, dw, dh);
+        }
+        c.fillStyle = '#64748b'; c.font = `${9 * S}px ${FONT}`; c.textAlign = 'right'; c.fillText((i / per + 1) + ' / ' + totalPages, cv.width - m, cv.height - m + 6 * S); c.textAlign = 'left';
+        const u = atob(cv.toDataURL('image/jpeg', 0.9).split(',')[1]), jpeg = new Uint8Array(u.length); for (let q = 0; q < u.length; q++) jpeg[q] = u.charCodeAt(q);
+        pages.push({ jpeg, w: cv.width, h: cv.height });
+      }
+      shDl(shBuildPdf(pages, PW, PH), 'PlayDrawLab_' + shDate() + '.pdf');
+      toast('PDFを保存しました(' + ks.length + '枚・' + totalPages + 'ページ)', 3000);
+    } catch (e) { alert('PDFの作成に失敗しました: ' + e.message); }
+  }
+  function playerFileExport() {
+    const ks = shKeys(); if (!ks.length) return toast('選手に配るプレーを、一覧の□で選んでください(Select All も使えます)', 3400);
+    const title = document.getElementById('sh-title').value.trim() || 'Play Book';
+    const data = JSON.stringify({ title, plays: ks.map(k => ({ n: k, i: savedPlays[k].image })) }).replace(/</g, '\\u003c');
+    const css = 'html,body{margin:0;height:100%;background:#0f172a;color:#e5e7eb;font-family:"Yu Gothic","Meiryo","Hiragino Sans",sans-serif}#top{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#111827;font-size:14px}#top b{font-size:15px}#main{height:calc(100% - 100px);display:flex;align-items:center;justify-content:center;overflow:auto;touch-action:pan-x pan-y pinch-zoom;padding:6px}#main img{max-width:100%;max-height:100%;background:#fff;border-radius:3px}#name{text-align:center;font-size:14px;padding:4px;height:20px}#bar{display:flex;gap:8px;padding:8px 12px;background:#111827}#bar button{flex:1;padding:12px;font-size:15px;border:0;border-radius:8px;background:#334155;color:#fff}#list{position:fixed;inset:0;background:#0f172aee;overflow:auto;padding:12px;display:none}#list.on{display:block}#list div{padding:12px;border-bottom:1px solid #334155;font-size:15px}#list div.cur{color:#fcd34d;font-weight:bold}';
+    const js = 'const D=JSON.parse(document.getElementById("d").textContent);let i=0;const $=id=>document.getElementById(id);function show(n){i=(n+D.plays.length)%D.plays.length;$("im").src=D.plays[i].i;$("name").textContent=D.plays[i].n;$("cnt").textContent=(i+1)+" / "+D.plays.length;$("main").scrollTo(0,0)}function openList(){const l=$("list");l.innerHTML="";D.plays.forEach((p,k)=>{const d=document.createElement("div");d.textContent=(k+1)+". "+p.n;if(k==i)d.className="cur";d.onclick=()=>{show(k);l.className=""};l.appendChild(d)});l.className="on"}$("prev").onclick=()=>show(i-1);$("next").onclick=()=>show(i+1);$("lst").onclick=openList;$("list").onclick=e=>{if(e.target.id=="list")$("list").className=""};document.onkeydown=e=>{if(e.key=="ArrowRight")show(i+1);if(e.key=="ArrowLeft")show(i-1)};let sx=null;$("main").addEventListener("touchstart",e=>{sx=e.touches.length==1?e.touches[0].clientX:null},{passive:true});$("main").addEventListener("touchend",e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>70)show(i+(dx<0?1:-1));sx=null},{passive:true});show(0);';
+    const html = '<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + title.replace(/[<&]/g, '') + '</title><style>' + css + '</style></head><body><div id="top"><b>' + title.replace(/[<&]/g, '') + '</b><span id="cnt"></span></div><div id="main"><img id="im" alt=""></div><div id="name"></div><div id="bar"><button id="prev">◀ 前へ</button><button id="lst">一覧</button><button id="next">次へ ▶</button></div><div id="list"></div><script id="d" type="application/json">' + data + '<\/script><script>' + js + '<\/script></body></html>';
+    shDl(new Blob([html], { type: 'text/html' }), 'PlayDrawLab_players_' + shDate() + '.html');
+    toast('選手用ファイルを保存しました(' + ks.length + '枚)。LINE・メール・AirDropなどで送れます', 4200);
   }
 
   // v163〜v165 で、保存先のキー名(…_v1623)が誤って変わっていた問題の修復:
@@ -1554,6 +1765,7 @@ const GridironApp = (() => {
     });
 
     migrateStorageKeys();
+    try { ulInit(); histInit(); } catch (e) { console.warn(e); }
     savedPlays = JSON.parse(localStorage.getItem(APP_CONFIG.storageKeys.plays) || '{}');
     loadFromIDB();
     initFonts();
@@ -3190,6 +3402,7 @@ const GridironApp = (() => {
     });
   }
   function drawField() {
+    try { ulSync(); } catch (e) {}
     ctx.clearRect(0, 0, W, H);
     paintField();
     const showHash = document.getElementById('show-hash').checked;
@@ -5870,7 +6083,7 @@ const GridironApp = (() => {
   return {
     init, setMode, undo, redo, toast, toggleBlockEnd, openFontDialog, deleteSelected, addPlayer, clearField, render,
     selectGroup, applySelectedOff, applySelectedDef, renameFormation, moveFormation, openFormOrder, openFormPicker, smOp, rtOp, covOp, cdOp, visOp, pbPreset, pbSecAll, backupAll, restoreAll, restoreFile, openCatPicker, placeDef34, placeDef425, placeDef43, placeOff11, assignFormCat, catAdd, catRename, catDelete, catMove, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
-    flipOffDefPositions, flipLR, duplicateSelected, togglePenOnly, shareExport, editTextContent, textEditStart, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition, changeDefHashPosition, alignSide,
+    histNow, histAutoChanged, ulOp, ulReset, ulLoad, ulClear, pdfExport, playerFileExport, flipOffDefPositions, flipLR, duplicateSelected, togglePenOnly, shareExport, editTextContent, textEditStart, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition, changeDefHashPosition, alignSide,
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
     setLineType, setLineArcDir, setLineArrowhead,
