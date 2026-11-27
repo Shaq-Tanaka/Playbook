@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v187)</title>
+<title>Play Draw Lab (Pro Edition v190)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -354,7 +354,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span style="white-space:nowrap; font-size:13px;">Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><button type="button" id="btn-update" title="最新版に更新（保存したデータは消えません）" style="padding:1px 5px; font-size:10px; white-space:nowrap;">🔄</button><span id="ver-badge" style="font-size:9.5px; white-space:nowrap; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v187</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><button type="button" id="btn-update" title="最新版に更新（保存したデータは消えません）" style="padding:1px 5px; font-size:10px; white-space:nowrap;">🔄</button><span id="ver-badge" style="font-size:9.5px; white-space:nowrap; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v190</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -1115,6 +1115,7 @@
           <option value="team">Team Install Page (タイトル帯 + 大1 + 小4)</option>
           <option value="ohio">Ohio State風 (赤タイトル + 2x2図 + メモ表)</option>
           <option value="rams">LA Rams風 (青枠 + 2列x3段・ラベル付き6図)</option>
+          <option value="rams10">LA Rams風 FRONTS (青枠 + 2列x5段・ラベル付き10図)</option>
           <option value="sec_rams">Section Book — Rams風 (HUDDLE〜ADDITIONAL PROTECTION / 12セクション)</option>
           <option value="sec_miami">Section Book — Miami風 (Pass Route Tree より前 / 約86p)</option>
           <option value="rt_miami">Route Tree Book — Miami風 (目次 + WR-TE + RB / 29p)</option>
@@ -1516,7 +1517,7 @@ const GridironApp = (() => {
   const lsDump = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (BK_PREFIX.test(k)) o[k] = localStorage.getItem(k); } } catch (e) {} return o; };
   async function backupAll() {
     try { await persistPlays(); } catch (e) {}
-    const data = { app: 'PlayDrawLab', ver: 'v187', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
+    const data = { app: 'PlayDrawLab', ver: 'v190', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }), a = document.createElement('a'), d = new Date(), z = n => String(n).padStart(2, '0');
     a.href = URL.createObjectURL(blob); a.download = `PlayDrawLab_backup_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -4962,10 +4963,26 @@ const GridironApp = (() => {
       defHashPos: (document.getElementById('def-hash-pos') || {}).value || 'middle',
       image: canvas.toDataURL('image/png'), imgH: H
     };
+    try { const cr = makeCrop(); if (cr) { o.cimg = cr.url; o.cw = cr.w; o.ch = cr.h; } } catch (e) {}
     render(false);
     return o;
   }
 
+  // 選手・線・文字の周りだけを切り出した画像(FRONTSのように、図を大きく並べるページ用)。縦横比は2.6:1で、図の大きさを揃える
+  function makeCrop() {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    const add = (x, y, r) => { if (typeof x !== 'number' || typeof y !== 'number') return; x0 = Math.min(x0, x - r); x1 = Math.max(x1, x + r); y0 = Math.min(y0, y - r); y1 = Math.max(y1, y + r); };
+    players.forEach(p => { if (p.visible !== false) add(p.x, p.y, 30); });
+    lines.forEach(l => (l.points || []).forEach(pt => add(pt.x, pt.y, 8)));
+    texts.forEach(t => add(t.x, t.y, 24)); zones.forEach(z => add(z.x, z.y, 40));
+    if (x1 < x0) return null;
+    const R = 2.6; let w = Math.max(520, x1 - x0 + 50), h = Math.max(200, y1 - y0 + 40);
+    if (w / h < R) w = h * R; else h = w / R;
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, c = document.createElement('canvas'); c.width = Math.round(w); c.height = Math.round(h);
+    const g = c.getContext('2d'); g.fillStyle = '#ffffff'; g.fillRect(0, 0, c.width, c.height);
+    g.drawImage(canvas, cx - w / 2, cy - h / 2, w, h, 0, 0, c.width, c.height);
+    return { url: c.toDataURL('image/png'), w: c.width, h: c.height };
+  }
   let curPlayId = null;   // いま開いているプレーの、固有ID(タイトルではなく、IDで同じプレーかを判断する)
   const parseKey = k => { const m = String(k).match(/^(.*?)\s+[-–]\s+(.+)$/); return m ? { set: m[1].trim(), name: m[2].trim() } : { set: '', name: String(k) }; };
   const setOf = k => { const p = savedPlays[k]; return p && p.set != null ? p.set : parseKey(k).set; };
@@ -5012,10 +5029,51 @@ const GridironApp = (() => {
     if (c === 0) { save(); }
     return true;
   }
+  // Formation / Shift・Motion / Coverage / Blitz / Stunts: 入力欄が空欄のとき、盤面から名前を作る
+  function autoCatName(c) {
+    const nearest = pt => { let b = null, d = 1e9; players.forEach(p => { const q = Math.hypot(p.x - pt.x, p.y - pt.y); if (q < d) { d = q; b = p; } }); return d < 40 ? b : null; };
+    const labsOf = grps => { const out = []; lines.forEach(l => { if (grps.includes(l.grp) && l.points && l.points.length) { const p = nearest(l.points[0]); const t = p && (p.label || '').trim(); if (t && !out.includes(t)) out.push(t); } }); return out; };
+    if (c === 'form') {
+      const off = players.filter(p => p.side !== 'def' && p.visible !== false), OL = ['LT', 'LG', 'C', 'RG', 'RT', 'OT', 'OG', 'T', 'G'];
+      const cc = off.find(p => (p.label || '').trim().toUpperCase() === 'C') || off.find(p => p.shape === 'square'), cx = cc ? cc.x : W / 2;
+      const rec = off.filter(p => !OL.includes((p.label || '').trim().toUpperCase()) && (p.label || '').trim().toUpperCase() !== 'QB' && p.shape !== 'square');
+      const backs = rec.filter(p => p.y - losY >= 45).length, wide = rec.filter(p => p.y - losY < 45);
+      if (!wide.length) return '';
+      const l = wide.filter(p => p.x < cx).length, r = wide.length - l;
+      return Math.max(l, r) + 'x' + Math.min(l, r) + ' ' + backs + 'B';
+    }
+    if (c === 'motion') {
+      const sh = labsOf(['shift']), mo = labsOf(['motion']);
+      return [sh.length ? sh.join('/') + ' Shift' : '', mo.length ? mo.join('/') + ' Motion' : ''].filter(Boolean).join(' / ');
+    }
+    if (c === 'blitz') { const b = labsOf(['blitz']); return b.length ? b.join('/') + ' Blitz' : ''; }
+    if (c === 'stunt') { const b = labsOf(['twist']); return b.length ? b.join('/') + ' Twist' : ''; }
+    if (c === 'cov') {
+      const cnt = k => texts.filter(t => t.grp === 'cover' && (t.text || '').trim().toUpperCase() === k).length;
+      const h = cnt('1/2'), t3 = cnt('1/3'), man = cnt('MAN');
+      if (h >= 2) return man ? 'Cover 2 Man' : 'Cover 2';
+      if (t3 >= 3 || (t3 >= 2 && cnt('MIDDLE RUN THROUGH'))) return 'Cover 3';
+      if (t3 === 1 && man) return 'Cover 1';
+      if (man && !h && !t3) return 'Cover 0';
+      return '';
+    }
+    return '';
+  }
+  function autoFrontName() {   // 盤面のDEFから、DL人数+LB人数(例: 3-4 → "34" / 4-3 → "43")
+    let dl = 0, lb = 0;
+    players.forEach(p => {
+      if (p.side !== 'def' || p.visible === false) return;
+      const L = (p.label || '').trim().toLowerCase(), it = defPalette.find(q => (q.label || '').trim().toLowerCase() === L), g = it ? paletteGroup(it, 'def') : guessGroup(p, 'def');
+      if (g === 'DL') dl++; else if (g === 'LB') lb++;
+    });
+    return (dl + lb) ? String(dl) + String(lb) : '';
+  }
   const curSet = () => (document.getElementById('set-name').value || '').trim();
   const curName = () => {   // Play以外は、入力欄(FORMATION など)に打ち込んだ名称が、そのまま名前になる
     const c = (document.getElementById('play-cat') || {}).value || 'play';
-    if (c !== 'play') { const cf = catFields(c), n = cf.manual ? '' : cf.name.map(val).filter(Boolean).join(cf.join || ' '); if (n) return n; }
+    if (c !== 'play') { const cf = catFields(c), n = cf.manual ? '' : cf.name.map(val).filter(Boolean).join(cf.join || ' '); if (n) return n;
+      if (c === 'front') { const a = autoFrontName(); if (a) { try { toast('FRONT が空欄なので、名前を「' + a + '」(DLの数+LBの数)にしました', 3200); } catch (e) {} return a; } }
+      else { const a = autoCatName(c); if (a) { try { toast('入力欄が空欄なので、名前を「' + a + '」にしました(盤面から自動)', 3200); } catch (e) {} return a; } } }
     return (document.getElementById('play-name').value || '').trim();
   };
   function save() {
@@ -5503,6 +5561,7 @@ const GridironApp = (() => {
   const PB_STYLES = {
     ohio:  { color: '#bb0000', per: 4, rows: 2 },
     rams:  { color: '#1f4fa3', per: 6, rows: 3 },
+    rams10: { color: '#1f4fa3', per: 10, rows: 5 },
     miami: { color: '#00808f', per: 6, rows: 3 },
     assign: { color: '#bb0000', per: 1, rows: 1 }
   };
@@ -5550,7 +5609,8 @@ const GridironApp = (() => {
       .sp .gd { flex:1; margin-top: 3mm; display:grid; grid-template-columns:1fr 1fr; gap: 2mm; min-height:0; }
       .sp .ce { position:relative; border: 0.3mm solid #9ca3af; min-height:0; overflow:hidden; display:flex; }
       .sp .ce img { width:100%; height:100%; object-fit:contain; } .sp .ce .lb { position:absolute; left:0; top:0; background: var(--tc); color:#fff; font-weight:bold; font-size:10pt; padding: 0.5mm 2.5mm; }
-      .sp.rams { border: 1.2mm solid var(--tc); padding: 3mm; box-sizing:border-box; } .sp.rams .hd { text-align:center; }
+      .sp.rams, .sp.rams10 { border: 1.2mm solid var(--tc); padding: 3mm; box-sizing:border-box; } .sp.rams .hd, .sp.rams10 .hd { text-align:center; }
+      .sp.rams10 .ce { border: 0.3mm solid #111; } .sp.rams10 .ce .lb { background:none; color:#000; font-size:9pt; padding:0.5mm 1.5mm; } .sp.rams10 .gd { gap:0; }
       .sp table { border-collapse: collapse; margin-top: 3mm; font-size: 9pt; width:100%; } .sp td, .sp th { border: 0.3mm solid var(--tc); padding: 1mm 2mm; text-align:left; vertical-align:top; white-space: pre-wrap; }
       .sp th { background: var(--tc); color:#fff; }`;
   function pbNotesOf(items) { return items.map(it => ({ lb: it.label, note: (savedPlays[it.key].notes || ''), m: savedPlays[it.key].meta || {}, pers: savedPlays[it.key].offPersonnel || '' })); }
@@ -5625,7 +5685,7 @@ const GridironApp = (() => {
       if (key === 'assign') html += pbAssignBody(pg.items[0].key, L); else {
       html += '<div class="gd" style="grid-template-rows:repeat(' + ST.rows + ',1fr)">';
       (pbPlace(pg.items, ST.rows) || []).forEach(pl => {
-        html += `<div class="ce" style="grid-column:${pl.c + 1}; grid-row:${pl.r + 1} / span ${pl.rs}"><img src="${savedPlays[pl.it.key].image}"><div class="lb">${esc(pl.it.label)}</div></div>`;
+        html += `<div class="ce" style="grid-column:${pl.c + 1}; grid-row:${pl.r + 1} / span ${pl.rs}"><img src="${(key === 'rams10' && savedPlays[pl.it.key].cimg) || savedPlays[pl.it.key].image}"><div class="lb">${esc(pl.it.label)}</div></div>`;
       });
       html += '</div>';
       if (key === 'ohio') {
@@ -5668,8 +5728,8 @@ const GridironApp = (() => {
       if (C.dividers && pg.group && pg.group !== lastG) pbPptxDivider(pptx, C, PW, PH, pg.group);
       lastG = pg.group;
       const sl = pptx.addSlide(), nt = pbNotesOf(pg.items);
-      if (key === 'rams') sl.addShape(pptx.ShapeType.rect, { x: M / 2, y: M / 2, w: PW - M, h: PH - M, fill: { type: 'none' }, line: { color: tc, width: 3 } });
-      sl.addText(pg.title, { x: M, y: M, w: PW - 2 * M, h: 0.6, fontSize: 22, bold: true, color: 'FFFFFF', fill: { color: tc }, align: key === 'rams' ? 'center' : 'left', valign: 'middle' });
+      if (key === 'rams' || key === 'rams10') sl.addShape(pptx.ShapeType.rect, { x: M / 2, y: M / 2, w: PW - M, h: PH - M, fill: { type: 'none' }, line: { color: tc, width: 3 } });
+      sl.addText(pg.title, { x: M, y: M, w: PW - 2 * M, h: 0.6, fontSize: 22, bold: true, color: 'FFFFFF', fill: { color: tc }, align: (key === 'rams' || key === 'rams10') ? 'center' : 'left', valign: 'middle' });
       let y0 = M + 0.7;
       if (key === 'assign') {
         const k = pg.items[0].key, p = savedPlays[k], AD = pbAssignData(k);
@@ -5698,10 +5758,10 @@ const GridironApp = (() => {
       (pbPlace(pg.items, ST.rows) || []).forEach(pl => {
         const it = pl.it, x = M + pl.c * cw, y = y0 + pl.r * ch, chh = ch * pl.rs;
         sl.addShape(pptx.ShapeType.rect, { x, y, w: cw, h: chh, fill: { type: 'none' }, line: { color: '9CA3AF', width: 0.75 } });
-        const ratio = pbRatio(it.key);
+        const sp0 = savedPlays[it.key], useC = key === 'rams10' && sp0.cimg, ratio = useC ? sp0.cw / sp0.ch : pbRatio(it.key);
         let w = cw - 0.1, h = w / ratio; if (h > chh - 0.1) { h = chh - 0.1; w = h * ratio; }
-        sl.addImage({ data: savedPlays[it.key].image, x: x + (cw - w) / 2, y: y + (chh - h) / 2, w, h });
-        sl.addText(it.label, { x, y, w: Math.min(cw, 0.25 + it.label.length * 0.13), h: 0.28, fontSize: 10, bold: true, color: 'FFFFFF', fill: { color: tc }, valign: 'middle' });
+        sl.addImage({ data: useC ? sp0.cimg : sp0.image, x: x + (cw - w) / 2, y: y + (chh - h) / 2, w, h });
+        if (key === 'rams10') sl.addText(it.label, { x, y, w: Math.min(cw, 0.25 + it.label.length * 0.12), h: 0.24, fontSize: 9, bold: true, color: '000000', valign: 'middle' }); else sl.addText(it.label, { x, y, w: Math.min(cw, 0.25 + it.label.length * 0.13), h: 0.28, fontSize: 10, bold: true, color: 'FFFFFF', fill: { color: tc }, valign: 'middle' });
       });
       if (key === 'ohio') {
         const rows = [[{ text: 'PLAY', options: { bold: true, color: 'FFFFFF', fill: { color: tc } } }, { text: 'RULES / CALLS / COACHING POINT', options: { bold: true, color: 'FFFFFF', fill: { color: tc } } }]]
@@ -5720,6 +5780,7 @@ const GridironApp = (() => {
   function pbTemplateChanged() {
     const t = document.getElementById('pb-template-type').value, pr = RT_PRESET[t], box = document.getElementById('pb-rt-opts');
     box.style.display = pr ? 'flex' : 'none';
+    if (PB_STYLES[t]) { const c0 = document.getElementById('pb-theme'); if (c0) { c0.value = PB_STYLES[t].color; c0.dispatchEvent(new Event('change')); } }   // 雛形に合わせたテーマ色(Rams=青 / Ohio=赤 / Miami=青緑)
     const sb = SEC_BOOKS[t], so = document.getElementById('pb-sec-opts');
     so.style.display = sb ? 'flex' : 'none';
     if (sb) {
