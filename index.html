@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v180)</title>
+<title>Play Draw Lab (Pro Edition v183)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -303,7 +303,7 @@
           <div class="menu-item" onclick="GridironApp.setPlayerSymbol('arc-ring')">◌ Arc Ring (4分割の円弧)</div>
           <div class="menu-item" onclick="GridironApp.setPlayerSymbol('half-circle-left')">◐ Half Circle (Left-Filled)</div>
           <div class="menu-item" onclick="GridironApp.setPlayerSymbol('half-circle-right')">◑ Half Circle (Right-Filled)</div>
-          <div class="menu-item" onclick="GridironApp.setPlayerSymbol('vertical-split')">◫ Vertical Split</div>
+          <div class="menu-item" onclick="GridironApp.setPlayerSymbol('vertical-split')">◫ Vertical Split (縦分割・塗りなし)</div>
           <div class="menu-item" onclick="GridironApp.setPlayerSymbol('box-split-left')">◧ Box Left-Filled</div>
           <div class="menu-item" onclick="GridironApp.setPlayerSymbol('box-split-right')">◨ Box Right-Filled</div>
           <div class="menu-item" onclick="GridironApp.setPlayerSymbol('box-x')">☒ Box X (□に×)</div>
@@ -353,7 +353,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v180</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><button type="button" id="btn-update" title="最新版に更新（保存したデータは消えません）" style="padding:1px 6px; font-size:10px;">🔄 更新</button><span id="ver-badge" style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v183</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -893,9 +893,9 @@
       <div class="prop-row">
         <label>Side Line:</label>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <label class="chk-label"><input type="checkbox" id="sl-none" checked onchange="GridironApp.changeSideLine('none')"> None</label>
-          <label class="chk-label"><input type="checkbox" id="sl-left" onchange="GridironApp.changeSideLine('left')"> Left Sideline</label>
-          <label class="chk-label"><input type="checkbox" id="sl-right" onchange="GridironApp.changeSideLine('right')"> Right Sideline</label>
+          <label class="chk-label"><input type="checkbox" id="sl-none" onchange="GridironApp.changeSideLine('none')"> 両方外す</label>
+          <label class="chk-label"><input type="checkbox" id="sl-left" onchange="GridironApp.changeSideLine('left')"> Left 外す</label>
+          <label class="chk-label"><input type="checkbox" id="sl-right" onchange="GridironApp.changeSideLine('right')"> Right 外す</label>
         </div>
       </div>
 
@@ -1232,7 +1232,7 @@ const GridironApp = (() => {
   let yardStartMode = '+20', numLos = 30, numGoal = 'down', numArrow = true, fieldLinesOff = false; 
   let fieldFill = 'none', pylonsOn = false;
   try { fieldFill = localStorage.getItem('pdl_fieldfill') || (localStorage.getItem('pdl_fieldcolor') === 'green' ? 'grass' : 'none'); } catch (e) {}
-  let yardLines = '10', ezTop = false, ezBottom = false, slLeft = false, slRight = false;
+  let yardLines = '10', ezTop = false, ezBottom = false, slLeft = true, slRight = true;
   const SL_W = 56; // サイドライン外側(アウトオブバウンズ)の幅 ≒3yd
 
   let mode = 'select';
@@ -1504,7 +1504,7 @@ const GridironApp = (() => {
   const lsDump = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (BK_PREFIX.test(k)) o[k] = localStorage.getItem(k); } } catch (e) {} return o; };
   async function backupAll() {
     try { await persistPlays(); } catch (e) {}
-    const data = { app: 'PlayDrawLab', ver: 'v180', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
+    const data = { app: 'PlayDrawLab', ver: 'v183', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }), a = document.createElement('a'), d = new Date(), z = n => String(n).padStart(2, '0');
     a.href = URL.createObjectURL(blob); a.download = `PlayDrawLab_backup_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -1669,6 +1669,22 @@ const GridironApp = (() => {
     str(`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xo}\n%%EOF`);
     return new Blob(chunks, { type: 'application/pdf' });
   }
+  async function appUpdate() {
+    try { toast('最新版を読み込んでいます…(保存したデータは消えません)', 2500); } catch (e) {}
+    try { if ('serviceWorker' in navigator) { const rs = await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(r => r.unregister())); } } catch (e) {}
+    try { if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); } } catch (e) {}
+    setTimeout(() => { location.replace(location.pathname + '?u=' + Date.now()); }, 400);
+  }
+  async function appCheckUpdate() {
+    try {
+      const cur = (document.getElementById('ver-badge').textContent.match(/v(\d+)/) || [])[1]; if (!cur) return;
+      const r = await fetch(location.pathname + '?c=' + Date.now(), { cache: 'no-store' }); if (!r.ok) return;
+      const t = await r.text(), m = t.match(/PRO v(\d+)<\/span>/); if (!m) return;
+      const b = document.getElementById('btn-update');
+      if (+m[1] > +cur && b) { b.textContent = '🔄 新版あり v' + m[1]; b.style.background = '#f59e0b'; b.style.color = '#000'; b.style.fontWeight = 'bold'; try { toast('新しい版 v' + m[1] + ' があります。「🔄 新版あり」を押すと更新できます', 5000); } catch (e) {} }
+    } catch (e) {}
+  }
+  try { const ub = document.getElementById('btn-update'); if (ub) ub.onclick = appUpdate; setTimeout(appCheckUpdate, 3000); } catch (e) {}
   function shPerSync() {   // 横は最大6枚、縦は最大8枚まで選べる
     const ori = document.getElementById('sh-ori'), per = document.getElementById('sh-per'); if (!ori || !per) return;
     const max = ori.value === 'portrait' ? 8 : 6, keep = +per.value;
@@ -3154,15 +3170,15 @@ const GridironApp = (() => {
   }
   function changeSideLine(which) {
     const n = document.getElementById('sl-none'), l = document.getElementById('sl-left'), r = document.getElementById('sl-right');
-    if (which === 'none') { l.checked = false; r.checked = false; n.checked = true; }
-    else { n.checked = !(l.checked || r.checked); }
-    slLeft = l.checked; slRight = r.checked;
+    if (which === 'none') { l.checked = n.checked; r.checked = n.checked; }
+    else { n.checked = l.checked && r.checked; }
+    slLeft = !l.checked; slRight = !r.checked;   // チェック＝その側のサイドラインを外す
     render();
   }
   function syncFieldControls() {
-    document.getElementById('sl-left').checked = slLeft;
-    document.getElementById('sl-right').checked = slRight;
-    document.getElementById('sl-none').checked = !(slLeft || slRight);
+    document.getElementById('sl-left').checked = !slLeft;
+    document.getElementById('sl-right').checked = !slRight;
+    document.getElementById('sl-none').checked = !slLeft && !slRight;
     document.getElementById('yard-start-mode').value = yardStartMode;
     document.getElementById('num-los').value = numLos; document.getElementById('num-goal').value = numGoal;
     document.getElementById('num-arrow').checked = numArrow;
@@ -3790,9 +3806,9 @@ const GridironApp = (() => {
         ctx.beginPath(); ctx.arc(p.x, p.y, r, Math.PI * 1.5, Math.PI * 0.5, false); ctx.closePath(); ctx.fill();
         ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.stroke();
       } else if (p.shape === 'vertical-split') {
+        if (fill !== 'transparent') ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
         ctx.strokeRect(p.x - r, p.y - r, r * 2, r * 2);
-        ctx.fillStyle = stroke;
-        ctx.fillRect(p.x, p.y - r, r, r * 2);
+        ctx.beginPath(); ctx.moveTo(p.x, p.y - r); ctx.lineTo(p.x, p.y + r); ctx.stroke();
       } else if (p.shape === 'box-split-left') {
         ctx.strokeRect(p.x - r, p.y - r, r * 2, r * 2);
         ctx.fillStyle = stroke;
@@ -3847,7 +3863,7 @@ const GridironApp = (() => {
     else if (shape === 'arc-ring') { g.lineCap = 'round'; for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2 - Math.PI / 2; g.beginPath(); g.arc(x, y, r, a - 0.5, a + 0.5); g.stroke(); } }
     else if (shape === 'half-circle-left') { g.fillStyle = '#000'; g.beginPath(); g.arc(x, y, r, Math.PI * .5, Math.PI * 1.5); g.closePath(); g.fill(); circ(); g.stroke(); }
     else if (shape === 'half-circle-right') { g.fillStyle = '#000'; g.beginPath(); g.arc(x, y, r, Math.PI * 1.5, Math.PI * .5); g.closePath(); g.fill(); circ(); g.stroke(); }
-    else if (shape === 'vertical-split') { g.strokeRect(x - r, y - r, r * 2, r * 2); g.fillStyle = '#000'; g.fillRect(x, y - r, r, r * 2); }
+    else if (shape === 'vertical-split') { g.strokeRect(x - r, y - r, r * 2, r * 2); g.beginPath(); g.moveTo(x, y - r); g.lineTo(x, y + r); g.stroke(); }
     else if (shape === 'box-split-left') { g.strokeRect(x - r, y - r, r * 2, r * 2); g.fillStyle = '#000'; g.fillRect(x - r, y - r, r, r * 2); }
     else if (shape === 'box-split-right') { g.strokeRect(x - r, y - r, r * 2, r * 2); g.fillStyle = '#000'; g.fillRect(x, y - r, r, r * 2); }
     else if (shape === 'box-x') { g.strokeRect(x - r, y - r, r * 2, r * 2); g.beginPath(); g.moveTo(x - r, y - r); g.lineTo(x + r, y + r); g.moveTo(x + r, y - r); g.lineTo(x - r, y + r); g.stroke(); }
@@ -4831,7 +4847,7 @@ const GridironApp = (() => {
     if (pData.yardStartMode) yardStartMode = pData.yardStartMode;
     numLos = pData.numLos !== undefined ? pData.numLos : 30; numGoal = pData.numGoal || 'down'; numArrow = pData.numArrow !== false;
     if (pData.fieldFill) fieldFill = pData.fieldFill; else if (pData.fieldGreen !== undefined) fieldFill = pData.fieldGreen ? 'grass' : 'none'; pylonsOn = !!pData.pylonsOn;
-    yardLines = pData.yardLines === 'none' ? 'none' : '10'; ezTop = !!pData.ezTop; ezBottom = !!pData.ezBottom; slLeft = !!pData.slLeft; slRight = !!pData.slRight;
+    yardLines = pData.yardLines === 'none' ? 'none' : '10'; ezTop = !!pData.ezTop; ezBottom = !!pData.ezBottom; slLeft = pData.slLeft === undefined ? true : !!pData.slLeft; slRight = pData.slRight === undefined ? true : !!pData.slRight;
     syncFieldControls();
     if (pData.offSize) { document.getElementById('off-size-range').value = pData.offSize; document.getElementById('off-size-val').innerText = pData.offSize; }
     if (pData.defSize) { document.getElementById('def-size-range').value = pData.defSize; document.getElementById('def-size-val').innerText = pData.defSize; }
