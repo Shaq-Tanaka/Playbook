@@ -1,5 +1,5 @@
 // Gridiron Playbook Studio: オフライン対応（ネット接続時は最新を取得、切れていれば保存済みを使用）
-const C = 'gps-v176';
+const C = 'gps-v179';
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(C).then(c => c.addAll(['./', 'index.html']).catch(() => {}))); });
 self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener('fetch', e => {

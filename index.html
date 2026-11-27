@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v176)</title>
+<title>Play Draw Lab (Pro Edition v179)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -353,7 +353,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v176</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v179</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -1050,7 +1050,7 @@
         <div style="font-size:10.5px; font-weight:bold; color:#fcd34d; margin-bottom:3px;">📤 選んだプレーをまとめて出力 / 配る</div>
         <input type="text" id="sh-title" placeholder="資料名(例: 2026 Spring Game Plan)" style="margin-bottom:3px;">
         <div style="display:flex; gap:3px; margin-bottom:3px;">
-          <select id="sh-per" style="flex:1;"><option value="1">1ページに 1枚</option><option value="2" selected>1ページに 2枚</option><option value="4">1ページに 4枚</option></select>
+          <select id="sh-per" style="flex:1;"><option value="1">1ページに 1枚</option><option value="2" selected>1ページに 2枚</option><option value="4">1ページに 4枚</option><option value="6">1ページに 6枚</option><option value="8">1ページに 8枚</option></select>
           <select id="sh-ori" style="flex:1;"><option value="landscape" selected>A4 横</option><option value="portrait">A4 縦</option></select>
         </div>
         <div style="display:flex; gap:3px;">
@@ -1504,7 +1504,7 @@ const GridironApp = (() => {
   const lsDump = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (BK_PREFIX.test(k)) o[k] = localStorage.getItem(k); } } catch (e) {} return o; };
   async function backupAll() {
     try { await persistPlays(); } catch (e) {}
-    const data = { app: 'PlayDrawLab', ver: 'v176', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
+    const data = { app: 'PlayDrawLab', ver: 'v179', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }), a = document.createElement('a'), d = new Date(), z = n => String(n).padStart(2, '0');
     a.href = URL.createObjectURL(blob); a.download = `PlayDrawLab_backup_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -1669,12 +1669,19 @@ const GridironApp = (() => {
     str(`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xo}\n%%EOF`);
     return new Blob(chunks, { type: 'application/pdf' });
   }
+  function shPerSync() {   // 横は最大6枚、縦は最大8枚まで選べる
+    const ori = document.getElementById('sh-ori'), per = document.getElementById('sh-per'); if (!ori || !per) return;
+    const max = ori.value === 'portrait' ? 8 : 6, keep = +per.value;
+    per.innerHTML = [1, 2, 4, 6, 8].filter(n => n <= max).map(n => '<option value="' + n + '">1ページに ' + n + '枚</option>').join('');
+    per.value = String(Math.min(keep, max));
+  }
+  try { const o = document.getElementById('sh-ori'); if (o) { o.addEventListener('change', shPerSync); shPerSync(); } } catch (e) {}
   async function pdfExport() {
     const ks = shKeys(); if (!ks.length) return toast('PDFにするプレーを、一覧の□で選んでください(Select All も使えます)', 3400);
     toast('PDFを作っています… (' + ks.length + '枚)', 2400);
     try {
       const per = +document.getElementById('sh-per').value, land = document.getElementById('sh-ori').value === 'landscape', title = document.getElementById('sh-title').value.trim();
-      const PW = land ? 842 : 595, PH = land ? 595 : 842, S = 2.5, cols = per === 1 ? 1 : per === 2 ? (land ? 2 : 1) : 2, rows = per === 1 ? 1 : per === 2 ? (land ? 1 : 2) : 2;
+      const PW = land ? 842 : 595, PH = land ? 595 : 842, S = 2.5, GR = { 1: [1, 1], 2: land ? [2, 1] : [1, 2], 4: [2, 2], 6: land ? [3, 2] : [2, 3], 8: land ? [4, 2] : [2, 4] }[per] || [2, 2], cols = GR[0], rows = GR[1];
       const totalPages = Math.ceil(ks.length / per), pages = [], FONT = '"Yu Gothic","Meiryo","Hiragino Sans",sans-serif';
       for (let i = 0; i < ks.length; i += per) {
         const cv = document.createElement('canvas'); cv.width = Math.round(PW * S); cv.height = Math.round(PH * S);
@@ -5236,10 +5243,10 @@ const GridironApp = (() => {
     {
       const div = document.createElement('div');
       div.className = 'play-item' + (name === currentName ? ' current' : '');
-      div.style.paddingLeft = g ? '18px' : '8px';
+      div.style.paddingLeft = g ? '18px' : '8px'; div.style.flexWrap = 'wrap'; div.style.rowGap = '3px';
       const cc = savedPlays[name].cat || 'play';
       { const sp = savedPlays[name]; div.title = sp.savedAt ? ('更新: ' + (sp.savedBy || '(名前なし)') + '  ' + fmtT(sp.savedAt)) : ''; }
-      div.innerHTML = `<input type="checkbox" class="sel" style="width:auto;margin-right:5px;flex:none"${playSel.has(name) ? ' checked' : ''}><span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(nameOf(name))}</span><span class="mvb" style="flex:none;display:flex;gap:2px;margin-right:3px;"><button type="button" class="mini-btn mvu" title="Move up" style="padding:0 5px;font-size:9px;">▲</button><button type="button" class="mini-btn mvd" title="Move down" style="padding:0 5px;font-size:9px;">▼</button></span><button type="button" class="mini-btn mvc" title="保存先(Category)を変更 / 名前を変更" style="padding:0 6px;font-size:11px;margin-right:3px;flex:none;">📂移動</button><button type="button" class="mini-btn mrg" title="今のPlayに重ねる(転用): この図の 線・ゾーン・文字(+DEF/OFFの陣形)を、いま開いているPlayに追加します" style="padding:0 6px;font-size:11px;margin-right:3px;flex:none;">＋重ねる</button><span class="del" title="削除">×</span>`;
+      div.innerHTML = `<input type="checkbox" class="sel" style="width:auto;margin-right:5px;flex:none"${playSel.has(name) ? ' checked' : ''}><span style="flex:1 1 60px; min-width:60px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${esc(nameOf(name))}">${esc(nameOf(name))}</span><span class="mvb" style="flex:none;display:flex;gap:2px;margin-right:3px;"><button type="button" class="mini-btn mvu" title="Move up" style="padding:0 5px;font-size:9px;">▲</button><button type="button" class="mini-btn mvd" title="Move down" style="padding:0 5px;font-size:9px;">▼</button></span><button type="button" class="mini-btn mvc" title="保存先(Category)を変更 / 名前を変更" style="padding:0 6px;font-size:11px;margin-right:3px;flex:none;">📂</button><button type="button" class="mini-btn mrg" title="今のPlayに重ねる(転用): この図の 線・ゾーン・文字(+DEF/OFFの陣形)を、いま開いているPlayに追加します" style="padding:0 6px;font-size:11px;margin-right:3px;flex:none;">＋重ねる</button><span class="del" title="削除">×</span>`;
       div.querySelector('.mvu').onclick = e => { e.stopPropagation(); movePlay(name, ks, -1); };
       div.querySelector('.mvd').onclick = e => { e.stopPropagation(); movePlay(name, ks, 1); };
       div.querySelector('.mvc').onclick = e => { e.stopPropagation(); const sel = [...playSel].filter(k => savedPlays[k]); openMoveMenu(e.currentTarget, (playSel.has(name) && sel.length > 1) ? sel : [name]); };
