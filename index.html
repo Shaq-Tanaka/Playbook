@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v173)</title>
+<title>Play Draw Lab (Pro Edition v174)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -346,7 +346,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v173</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v174</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -1497,7 +1497,7 @@ const GridironApp = (() => {
   const lsDump = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (BK_PREFIX.test(k)) o[k] = localStorage.getItem(k); } } catch (e) {} return o; };
   async function backupAll() {
     try { await persistPlays(); } catch (e) {}
-    const data = { app: 'PlayDrawLab', ver: 'v173', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
+    const data = { app: 'PlayDrawLab', ver: 'v174', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }), a = document.createElement('a'), d = new Date(), z = n => String(n).padStart(2, '0');
     a.href = URL.createObjectURL(blob); a.download = `PlayDrawLab_backup_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -2721,6 +2721,7 @@ const GridironApp = (() => {
     });
     zones.forEach(z => { z.x = mx(z.x); });
     texts.forEach(t => { t.x = mx(t.x); });
+    try { if (offMirrorValid()) offMirrored = !offMirrored; } catch (e) {}
     selectedObj = null;
     render();
     toast('左右を反転しました（OLは LT/LG=左、RG/RT=右 に固定）', 2800);
@@ -2877,7 +2878,7 @@ const GridironApp = (() => {
     pushHistory();
     let flipped = false;
     if (side === 'off') { flipped = orientOffToHash(mode); applyOffHashShift(false, true); snapXYToNumbers(mode); render(); } else applyDefHashShift(true, true);
-    toast((side === 'off' ? 'オフェンス' : 'ディフェンス') + 'を ' + (mode === 'left' ? '左ハッシュ' : mode === 'right' ? '右ハッシュ' : '中央') + ' に寄せました' + (flipped ? '（ワイド側がフィールド広い側になるよう左右反転）' : ''), 2200);
+    toast((side === 'off' ? 'オフェンス' : 'ディフェンス') + 'を ' + (mode === 'left' ? '左ハッシュ' : mode === 'right' ? '右ハッシュ' : '中央') + ' に寄せました' + (flipped ? (mode === 'right' ? '（左右反転しました）' : '（元の向きに戻しました）') : ''), 2200);
   }
 
   // Hash合わせのとき、X=数字のすぐ外側(サイドライン側)、Y=数字のすぐ内側(フィールド中央側)に置く(画面外に出ないように)
@@ -2901,29 +2902,33 @@ const GridironApp = (() => {
   }
 
   // ハッシュに寄せるとき、OFFの広い側(WR等が多く出ている側)がフィールドの広い側(ハッシュの反対側)を向くよう、左右反転する
-  function orientOffToHash(mode) {
-    if (mode !== 'left' && mode !== 'right' && mode !== 'center' && mode !== 'middle') return false;
-    if (mode !== 'right') mode = 'left'; // 中央(Middle)は、L Hashと同じ向き(広い側=右)に揃える
+  let offMirrored = false, offMirrorRef = null;   // いまのOFFが、元の向きから反転した状態か(同じ選手のまとまりのときだけ有効)
+  const offMirrorValid = () => { const off = players.filter(p => p.side !== 'def'); return !!offMirrorRef && offMirrorRef.length === off.length && off.every(p => offMirrorRef.includes(p)); };
+  function mirrorOffPlayers() {
     const OLN = ['OT', 'OG', 'C', 'T', 'G', 'LT', 'LG', 'RG', 'RT'];
     const off = players.filter(p => p.side !== 'def');
     if (!off.length) return false;
-    const c = off.find(p => p.label === 'C');
+    const c = off.find(p => (p.label || '').trim() === 'C') || off.find(p => p.shape === 'square');
     const cx = c ? c.x : off.reduce((a, p) => a + p.x, 0) / off.length;
-    const skill = off.filter(p => !OLN.includes((p.label || '').trim()));
-    if (!skill.length) return false;
-    const extR = Math.max(0, ...skill.map(p => p.x - cx)), extL = Math.max(0, ...skill.map(p => cx - p.x));
-    const wideIsRight = extR > extL + 5, wideIsLeft = extL > extR + 5;
-    // 左ハッシュ → フィールドが広いのは右側 / 右ハッシュ → 左側
-    if (!((mode === 'left' && wideIsLeft) || (mode === 'right' && wideIsRight))) return false;
     const mx = x => 2 * cx - x, SWL = { LT: 'RT', RT: 'LT', LG: 'RG', RG: 'LG' };
+    const starts = off.map(o => ({ x: o.x, y: o.y }));
     off.forEach(p => { p.x = mx(p.x); const l = (p.label || '').trim(); if (SWL[l]) p.label = SWL[l]; });
     lines.forEach(l => {
       const st = (l.points || [])[0];
-      if (!st || !off.some(o => Math.hypot(o.x - mx(st.x), o.y - st.y) < 22)) return;
+      if (!st || !starts.some(o => Math.hypot(o.x - st.x, o.y - st.y) < 22)) return;
       l.points.forEach(q => { q.x = mx(q.x); });
       if (l.arcDir === 'left') l.arcDir = 'right'; else if (l.arcDir === 'right') l.arcDir = 'left';
     });
     return true;
+  }
+  // R Hash なら、必ず左右反転(L Hash / Middle のときが元の向き)。L / Middle に戻すと、元の向きに戻る
+  function orientOffToHash(mode) {
+    if (mode !== 'left' && mode !== 'right' && mode !== 'center' && mode !== 'middle') return false;
+    const want = mode === 'right', cur = offMirrorValid() ? offMirrored : false;
+    let did = false;
+    if (want !== cur) did = mirrorOffPlayers();
+    offMirrored = want; offMirrorRef = players.filter(p => p.side !== 'def');
+    return did;
   }
 
   function applyOffHashShift(doRender = true, force = false) {
