@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v164)</title>
+<title>Play Draw Lab (Pro Edition v166)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -346,7 +346,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v164</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v166</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -1000,6 +1000,11 @@
         <h4 style="font-size: 10.5px; color: #ffffff;">Saved Plays (保存済み)</h4>
         <span id="play-count" style="font-size:10.5px; color:#ffffff;">0件</span>
       </div>
+      <div style="display:flex; gap:3px; margin-bottom:3px;">
+        <button class="mini-btn" onclick="GridironApp.backupAll()" style="flex:1; font-size:10px;" title="保存したプレー・Formation・Category・Route・Cover など、すべてを1つのファイルに保存します(バージョンアップ前や、PC/iPad間の移動に)">💾 バックアップ保存</button>
+        <button class="mini-btn" onclick="GridironApp.restoreAll()" style="flex:1; font-size:10px;" title="バックアップのファイルを読み込みます">📂 バックアップ読込</button>
+        <input type="file" id="bk-file" accept=".json,application/json" style="display:none;" onchange="GridironApp.restoreFile(event)">
+      </div>
       <select id="play-catf" onchange="GridironApp.updatePlayList()" style="margin-bottom:3px;"><option value="all">Category: All</option><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
       <input type="text" id="play-search" placeholder="🔍 検索..." oninput="GridironApp.updatePlayList()" style="margin-bottom:3px;">
       <div style="display:flex; gap:3px; align-items:center; margin-bottom:3px;">
@@ -1041,6 +1046,20 @@
       </div>
 
       <div>
+        <label style="font-size:9.5px; color:#fbbf24;">作るページの種類 (まとめて選ぶ):</label>
+        <select id="pb-preset" onchange="GridironApp.pbPreset()">
+          <option value="">(選ぶと、下の設定が自動で切り替わります)</option>
+          <option value="route">Pass Route Tree だけ (WR-TE / RB)</option>
+          <option value="front">Front だけ (DEFENSIVE ID / FRONTS)</option>
+          <option value="cover">Cover だけ (COVERAGES)</option>
+          <option value="blitz">Blitz だけ</option>
+          <option value="oline">OL Terminology だけ (OL / PROTECTION)</option>
+          <option value="formation">Formation だけ (+ PERSONNEL)</option>
+          <option value="motion">Motion / Shift だけ</option>
+          <option value="all">全部 (Section Book)</option>
+        </select>
+      </div>
+      <div>
         <label style="font-size:9.5px; color:#a1a1aa;">雛形テンプレート種類:</label>
         <select id="pb-template-type" onchange="GridironApp.pbTemplateChanged()">
           <option value="standard">Standard Game Plan (表紙 + サマリーカード)</option>
@@ -1059,7 +1078,7 @@
       </div>
 
       <div id="pb-sec-opts" style="display:none; font-size:10px; color:#a1a1aa; flex-direction:column; gap:2px;">
-        <div style="color:#fbbf24;">出力するセクション:</div>
+        <div style="color:#fbbf24; display:flex; gap:6px; align-items:center;">出力するセクション: <button type="button" class="mini-btn" onclick="GridironApp.pbSecAll(true)" style="padding:0 6px;">全部ON</button><button type="button" class="mini-btn" onclick="GridironApp.pbSecAll(false)" style="padding:0 6px;">全部OFF</button></div>
         <div id="pb-sec-list" style="display:flex; flex-direction:column; gap:1px; max-height:150px; overflow-y:auto;"></div>
         <label class="chk-label"><input type="checkbox" id="pb-sec-blank" checked style="width:auto; display:inline-block;"> 裏白ページ(両面印刷用)</label>
         <div style="color:#71717a;">プレイ名を「ページ名 - 図の名前」にすると、そのページに入ります(例: 2 BACK VARIATIONS - STRONG 1)。入れなかったページは空欄の雛形です。</div>
@@ -1110,12 +1129,12 @@ const APP_CONFIG = {
     { key: 'farm',       label: 'ファーム',   placeholder: '例: Red Zone / 3rd Down' }
   ],
   storageKeys: {
-    plays: 'gridiron_plays_v1643',
-    offForms: 'gridiron_off_v1643',
-    defForms: 'gridiron_def_v1643',
-    offPalette: 'gridiron_off_palette_v1643',
-    defPalette: 'gridiron_def_palette_v1643',
-    groupNames: 'gridiron_group_names_v1643'
+    plays: 'gridiron_plays_v1623',
+    offForms: 'gridiron_off_v1623',
+    defForms: 'gridiron_def_v1623',
+    offPalette: 'gridiron_off_palette_v1623',
+    defPalette: 'gridiron_def_palette_v1623',
+    groupNames: 'gridiron_group_names_v1623'
   }
 };
 
@@ -1418,6 +1437,7 @@ const GridironApp = (() => {
     draftTimer = setTimeout(() => { idb.set('draft', { pnotes, players, lines, zones, texts, name: document.getElementById('play-name').value }).catch(() => {}); }, 1000);
   }
   async function loadFromIDB() {
+    await lsRestoreIfLost(); setTimeout(lsMirror, 4000); setInterval(lsMirror, 20000);
     try {
       const d = await idb.get('plays');
       if (d && Object.keys(d).length) { savedPlays = d; ensureIds(); }
@@ -1432,6 +1452,64 @@ const GridironApp = (() => {
     } catch (err) { console.warn('IndexedDB unavailable', err); }
   }
 
+  // ===== バックアップ(保存したもの全部を1ファイルに) =====
+  const BK_PREFIX = /^(pdl_|gridiron_|gps_)/;
+  const lsDump = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (BK_PREFIX.test(k)) o[k] = localStorage.getItem(k); } } catch (e) {} return o; };
+  async function backupAll() {
+    try { await persistPlays(); } catch (e) {}
+    const data = { app: 'PlayDrawLab', ver: 'v166', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
+    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }), a = document.createElement('a'), d = new Date(), z = n => String(n).padStart(2, '0');
+    a.href = URL.createObjectURL(blob); a.download = `PlayDrawLab_backup_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.json`;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    toast('バックアップを保存しました(プレー ' + Object.keys(savedPlays).length + '件・Formation・設定)', 3200);
+  }
+  function restoreAll() { const f = document.getElementById('bk-file'); f.value = ''; f.click(); }
+  function restoreFile(ev) {
+    const file = ev.target.files && ev.target.files[0]; if (!file) return;
+    const rd = new FileReader();
+    rd.onload = async () => {
+      let d; try { d = JSON.parse(rd.result); } catch (e) { return alert('バックアップのファイルを読み込めませんでした。'); }
+      if (!d || d.app !== 'PlayDrawLab') return alert('Play Draw Lab のバックアップファイルではありません。');
+      const np = Object.keys(d.plays || {}).length, nk = Object.keys(d.ls || {}).length;
+      if (!confirm('バックアップ(' + (d.date || '').slice(0, 10) + ')を読み込みます。\nプレー ' + np + '件、設定・Formation等 ' + nk + '項目。\n\n・今あるプレーは残り、同じ名前のものだけ上書きされます\n・Formation等の設定は、バックアップの内容に置き換わります\n\nよろしいですか？')) return;
+      try { Object.keys(d.ls || {}).forEach(k => { if (BK_PREFIX.test(k)) localStorage.setItem(k, d.ls[k]); }); } catch (e) { alert('設定の書き込みに失敗しました: ' + e.message); }
+      Object.keys(d.plays || {}).forEach(k => { savedPlays[k] = d.plays[k]; });
+      try { await persistPlays(); } catch (e) {}
+      alert('読み込みました。画面を更新します。'); location.reload();
+    };
+    rd.readAsText(file);
+  }
+  // 自動の控え(同じブラウザ内。localStorageだけ消えた場合の復元用)
+  async function lsMirror() { try { await idb.set('lsbackup', { t: Date.now(), ls: lsDump() }); } catch (e) {} }
+  async function lsRestoreIfLost() {
+    try {
+      if (localStorage.getItem(APP_CONFIG.storageKeys.offForms) || sessionStorage.getItem('pdl_restored')) return;
+      const b = await idb.get('lsbackup'); if (!b || !b.ls || !Object.keys(b.ls).length) return;
+      Object.keys(b.ls).forEach(k => { if (BK_PREFIX.test(k)) localStorage.setItem(k, b.ls[k]); });
+      sessionStorage.setItem('pdl_restored', '1'); location.reload();
+    } catch (e) {}
+  }
+
+  // v163〜v165 で、保存先のキー名(…_v1623)が誤って変わっていた問題の修復:
+  // 変わったキー(…_v1633 / v1643 / v1653)に入っているものを、元のキーへ合流させる
+  function migrateStorageKeys() {
+    try {
+      const K = APP_CONFIG.storageKeys, objKeys = ['plays', 'offForms', 'defForms', 'groupNames'];
+      const keys = []; for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+      Object.keys(K).forEach(name => {
+        const canon = K[name], base = canon.replace(/_v1623$/, '');
+        const re = new RegExp('^' + base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '_v16\\d3$');
+        keys.filter(k => k !== canon && re.test(k)).sort().forEach(k => {
+          let legacy = null, cur = null; try { legacy = JSON.parse(localStorage.getItem(k)); } catch (e) {} try { cur = JSON.parse(localStorage.getItem(canon)); } catch (e) {}
+          if (legacy != null) {
+            if (cur == null) localStorage.setItem(canon, JSON.stringify(legacy));
+            else if (objKeys.includes(name) && typeof legacy === 'object' && !Array.isArray(legacy) && typeof cur === 'object') localStorage.setItem(canon, JSON.stringify({ ...legacy, ...cur }));
+          }
+          localStorage.removeItem(k);
+        });
+      });
+    } catch (e) { console.warn('migrateStorageKeys', e); }
+  }
   const EZ_H = PX_PER_YD * 10;   // エンドゾーン1つぶん(10yd)
   const BOT_PAD = PX_PER_YD * 5;   // 下側の余白(5yd)。フィールドの線・数字は、そのまま下へ続ける
   const calcH = () => Math.round(PX_PER_YD * fieldLen + (ezTop ? EZ_H : 0) + (ezBottom ? EZ_H : 0) + (ezBottom ? 0 : BOT_PAD));   // エンドゾーンは、余白として足す
@@ -1475,6 +1553,7 @@ const GridironApp = (() => {
       metaBox.appendChild(row);
     });
 
+    migrateStorageKeys();
     savedPlays = JSON.parse(localStorage.getItem(APP_CONFIG.storageKeys.plays) || '{}');
     loadFromIDB();
     initFonts();
@@ -5168,6 +5247,17 @@ const GridironApp = (() => {
     document.getElementById('pb-rt-blank').checked = pr.blank;
     const c = document.getElementById('pb-theme'); c.value = pr.color; c.dispatchEvent(new Event('change'));
   }
+  function pbSecAll(on) { document.querySelectorAll('#pb-sec-list input').forEach(i => { i.checked = !!on; }); }
+  function pbPreset() {
+    const v = document.getElementById('pb-preset').value; if (!v) return;
+    const tp = document.getElementById('pb-template-type'); let t = tp.value; const miami = /miami/.test(t);
+    if (v === 'route') { tp.value = miami ? 'rt_miami' : 'rt_rams'; pbTemplateChanged(); toast('Route Tree のページを作る設定にしました', 2200); return; }
+    if (!SEC_BOOKS[t]) { tp.value = miami ? 'sec_miami' : 'sec_rams'; pbTemplateChanged(); }
+    const MAP = { front: ['defid', 'fronts'], cover: ['cov'], blitz: ['blitz'], oline: ['oline', 'prot', 'scat', 'addl', 'blocking'], formation: ['personnel', 'formation'], motion: ['motions', 'shifts'] };
+    const ids = MAP[v]; let n = 0;
+    document.querySelectorAll('#pb-sec-list input').forEach(i => { i.checked = !ids || ids.includes(i.dataset.sec); if (i.checked) n++; });
+    toast(n + ' セクションを選びました。「Play Book冊子を自動生成」で出力できます', 2800);
+  }
   function pbRtData(style) {
     const wr = [], rb = [];
     Object.keys(savedPlays).forEach(k => {
@@ -5622,7 +5712,7 @@ const GridironApp = (() => {
   function exportJSON() {
     const data = { plays: savedPlays, offForms: offFormations, defForms: defFormations, offPalette, defPalette, groupNames, cats: customCats };
     const link = document.createElement('a');
-    link.download = 'playbook_backup_v1643.json';
+    link.download = 'playbook_backup.json';
     link.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
     link.click();
   }
@@ -5732,7 +5822,7 @@ const GridironApp = (() => {
 
   return {
     init, setMode, undo, redo, toast, toggleBlockEnd, openFontDialog, deleteSelected, addPlayer, clearField, render,
-    selectGroup, applySelectedOff, applySelectedDef, renameFormation, moveFormation, openFormOrder, openFormPicker, smOp, rtOp, covOp, cdOp, visOp, openCatPicker, placeDef34, placeDef425, placeDef43, placeOff11, assignFormCat, catAdd, catRename, catDelete, catMove, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
+    selectGroup, applySelectedOff, applySelectedDef, renameFormation, moveFormation, openFormOrder, openFormPicker, smOp, rtOp, covOp, cdOp, visOp, pbPreset, pbSecAll, backupAll, restoreAll, restoreFile, openCatPicker, placeDef34, placeDef425, placeDef43, placeOff11, assignFormCat, catAdd, catRename, catDelete, catMove, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
     flipOffDefPositions, flipLR, duplicateSelected, togglePenOnly, shareExport, editTextContent, textEditStart, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition, changeDefHashPosition, alignSide,
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
