@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v186)</title>
+<title>Play Draw Lab (Pro Edition v187)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -354,7 +354,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span style="white-space:nowrap; font-size:13px;">Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><button type="button" id="btn-update" title="最新版に更新（保存したデータは消えません）" style="padding:1px 5px; font-size:10px; white-space:nowrap;">🔄</button><span id="ver-badge" style="font-size:9.5px; white-space:nowrap; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v186</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><button type="button" id="btn-update" title="最新版に更新（保存したデータは消えません）" style="padding:1px 5px; font-size:10px; white-space:nowrap;">🔄</button><span id="ver-badge" style="font-size:9.5px; white-space:nowrap; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v187</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -1516,7 +1516,7 @@ const GridironApp = (() => {
   const lsDump = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (BK_PREFIX.test(k)) o[k] = localStorage.getItem(k); } } catch (e) {} return o; };
   async function backupAll() {
     try { await persistPlays(); } catch (e) {}
-    const data = { app: 'PlayDrawLab', ver: 'v186', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
+    const data = { app: 'PlayDrawLab', ver: 'v187', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }), a = document.createElement('a'), d = new Date(), z = n => String(n).padStart(2, '0');
     a.href = URL.createObjectURL(blob); a.download = `PlayDrawLab_backup_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -5205,6 +5205,17 @@ const GridironApp = (() => {
     const off = e => { if (!m.contains(e.target)) { m.remove(); document.removeEventListener('pointerdown', off, true); } };
     setTimeout(() => document.addEventListener('pointerdown', off, true), 0);
   }
+  function movePlayTo(from, to) {   // ドラッグで入れ替え(同じタイトルの中)
+    if (!savedPlays[from] || !savedPlays[to] || setOf(from) !== setOf(to)) return;
+    const full = sortKeys(Object.keys(savedPlays)), i = full.indexOf(from), j = full.indexOf(to); if (i < 0 || j < 0 || i === j) return;
+    full.splice(i, 1); full.splice(j, 0, from); playOrder = full; savePlayOrder(); updatePlayList();
+  }
+  function moveSetTo(from, to) {   // ドラッグで、タイトルのまとまりごと入れ替え
+    const un = k => k === '\u0001' ? '' : k;
+    const full = sortKeys(Object.keys(savedPlays)), go = [...new Set(full.map(setOf))], i = go.indexOf(un(from)), j = go.indexOf(un(to)); if (i < 0 || j < 0 || i === j) return;
+    go.splice(i, 1); go.splice(j, 0, un(from));
+    playOrder = go.flatMap(gg => full.filter(k => setOf(k) === gg)); savePlayOrder(); updatePlayList();
+  }
   function movePlay(name, ks, dir) {
     const i = ks.indexOf(name), j = i + dir; if (i < 0 || j < 0 || j >= ks.length) return;
     const full = sortKeys(Object.keys(savedPlays)), a = full.indexOf(name), b = full.indexOf(ks[j]);
@@ -5320,7 +5331,11 @@ const GridironApp = (() => {
         [['▲', -1, 'Move this set up'], ['▼', 1, 'Move this set down']].forEach(([t, d, ti]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'mini-btn'; b.textContent = t; b.title = ti; b.style.cssText = 'padding:0 5px;font-size:9px;'; b.onclick = e => { e.stopPropagation(); moveSet(g, visG, d); }; mv.appendChild(b); });
         const mb = document.createElement('button'); mb.type = 'button'; mb.className = 'mini-btn'; mb.textContent = '📂'; mb.title = 'このタイトルの図を、まとめて別のCategoryへ移動'; mb.style.cssText = 'padding:0 5px;font-size:11px;'; mb.onclick = e => { e.stopPropagation(); openMoveMenu(mb, ks.slice()); }; mv.appendChild(mb);
         head.appendChild(mv); }
-      head.onclick = () => { if (collapsedSets.has(g)) collapsedSets.delete(g); else collapsedSets.add(g); updatePlayList(); };
+      head.className = 'set-head'; head.dataset.k = g || '\u0001'; head.title = 'ドラッグで、タイトルの順番を入れ替えられます';
+      { const gp = document.createElement('span'); gp.textContent = '⠿'; gp.className = 'grip'; gp.style.cssText = 'flex:none;cursor:grab;touch-action:none;color:#71717a;padding:0 2px;'; head.insertBefore(gp, head.firstChild);
+        const st = e => { if (e.target.closest('button,input')) return; if (e.pointerType !== 'mouse' && !e.target.closest('.grip')) return; dragSort(e, head.dataset.k, '.set-head', moveSetTo, k => k === '\u0001' ? '(タイトルなし)' : k); };
+        head.addEventListener('pointerdown', st); }
+      head.onclick = () => { if (dragSwallow) return; if (collapsedSets.has(g)) collapsedSets.delete(g); else collapsedSets.add(g); updatePlayList(); };
       head.querySelector('input').onclick = e => { e.stopPropagation(); ks.forEach(k => { if (e.target.checked) playSel.add(k); else playSel.delete(k); }); updatePlayList(); };
       list.appendChild(head);
       if (!open) return;
@@ -5339,7 +5354,10 @@ const GridironApp = (() => {
       div.querySelector('.mvd').onclick = e => { e.stopPropagation(); movePlay(name, ks, 1); };
       div.querySelector('.mvc').onclick = e => { e.stopPropagation(); const sel = [...playSel].filter(k => savedPlays[k]); openMoveMenu(e.currentTarget, (playSel.has(name) && sel.length > 1) ? sel : [name]); };
       div.querySelector('.mrg').onclick = e => { e.stopPropagation(); mergePlayObj(name, savedPlays[name]); };
-      div.onclick = () => loadPlayObj(name, savedPlays[name]);
+      div.dataset.k = name; div.classList.add('play-row'); div.title = (div.title ? div.title + '\n' : '') + 'ドラッグで、順番を入れ替えられます';
+      { const gp = document.createElement('span'); gp.textContent = '⠿'; gp.className = 'grip'; gp.style.cssText = 'flex:none;cursor:grab;touch-action:none;color:#71717a;margin-right:3px;'; div.insertBefore(gp, div.firstChild);
+        div.addEventListener('pointerdown', e => { if (e.target.closest('button,input,.del')) return; if (e.pointerType !== 'mouse' && !e.target.closest('.grip')) return; dragSort(e, name, '.play-row', movePlayTo, k => nameOf(k)); }); }
+      div.onclick = () => { if (dragSwallow) return; loadPlayObj(name, savedPlays[name]); };
       { const cb = div.querySelector('.sel'); cb.onclick = e => { e.stopPropagation(); if (cb.checked) playSel.add(name); else playSel.delete(name); playSelInfo(); }; }
       div.querySelector('.del').onclick = (e) => {
         e.stopPropagation();
