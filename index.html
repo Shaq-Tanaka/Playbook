@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v179)</title>
+<title>Play Draw Lab (Pro Edition v180)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -353,7 +353,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v179</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v180</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -946,7 +946,7 @@
         <select id="play-cat" onchange="GridironApp.applyCatUI()" title="Category(Play Book の振り分けに使います)" style="display:none;"><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select></span>
         <button onclick="GridironApp.manageCats()" title="Categoryの追加・名前変更・削除" style="padding:2px 7px;">✎</button>
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;" title="プレーをまとめる「セットのタイトル」(例: 2x2 Mesh / 2x2 FORMATIONS)。Play Bookでも、このタイトルごとにまとまります">Title:</span>
-        <input type="text" id="set-name" placeholder="例: 2x2 Mesh" style="flex:1.2; min-width:70px; font-weight:bold; color:#fcd34d;">
+        <input type="text" id="set-name" list="set-name-list" autocomplete="off" placeholder="例: 2x2 Mesh" style="flex:1.2; min-width:70px; font-weight:bold; color:#fcd34d;"><datalist id="set-name-list"></datalist><button type="button" id="set-name-btn" title="Titleを選ぶ / 事前に登録する" style="padding:2px 7px;">▾ 選ぶ</button>
         <span id="wrap-pname" style="display:contents">
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">Name:</span>
         <input type="text" id="play-name" value="Gun 3x1 (Trips) - Mesh" oninput="var t=document.getElementById('title-auto');if(t)t.checked=false;GridironApp.updateSaveState();" style="flex:2; min-width:90px; font-weight:bold; color:#ffffff;"><label title="オン: FORM/SHIFT/PLAY CALLから自動でタイトルを作ります。オフ: 保存タイトルを自由に手で決められます" style="font-size:10.5px; color:#fff; white-space:nowrap; display:flex; align-items:center; gap:2px;"><input type="checkbox" id="title-auto" checked style="width:auto;">自動</label></span>
@@ -1504,7 +1504,7 @@ const GridironApp = (() => {
   const lsDump = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (BK_PREFIX.test(k)) o[k] = localStorage.getItem(k); } } catch (e) {} return o; };
   async function backupAll() {
     try { await persistPlays(); } catch (e) {}
-    const data = { app: 'PlayDrawLab', ver: 'v179', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
+    const data = { app: 'PlayDrawLab', ver: 'v180', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }), a = document.createElement('a'), d = new Date(), z = n => String(n).padStart(2, '0');
     a.href = URL.createObjectURL(blob); a.download = `PlayDrawLab_backup_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -5076,6 +5076,57 @@ const GridironApp = (() => {
     const ix = new Map(playOrder.map((k, i) => [k, i]));
     return keys.slice().sort((x, y) => { const a = ix.has(x) ? ix.get(x) : 1e9, b = ix.has(y) ? ix.get(y) : 1e9; return (a - b) || x.localeCompare(y, 'ja', { numeric: true }); });
   }
+  let titleReg = []; try { titleReg = JSON.parse(localStorage.getItem('pdl_titles') || '[]'); if (!Array.isArray(titleReg)) titleReg = []; } catch (e) { titleReg = []; }
+  const saveTitleReg = () => { try { localStorage.setItem('pdl_titles', JSON.stringify(titleReg)); } catch (e) {} };
+  const allTitles = () => { const out = []; titleReg.concat(Object.keys(savedPlays).map(setOf)).forEach(t => { t = (t || '').trim(); if (t && !out.includes(t)) out.push(t); }); return out; };
+  function refreshTitleList() { const dl = document.getElementById('set-name-list'); if (dl) dl.innerHTML = allTitles().map(t => '<option value="' + esc(t) + '">').join(''); }
+  function renameKey(old, n) {
+    if (old === n || !savedPlays[old]) return old;
+    if (savedPlays[n]) { const q = parseKey(n), u = uniqueKey(q.set, q.name); n = u.key; }
+    savedPlays[n] = savedPlays[old]; delete savedPlays[old];
+    try { playOrder = playOrder.map(x => x === old ? n : x); savePlayOrder(); } catch (e) {}
+    if (playSel.has(old)) { playSel.delete(old); playSel.add(n); }
+    const o = savedPlays[n], pk = parseKey(n); o.set = pk.set; o.pname = pk.name;
+    if (curPlayId && o.id === curPlayId) { const se = document.getElementById('set-name'), ne = document.getElementById('play-name'); if (se) se.value = pk.set || ''; if (ne && (o.cat || 'play') === 'play') ne.value = pk.name; }
+    if (curPlayName === old) curPlayName = n;
+    return n;
+  }
+  function moveToTitle(keys, title) {
+    keys.forEach(k => { if (savedPlays[k]) renameKey(k, composeKey(title, nameOf(k))); });
+    persistPlays(); updatePlayList(); updateSaveState(); refreshTitleList();
+  }
+  function openTitleMenu() {
+    const btn = document.getElementById('set-name-btn'), inp = document.getElementById('set-name');
+    let m = document.getElementById('tt-menu'); if (m) { m.remove(); return; }
+    m = document.createElement('div'); m.id = 'tt-menu';
+    m.style.cssText = 'position:fixed;z-index:100000;background:#27272a;color:#f4f4f5;border:1px solid #52525b;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.6);padding:6px;width:260px;max-height:70vh;overflow:auto;font-size:12px;';
+    const draw = () => {
+      m.innerHTML = '<div style="font-weight:bold;color:#fcd34d;padding:2px 4px 6px;">Title を選ぶ</div>';
+      const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:4px;margin-bottom:6px;';
+      row.innerHTML = '<input type="text" id="tt-new" placeholder="新しいTitleを登録 (例: Formation)" style="flex:1;min-width:0;"><button type="button" id="tt-add" style="padding:2px 8px;background:#059669;border-color:#047857;font-weight:bold;">＋登録</button>';
+      m.appendChild(row);
+      const add = () => { const v = m.querySelector('#tt-new').value.trim(); if (!v) return; if (!titleReg.includes(v)) { titleReg.push(v); saveTitleReg(); } inp.value = v; inp.dispatchEvent(new Event('input', { bubbles: true })); refreshTitleList(); m.remove(); };
+      row.querySelector('#tt-add').onclick = add; row.querySelector('#tt-new').onkeydown = e => { if (e.key === 'Enter') add(); };
+      const list = allTitles();
+      if (!list.length) { const e = document.createElement('div'); e.style.cssText = 'color:#a1a1aa;padding:4px;'; e.textContent = 'まだ Title がありません。上の欄に入れて「＋登録」を押してください。'; m.appendChild(e); }
+      list.forEach(t => {
+        const r = document.createElement('div'); r.style.cssText = 'padding:6px 8px;border-radius:5px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:6px;';
+        const reg = titleReg.includes(t);
+        r.innerHTML = '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(t) + '</span>' + (reg ? '<span class="tt-del" title="登録から外す" style="color:#f87171;padding:0 4px;">×</span>' : '');
+        r.onmouseenter = () => r.style.background = '#2563eb'; r.onmouseleave = () => r.style.background = '';
+        r.onclick = () => { inp.value = t; inp.dispatchEvent(new Event('input', { bubbles: true })); m.remove(); };
+        if (reg) r.querySelector('.tt-del').onclick = e => { e.stopPropagation(); titleReg = titleReg.filter(x => x !== t); saveTitleReg(); refreshTitleList(); draw(); };
+        m.appendChild(r);
+      });
+    };
+    draw(); document.body.appendChild(m);
+    const rc = btn.getBoundingClientRect();
+    m.style.left = Math.max(4, Math.min(window.innerWidth - 268, rc.left)) + 'px';
+    m.style.top = Math.max(4, Math.min(window.innerHeight - m.offsetHeight - 4, rc.bottom + 4)) + 'px';
+    const off = e => { if (!m.contains(e.target) && e.target !== btn) { m.remove(); document.removeEventListener('pointerdown', off, true); } };
+    setTimeout(() => document.addEventListener('pointerdown', off, true), 0);
+  }
+  try { const b = document.getElementById('set-name-btn'); if (b) b.onclick = openTitleMenu; const i = document.getElementById('set-name'); if (i) i.addEventListener('focus', refreshTitleList); refreshTitleList(); } catch (e) {}
   function openMoveMenu(anchor, keys) {
     keys = keys.filter(k => savedPlays[k]); if (!keys.length) return;
     let m = document.getElementById('mv-menu'); if (m) m.remove();
@@ -5092,6 +5143,15 @@ const GridironApp = (() => {
       b.onclick = () => { keys.forEach(k => { savedPlays[k].cat = c.k; }); persistPlays(); m.remove(); updatePlayList(); toast(keys.length + '件を「' + c.l + '」へ移動しました', 2200); };
       m.appendChild(b);
     });
+    { const d0 = document.createElement('div'); d0.style.cssText = 'height:1px;background:#3f3f46;margin:5px 0;'; m.appendChild(d0);
+      const h2 = document.createElement('div'); h2.style.cssText = 'font-weight:bold;color:#fcd34d;padding:2px 4px 4px;'; h2.textContent = 'Title（ページ名）を変更'; m.appendChild(h2);
+      const curT = keys.length === 1 ? setOf(keys[0]) : null;
+      allTitles().filter(t => t !== curT).forEach(t => {
+        const b = document.createElement('div'); b.style.cssText = 'padding:6px 8px;border-radius:5px;cursor:pointer;'; b.textContent = '→ ' + t;
+        b.onmouseenter = () => b.style.background = '#2563eb'; b.onmouseleave = () => b.style.background = '';
+        b.onclick = () => { m.remove(); moveToTitle(keys, t); toast(keys.length + '件を Title「' + t + '」へ移しました', 2400); };
+        m.appendChild(b);
+      }); }
     if (keys.length === 1) {
       const d = document.createElement('div'); d.style.cssText = 'height:1px;background:#3f3f46;margin:5px 0;'; m.appendChild(d);
       const r = document.createElement('div'); r.style.cssText = 'padding:6px 8px;border-radius:5px;cursor:pointer;';
