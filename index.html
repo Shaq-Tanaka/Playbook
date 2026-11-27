@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v168)</title>
+<title>Play Draw Lab (Pro Edition v172)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -346,7 +346,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v168</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v172</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -1457,7 +1457,7 @@ const GridironApp = (() => {
   const lsDump = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (BK_PREFIX.test(k)) o[k] = localStorage.getItem(k); } } catch (e) {} return o; };
   async function backupAll() {
     try { await persistPlays(); } catch (e) {}
-    const data = { app: 'PlayDrawLab', ver: 'v168', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
+    const data = { app: 'PlayDrawLab', ver: 'v172', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }), a = document.createElement('a'), d = new Date(), z = n => String(n).padStart(2, '0');
     a.href = URL.createObjectURL(blob); a.download = `PlayDrawLab_backup_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -2649,14 +2649,14 @@ const GridironApp = (() => {
     if (Math.abs(r - shift) > 0.5) toast('数字の下で止めました(これより外へは、自動では動きません。手動なら動かせます)', 2600);
     return r;
   }
-  function applyDefHashShift(doRender = true) {
+  function applyDefHashShift(doRender = true, force = false) {
     const el = document.getElementById('def-hash-pos'); const mode = el ? el.value : 'middle';
     const dp = players.filter(p => p.side === 'def');
     if (!dp.length) return;
     const cur = dp.reduce((sum, p) => sum + p.x, 0) / dp.length;
     const half = 145;
     const target = mode === 'left' ? W / 2 - half : mode === 'right' ? W / 2 + half : W / 2;
-    const sh = limitShift(dp, target - cur);
+    const sh = force ? target - cur : limitShift(dp, target - cur);
     if (Math.abs(sh) > 0.01) dp.forEach(p => { p.x += sh; });
     if (doRender) render();
   }
@@ -2664,8 +2664,28 @@ const GridironApp = (() => {
     const el = document.getElementById(side === 'off' ? 'off-hash-pos' : 'def-hash-pos'); if (el) el.value = mode;
     pushHistory();
     let flipped = false;
-    if (side === 'off') { flipped = orientOffToHash(mode); applyOffHashShift(true); } else applyDefHashShift(true);
+    if (side === 'off') { flipped = orientOffToHash(mode); applyOffHashShift(false, true); snapXYToNumbers(mode); render(); } else applyDefHashShift(true, true);
     toast((side === 'off' ? 'オフェンス' : 'ディフェンス') + 'を ' + (mode === 'left' ? '左ハッシュ' : mode === 'right' ? '右ハッシュ' : '中央') + ' に寄せました' + (flipped ? '（ワイド側がフィールド広い側になるよう左右反転）' : ''), 2200);
+  }
+
+  // Hash合わせのとき、X=数字のすぐ外側(サイドライン側)、Y=数字のすぐ内側(フィールド中央側)に置く(画面外に出ないように)
+  function snapXYToNumbers(mode) {
+    const NUM_X = 145, HALF = 11;                         // 数字の中心x(左側)と、数字の高さの半分(回転しているので横幅になる)
+    const szEl = document.getElementById('off-size-range'), r = Math.max(6, +(szEl && szEl.value) || 12), gap = 3;
+    // Middle: 参考画像どおり、X・Z=数字の外側(数字の中心から約58px外) / Y・H=数字の内側(約89px内)。Left/Right: X=すぐ外側、Y=すぐ内側
+    const mid = mode === 'middle' || mode === 'center';
+    const labs = mid ? ['X', 'Y', 'Z', 'H'] : ['X', 'Y'];
+    players.filter(p => p.side !== 'def' && labs.includes((p.label || '').trim())).forEach(p => {
+      const left = p.x < W / 2, lab = p.label.trim(), outer = lab === 'X' || lab === 'Z';
+      const off = mid ? (outer ? NUM_X - 58 : NUM_X + 89) : (lab === 'X' ? NUM_X - HALF - gap - r : NUM_X + HALF + gap + r);   // 左側のx
+      const nx = left ? off : W - off, dx = nx - p.x;
+      if (Math.abs(dx) < 0.01) return;
+      lines.forEach(l => {
+        const st = (l.points || [])[0];
+        if (st && Math.hypot(st.x - p.x, st.y - p.y) < 22) l.points.forEach(q => { q.x += dx; });
+      });
+      p.x = nx;
+    });
   }
 
   // ハッシュに寄せるとき、OFFの広い側(WR等が多く出ている側)がフィールドの広い側(ハッシュの反対側)を向くよう、左右反転する
@@ -2694,7 +2714,7 @@ const GridironApp = (() => {
     return true;
   }
 
-  function applyOffHashShift(doRender = true) {
+  function applyOffHashShift(doRender = true, force = false) {
     const hashMode = document.getElementById('off-hash-pos').value;
     const offPlayers = players.filter(p => p.side !== 'def');
     if (offPlayers.length === 0) return;
@@ -2710,7 +2730,7 @@ const GridironApp = (() => {
       targetCenterX = (W / 2) + halfWidthPx;
     }
 
-    const shiftX = limitShift(offPlayers, targetCenterX - currentCenterX);
+    const shiftX = force ? targetCenterX - currentCenterX : limitShift(offPlayers, targetCenterX - currentCenterX);
     if (shiftX !== 0) {
       players.forEach(p => {
         if (p.side !== 'def') {
