@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v184)</title>
+<title>Play Draw Lab (Pro Edition v185)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -353,7 +353,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span style="white-space:nowrap; font-size:13px;">Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><button type="button" id="btn-update" title="最新版に更新（保存したデータは消えません）" style="padding:1px 5px; font-size:10px; white-space:nowrap;">🔄</button><span id="ver-badge" style="font-size:9.5px; white-space:nowrap; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v184</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><button type="button" id="btn-update" title="最新版に更新（保存したデータは消えません）" style="padding:1px 5px; font-size:10px; white-space:nowrap;">🔄</button><span id="ver-badge" style="font-size:9.5px; white-space:nowrap; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v185</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -1446,7 +1446,7 @@ const GridironApp = (() => {
     const wr = ws.getBoundingClientRect(), r0 = canvas.getBoundingClientRect();
     const narrow = matchMedia(NARROW_Q).matches, hd = document.querySelector('.call-header');
     const phone = matchMedia(PHONE_Q).matches, lsPhone = matchMedia('(pointer: coarse) and (max-height: 520px)').matches;
-    let topPad = hd ? Math.max(90, hd.getBoundingClientRect().bottom - wr.top + 2) : 90, botPad = narrow ? 76 : 58;
+    let topPad = hd ? Math.max(90, hd.getBoundingClientRect().bottom - wr.top + 14) : 90, botPad = narrow ? 76 : 58;
     let leftPad = 0;
     if (phone) { topPad = 40; botPad = lsPhone ? 10 : 56; if (lsPhone) leftPad = 94; }   // スマホ: 入力欄は図に重ねて開く(図を広く使う) / 横向きは左に縦のボタン列
     { const R = padReserve(); if (R.top) topPad += R.top; if (R.bottom) botPad = Math.max(botPad, R.bottom); }
@@ -1459,6 +1459,18 @@ const GridironApp = (() => {
   }
 
   function resetView() { fitView(); }
+  // 上の入力欄の高さが変わって、図に重なったときは、図を下げて合わせ直す
+  (function () {
+    let tm = null;
+    const chk = () => { try {
+      const hd = document.querySelector('.call-header'); if (!hd || matchMedia(PHONE_Q).matches) return;
+      const top = canvas.getBoundingClientRect().top, hb = hd.getBoundingClientRect().bottom;
+      if (hb > top + 2) fitView();
+    } catch (e) {} };
+    const go = () => { clearTimeout(tm); tm = setTimeout(chk, 120); };
+    try { const hd = document.querySelector('.call-header'); if (hd && window.ResizeObserver) new ResizeObserver(go).observe(hd); } catch (e) {}
+    window.addEventListener('resize', go); window.addEventListener('load', () => setTimeout(chk, 600));
+  })();
   function toggleHeader(force) {   // 上の入力欄(PERSONNEL〜COVERAGE、説明文)をたたんで、図を大きく使う
     const hd = document.querySelector('.call-header'); if (!hd) return;
     const on = force === undefined ? !hd.classList.contains('hdr-min') : !!force;
@@ -1504,7 +1516,7 @@ const GridironApp = (() => {
   const lsDump = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (BK_PREFIX.test(k)) o[k] = localStorage.getItem(k); } } catch (e) {} return o; };
   async function backupAll() {
     try { await persistPlays(); } catch (e) {}
-    const data = { app: 'PlayDrawLab', ver: 'v184', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
+    const data = { app: 'PlayDrawLab', ver: 'v185', date: new Date().toISOString(), ls: lsDump(), plays: savedPlays };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }), a = document.createElement('a'), d = new Date(), z = n => String(n).padStart(2, '0');
     a.href = URL.createObjectURL(blob); a.download = `PlayDrawLab_backup_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}.json`;
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
