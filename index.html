@@ -37,7 +37,7 @@
   } catch (e) {}
 })();
 </script>
-<title>Play Draw Lab (Pro Edition v150)</title>
+<title>Play Draw Lab (Pro Edition v164)</title>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>if(/[?&]addin=1/.test(location.search)){document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');}</script>
 <style>
@@ -346,7 +346,7 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <span>Play Draw Lab</span>
-      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v150</span></span>
+      <span style="display:flex; gap:4px; align-items:center;"><button id="btn-layout" onclick="GridironApp.layoutSettings()" title="Layout(ツールバーの位置の設定)" style="padding:1px 6px; font-size:10px;">⚙</button><button id="btn-compact" title="パネルを小さく(コンパクト表示)" style="padding:1px 6px; font-size:10px;">小</button><button id="btn-big" title="ボタンを大きく(タッチ操作向け)" style="padding:1px 6px; font-size:10px;">大</button><button id="btn-acc" title="すべて折りたたむ / 開く" style="padding:1px 6px; font-size:10px;">⇕</button><span style="font-size:9.5px; background:#1e3a8a; padding:2px 5px; border-radius:3px;">PRO v164</span></span>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -586,6 +586,48 @@
     </div>
 
     <div class="tool-group">
+      <h4>3-2. SHIFT / MOTION</h4>
+      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Category:</span>
+        <select id="sm-cat" style="flex:1;" title="新規登録する項目の入れ先(SHIFT / MOTION)。選んだ項目の移動にも使えます"><option value="shift">SHIFT</option><option value="motion">MOTION</option></select>
+      </div>
+      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Select:</span>
+        <button type="button" id="sm-btn" onclick="GridironApp.smOp('picker')" style="flex:1; min-width:0; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:4px 22px 4px 8px; position:relative; background:#18181b;" title="一覧から選ぶと、SHIFT欄 / MOTION欄に入ります。一覧の中では、ドラッグで並べ替え・SHIFT⇄MOTIONの移動ができます。SHIFTは OFF FORMATION からも選べます"><span id="sm-btn-t">(SHIFT / MOTION を選ぶ)</span><span style="position:absolute; right:7px; top:50%; transform:translateY(-50%); color:#a1a1aa;">▾</span></button>
+        <button class="mini-btn" onclick="GridironApp.smOp('rename')" title="最後に選んだ項目の名称修正">✏️</button>
+        <button class="mini-btn danger" onclick="GridironApp.smOp('delete')" title="最後に選んだ項目を削除">🗑</button>
+      </div>
+      <div style="display:flex; gap:4px; margin-bottom:3px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Name:</span>
+        <input type="text" id="sm-name" placeholder="新規名称(上のCategoryに登録)" style="flex:1;" onkeydown="if(event.key==='Enter')GridironApp.smOp('add')">
+        <button onclick="GridironApp.smOp('add')" style="background:#7c3aed; white-space:nowrap;">+ 新規登録</button>
+      </div>
+    </div>
+
+    <div class="tool-group">
+      <h4>3-4. ROUTE TREE</h4>
+      <label class="chk-label" style="display:flex; gap:6px; align-items:center; margin-bottom:4px; font-weight:bold; color:#fcd34d;"><input type="checkbox" id="rt-on" style="width:auto; display:inline-block;" onchange="GridironApp.rtOp('mode')"> Route Tree モード(ON → 選手をクリックで Route が付く)</label>
+      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Route:</span>
+        <select id="rt-sel" style="flex:1; min-width:0;" onchange="GridironApp.rtOp('select')"></select>
+        <button class="mini-btn" onclick="GridironApp.rtOp('rename')" title="名称修正">✏️</button>
+        <button class="mini-btn danger" onclick="GridironApp.rtOp('delete')" title="削除">🗑</button>
+      </div>
+      <div style="display:flex; gap:10px; margin-bottom:4px; align-items:center; font-size:11px; color:#e4e4e7;">
+        <label class="chk-label" style="display:flex; gap:4px; align-items:center;"><input type="checkbox" id="rt-flip" style="width:auto; display:inline-block;"> 左右反転</label>
+        <span style="color:#a1a1aa; font-size:10px;">基本は、インサイド/アウトサイドを自動で判定</span>
+      </div>
+      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">向き:</span>
+        <select id="rt-dir" style="flex:1;" onchange="GridironApp.rtOp('dir')" title="左右反転の自動判定。アウトサイド=サイドライン側 / インサイド=中央側 / そのまま=描いた向き"><option value="out">アウトサイド側へ(自動)</option><option value="in">インサイド側へ(自動)</option><option value="none">そのまま(自動で反転しない)</option></select>
+        <button class="mini-btn" onclick="GridironApp.rtOp('cat')" title="Routeのカテゴリーを変更">📁</button>
+      </div>
+      <button onclick="GridironApp.rtOp('register')" style="width:100%; font-size:11px; background:#7c3aed; margin-bottom:3px;" title="図に引いた線を1本選んでから押すと、その線を新しい Route として覚えます">＋ 選択中の線を、新しい Route として登録</button>
+      <button onclick="GridironApp.rtOp('overwrite')" style="width:100%; font-size:11px; margin-bottom:3px;" title="上の Route の形を、選択中の線で置き換えます(名前・カテゴリーはそのまま)">⟳ 選択中の線で、上の Route を上書き(形を変更)</button>
+      <button onclick="GridironApp.rtOp('reset')" style="width:100%; font-size:10px; color:#fca5a5;" title="最初の16種類に戻します(登録したRouteは残ります)">最初のRouteを元に戻す</button>
+    </div>
+
+    <div class="tool-group">
       <h4>4. DEF FRONT</h4>
       <div style="display:flex; gap:3px; margin-bottom:4px; align-items:center;">
         <span style="font-size:10px; color:#fff; font-weight:bold; width:46px; flex:none;">Align:</span>
@@ -619,8 +661,67 @@
         <input type="text" id="new-def-name" placeholder="新規DEF陣形名..." style="flex:1;">
         <button onclick="GridironApp.createNewFormation('def')" style="background:#4338ca; border-color:#6366f1; white-space:nowrap;">+ 新規登録</button>
       </div>
-      <button onclick="GridironApp.placeDef43()" style="width:100%; margin-bottom:4px; background:#312e81; border-color:#6366f1; font-weight:bold;" title="DEFを4-3の11人で、標準の位置に一度に出します(今いるDEFは入れ替わります。Ctrl+Zで戻せます)">＋ DEF 11人を出す (4-3)</button>
+      <button onclick="GridironApp.placeDef43()" style="width:100%;  margin-bottom:4px; background:#312e81; border-color:#6366f1; font-weight:bold;" title="DEFを4-3の11人で、標準の位置に一度に出します(今いるDEFは入れ替わります。Ctrl+Zで戻せます)">＋ DEF 11人を出す (4-3)</button>
+      <button onclick="GridironApp.placeDef34()" style="width:100%; font-size:11px; opacity:.85; margin-bottom:4px; background:#312e81; border-color:#6366f1; font-weight:bold;" title="DEFを3-4(DL3・LB4)の11人で、標準の位置に一度に出します(今いるDEFは入れ替わります。Ctrl+Zで戻せます)">＋ DEF 3-4 の11人を出す</button>
+      <button onclick="GridironApp.placeDef425()" style="width:100%; font-size:11px; opacity:.85; margin-bottom:4px; background:#312e81; border-color:#6366f1; font-weight:bold;" title="DEFを4-2 Nickel(DL4・LB2・CB2・Ni・SS・FS)の11人で、標準の位置に一度に出します(今いるDEFは入れ替わります。Ctrl+Zで戻せます)">＋ DEF 4-2 Nickel の11人を出す</button>
       <button onclick="GridironApp.clearDefOnly()" style="width:100%; font-size:10.5px; color:#fca5a5;">DEF選手のみクリア</button>
+    </div>
+
+    <div class="tool-group">
+      <h4>4-2. COVER (図の登録)</h4>
+      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Cover:</span>
+        <select id="cov-sel" style="flex:1; min-width:0;" onchange="GridironApp.covOp('apply')"></select>
+        <button class="mini-btn" onclick="GridironApp.covOp('rename')" title="名称修正">✏️</button>
+        <button class="mini-btn danger" onclick="GridironApp.covOp('delete')" title="削除">🗑</button>
+      </div>
+      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">Name:</span>
+        <input type="text" id="cov-name" placeholder="Cover名(例: Cover 3)" style="flex:1;" onkeydown="if(event.key==='Enter')GridironApp.covOp('save')">
+        <button onclick="GridironApp.covOp('save')" style="background:#0e7490; white-space:nowrap;" title="今の図の ゾーン・線・文字 を登録(選手は含みません)">+ 新規登録</button>
+      </div>
+      <button onclick="GridironApp.covOp('overwrite')" style="width:100%; font-size:11px; margin-bottom:4px;" title="上で選んだ Cover を、今の図(ゾーン・線・文字)で置き換えます">⟳ 今の図で、選んだ Cover を上書き(変更)</button>
+      <label class="chk-label" style="display:flex; gap:6px; align-items:center; font-size:11px;"><input type="checkbox" id="cov-replace" checked style="width:auto; display:inline-block;"> 出すとき、今ある ゾーン・線・文字 を消す</label>
+      <div style="font-size:10px; color:#a1a1aa; margin-top:3px;">FRONT(DEFの陣形)は、上の 4. DEF FRONT で登録・呼び出し</div>
+    </div>
+
+    <div class="tool-group">
+      <h4>4-3. 記号モード (Cover / Blitz / Twist / Shift / Motion)</h4>
+      <label class="chk-label" style="display:flex; gap:6px; align-items:center; margin-bottom:4px; font-weight:bold; color:#fcd34d;"><input type="checkbox" id="cd-on" style="width:auto; display:inline-block;" onchange="GridironApp.cdOp('mode')"> 記号モード ON</label>
+      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">種類:</span>
+        <select id="cd-kind" style="flex:1;" onchange="GridironApp.cdOp('kind')"><option value="cover">Pass Cover (DEFをクリック)</option><option value="blitz">Blitz (DEFをクリック)</option><option value="twist">Twist (DLを2人、順にクリック)</option><option value="shift">Shift (選手→行き先をクリック)</option><option value="motion">Motion (選手→行き先をクリック)</option></select>
+      </div>
+      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">記号:</span>
+        <select id="cd-sel" style="flex:1; min-width:0;" onchange="GridironApp.cdOp('select')"></select>
+      </div>
+      <label class="chk-label" style="display:flex; gap:6px; align-items:center; font-size:11px; margin-bottom:4px;"><input type="checkbox" id="cd-flip" style="width:auto; display:inline-block;"> 左右反転 <span style="color:#a1a1aa; font-size:10px;">(基本は自動)</span></label>
+      <div style="display:flex; gap:4px; margin-bottom:3px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">下の枠(左):</span>
+        <input type="text" id="cd-tagl" placeholder="例: 2 DEEP 5 UNDER" style="flex:1;">
+      </div>
+      <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">下の枠(右):</span>
+        <input type="text" id="cd-tagr" placeholder="例: 4 MAN RUSH" style="flex:1;">
+      </div>
+      <div style="display:flex; gap:4px; margin-bottom:3px;">
+        <button onclick="GridironApp.cdOp('tags')" style="flex:1; font-size:11px; background:#0e7490;" title="図の左下と右下に、文字の枠を付けます(もう一度押すと入れ替え)">＋ 下の枠を入れる</button>
+        <button onclick="GridironApp.cdOp('tagsClear')" style="font-size:10px; color:#fca5a5;">枠を消す</button>
+      </div>
+      <button onclick="GridironApp.cdOp('clear')" style="width:100%; font-size:10px; color:#fca5a5;" title="上で選んでいる『種類』の記号を、すべて消します">この種類の記号を全部消す</button>
+      <div style="font-size:10px; color:#a1a1aa; margin-top:3px;">ゾーンの丸は使いません。Twist は DL を2人順にクリック、Shift / Motion は 選手 → 行き先 の順にクリックします</div>
+    </div>
+
+    <div class="tool-group">
+      <h4>4-4. 表示する線 (Check)</h4>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px 8px; margin-bottom:5px; color:#e4e4e7;"><label class="chk-label" style="display:flex; gap:5px; align-items:center; font-size:11px;"><input type="checkbox" id="vis-cover" checked style="width:auto; display:inline-block;" onchange="GridironApp.visOp()"> Pass Cover</label><label class="chk-label" style="display:flex; gap:5px; align-items:center; font-size:11px;"><input type="checkbox" id="vis-blitz" checked style="width:auto; display:inline-block;" onchange="GridironApp.visOp()"> Blitz</label><label class="chk-label" style="display:flex; gap:5px; align-items:center; font-size:11px;"><input type="checkbox" id="vis-twist" checked style="width:auto; display:inline-block;" onchange="GridironApp.visOp()"> Twist</label><label class="chk-label" style="display:flex; gap:5px; align-items:center; font-size:11px;"><input type="checkbox" id="vis-shift" checked style="width:auto; display:inline-block;" onchange="GridironApp.visOp()"> Shift</label><label class="chk-label" style="display:flex; gap:5px; align-items:center; font-size:11px;"><input type="checkbox" id="vis-motion" checked style="width:auto; display:inline-block;" onchange="GridironApp.visOp()"> Motion</label><label class="chk-label" style="display:flex; gap:5px; align-items:center; font-size:11px;"><input type="checkbox" id="vis-route" checked style="width:auto; display:inline-block;" onchange="GridironApp.visOp()"> Route(OFF)</label></div>
+      <div style="font-size:10px; color:#a1a1aa; margin-bottom:4px;">チェックを外すと、その種類の線・文字が図から消えます(消えたデータは残るので、もう一度チェックすれば出ます)。PNG・Play Book・保存画像にも反映されます。</div>
+      <div style="display:flex; gap:4px; align-items:center;">
+        <span style="font-size:10px; color:#fff; font-weight:bold; width:58px; flex:none;">分類を付ける:</span>
+        <select id="vis-assign" style="flex:1; min-width:0;"><option value="cover">Pass Cover</option><option value="blitz">Blitz</option><option value="twist">Twist</option><option value="shift">Shift</option><option value="motion">Motion</option><option value="route">Route(OFF)</option><option value="">(分類なし=常に表示)</option></select>
+        <button class="mini-btn" onclick="GridironApp.visOp('assign')" title="図で選んでいる線・文字に、この分類を付けます(手で描いた線も、チェックで出し入れできるようになります)">付ける</button>
+      </div>
     </div>
 
     <div class="tool-group" style="background:#1e1e22; border-radius:5px;">
@@ -632,8 +733,8 @@
       </div>
       <div class="prop-row">
         <label style="width:110px;">Defensive Size:</label>
-        <input type="range" id="def-size-range" min="8" max="24" value="12" style="flex:1;" oninput="GridironApp.changePlayerSize()">
-        <span id="def-size-val" style="font-size:10.5px; width:24px; text-align:right;">12</span>
+        <input type="range" id="def-size-range" min="8" max="24" value="14" style="flex:1;" oninput="GridironApp.changePlayerSize()">
+        <span id="def-size-val" style="font-size:10.5px; width:24px; text-align:right;">14</span>
       </div>
     </div>
 
@@ -808,7 +909,8 @@
       <div class="call-row">
         <button id="btn-hdr" type="button" onclick="GridironApp.toggleHeader()" title="入力欄を小さくたたむ / 開く(図を大きく使いたいとき)" style="padding:2px 7px;">▲</button>
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;">Category:</span>
-        <select id="play-cat" onchange="GridironApp.applyCatUI()" title="Category(Play Book の振り分けに使います)" style="width:auto; font-weight:bold;"><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select>
+        <span style="display:contents"><button type="button" id="play-cat-btn" onclick="GridironApp.openCatPicker()" style="font-weight:bold; text-align:left; position:relative; padding:2px 20px 2px 8px; white-space:nowrap; background:#18181b;" title="Click: choose Category / drag to reorder categories"><span id="play-cat-btn-t">Play</span><span style="position:absolute; right:6px; top:50%; transform:translateY(-50%); color:#a1a1aa;">▾</span></button>
+        <select id="play-cat" onchange="GridironApp.applyCatUI()" title="Category(Play Book の振り分けに使います)" style="display:none;"><option value="play">Play (通常プレイ)</option><option value="rt">Route Tree</option><option value="form">Formation</option><option value="motion">Motion</option><option value="shift">Shift</option><option value="front">Defense Front / ID</option><option value="blitz">Blitz</option><option value="cov">Coverage</option><option value="prot">Protection</option><option value="other">その他</option></select></span>
         <button onclick="GridironApp.manageCats()" title="Categoryの追加・名前変更・削除" style="padding:2px 7px;">✎</button>
         <span style="font-size: 10.5px; color: #fff; white-space:nowrap;" title="プレーをまとめる「セットのタイトル」(例: 2x2 Mesh / 2x2 FORMATIONS)。Play Bookでも、このタイトルごとにまとまります">Title:</span>
         <input type="text" id="set-name" placeholder="例: 2x2 Mesh" style="flex:1.2; min-width:70px; font-weight:bold; color:#fcd34d;">
@@ -1008,12 +1110,12 @@ const APP_CONFIG = {
     { key: 'farm',       label: 'ファーム',   placeholder: '例: Red Zone / 3rd Down' }
   ],
   storageKeys: {
-    plays: 'gridiron_plays_v1623',
-    offForms: 'gridiron_off_v1623',
-    defForms: 'gridiron_def_v1623',
-    offPalette: 'gridiron_off_palette_v1623',
-    defPalette: 'gridiron_def_palette_v1623',
-    groupNames: 'gridiron_group_names_v1623'
+    plays: 'gridiron_plays_v1643',
+    offForms: 'gridiron_off_v1643',
+    defForms: 'gridiron_def_v1643',
+    offPalette: 'gridiron_off_palette_v1643',
+    defPalette: 'gridiron_def_palette_v1643',
+    groupNames: 'gridiron_group_names_v1643'
   }
 };
 
@@ -1709,6 +1811,382 @@ const GridironApp = (() => {
     const d = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
     Object.defineProperty(sel, 'value', { get() { return d.get.call(this); }, set(v) { d.set.call(this, v); syncFormBtn(side); }, configurable: true });
   }
+  // ===== SHIFT / MOTION 登録リスト(1つのリストに SHIFT と MOTION の2カテゴリー) =====
+  const SM_DEF = { shift: ['Trips Rt', 'Trips Lt', 'Bunch Rt', 'Bunch Lt', 'Empty'], motion: ['Jet', 'Orbit', 'Fly', 'Return', 'Across', 'Zip'] };
+  const SM_INPUT = { shift: 'call-shift', motion: 'call-motion' }, SM_LABEL = { shift: 'SHIFT', motion: 'MOTION' };
+  let sm = null;
+  try {
+    const raw = JSON.parse(localStorage.getItem('pdl_namelists2') || 'null');
+    if (raw && Array.isArray(raw.shift) && Array.isArray(raw.motion)) sm = raw;
+    else { const old = JSON.parse(localStorage.getItem('pdl_namelists') || 'null'); if (old && old.shift && old.motion) sm = { shift: old.shift.items || [], motion: old.motion.items || [] }; }
+  } catch (e) { sm = null; }
+  if (!sm) sm = { shift: SM_DEF.shift.slice(), motion: SM_DEF.motion.slice() };
+  const saveSm = () => { try { localStorage.setItem('pdl_namelists2', JSON.stringify(sm)); } catch (e) {} };
+  let smLast = null; // {k, n}
+  const smVal = k => { const e = document.getElementById(SM_INPUT[k]); return e ? e.value.trim() : ''; };
+  function smRefresh() {
+    const t = document.getElementById('sm-btn-t'); if (!t) return;
+    const a = smVal('shift'), b = smVal('motion');
+    t.textContent = (a || b) ? ((a ? 'SHIFT: ' + a : '') + (a && b ? '  /  ' : '') + (b ? 'MOTION: ' + b : '')) : '(SHIFT / MOTION を選ぶ)';
+  }
+  function smPick(k, name) {
+    const inp = document.getElementById(SM_INPUT[k]);
+    if (inp) { inp.value = name || ''; inp.dispatchEvent(new Event('input', { bubbles: true })); }
+    smLast = name ? { k, n: name } : null; smRefresh();
+  }
+  function smOp(op) {
+    if (op === 'picker') return openSmPicker();
+    if (op === 'add') {
+      const el = document.getElementById('sm-name'), k = document.getElementById('sm-cat').value; let n = el.value.trim();
+      if (!n) n = smVal(k);
+      if (!n) return alert('名称を入力してください。');
+      if (sm[k].includes(n)) { smPick(k, n); return alert('同じ名前が、すでに登録されています。'); }
+      sm[k].push(n); el.value = ''; saveSm(); smPick(k, n); return;
+    }
+    if (!smLast) return alert('先に、一覧から項目を選んでください。');
+    const { k, n } = smLast;
+    if (op === 'rename') {
+      const t = (prompt(SM_LABEL[k] + ' の新しい名称:', n) || '').trim(); if (!t || t === n) return;
+      if (sm[k].includes(t)) return alert('同じ名前が、すでにあります。');
+      sm[k][sm[k].indexOf(n)] = t; saveSm(); smPick(k, t); return;
+    }
+    if (op === 'delete') {
+      if (!confirm('「' + n + '」を削除しますか？')) return;
+      sm[k] = sm[k].filter(x => x !== n); saveSm(); smPick(k, ''); smLast = null;
+    }
+  }
+  function openSmPicker() {
+    const old = document.getElementById('form-pop'); if (old) { old.remove(); return; }
+    const btn = document.getElementById('sm-btn');
+    const pop = document.createElement('div'); pop.id = 'form-pop';
+    const r = btn.getBoundingClientRect(), top = r.bottom + 2, maxH = Math.max(160, Math.min(window.innerHeight * 0.7, window.innerHeight - top - 10));
+    pop.style.cssText = `position:fixed; z-index:99998; left:${Math.max(4, r.left)}px; top:${top}px; width:${Math.max(r.width, 260)}px; max-height:${maxH}px; overflow:auto; background:#18181b; border:1px solid #52525b; border-radius:6px; box-shadow:0 8px 24px rgba(0,0,0,.6); font-size:13px; color:#e4e4e7;`;
+    document.body.appendChild(pop);
+    let drag = null, ghost = null;
+    const onKey = e => { if (e.key === 'Escape') close(); };
+    const outside = e => { if (!pop.contains(e.target) && !btn.contains(e.target)) close(); };
+    const close = () => { pop.remove(); document.removeEventListener('pointerdown', outside, true); document.removeEventListener('keydown', onKey, true); };
+    setTimeout(() => { document.addEventListener('pointerdown', outside, true); document.addEventListener('keydown', onKey, true); }, 0);
+    const hd = '<span class="fo-hd" style="flex:none; padding:2px 8px; color:#71717a; touch-action:none; cursor:grab; user-select:none;" title="Drag">☰</span>';
+    const draw = () => {
+      pop.innerHTML = '';
+      ['shift', 'motion'].forEach(k => {
+        const box = document.createElement('div'); box.className = 'fo-g'; box.dataset.k = k;
+        const h = document.createElement('div'); h.style.cssText = 'padding:6px 10px; font-weight:bold; background:#27272a; color:#fcd34d; display:flex; align-items:center;';
+        h.innerHTML = `<span style="flex:1;">📁 ${SM_LABEL[k]}</span><span style="font-weight:normal; font-size:10.5px; color:#a1a1aa; cursor:pointer;" class="sm-clr">空欄にする</span>`;
+        h.querySelector('.sm-clr').onclick = () => { smPick(k, ''); close(); }; box.appendChild(h);
+        sm[k].forEach(n => {
+          const row = document.createElement('div'); row.className = 'fo-i'; row.dataset.k = k; row.dataset.n = n;
+          row.style.cssText = 'display:flex; align-items:center; padding:6px 4px 6px 22px; cursor:pointer;' + (n === smVal(k) ? 'background:#2563eb; color:#fff;' : '') + (drag && drag.n === n ? 'opacity:.4;' : '');
+          row.innerHTML = `<span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(n)}</span>${hd}`;
+          row.onpointerdown = e => begin(e, { k, n }, row); box.appendChild(row);
+        });
+        if (!sm[k].length) { const em = document.createElement('div'); em.style.cssText = 'padding:5px 22px; color:#71717a; font-style:italic;'; em.textContent = '(空 - ここにドラッグ)'; box.appendChild(em); }
+        pop.appendChild(box);
+      });
+      const names = Object.keys(fmap('off'));
+      if (names.length) {
+        const h = document.createElement('div'); h.style.cssText = 'padding:6px 10px; font-weight:bold; background:#27272a; color:#86efac; border-top:1px solid #2f2f33;'; h.textContent = '📁 OFF FORMATION から選ぶ(→ SHIFT欄)'; pop.appendChild(h);
+        names.forEach(n => { const d = document.createElement('div'); d.style.cssText = 'padding:6px 10px 6px 22px; cursor:pointer;' + (n === smVal('shift') ? 'background:#2563eb; color:#fff;' : ''); d.textContent = n; d.onclick = () => { smPick('shift', n); close(); }; pop.appendChild(d); });
+      }
+      const hint = document.createElement('div'); hint.style.cssText = 'padding:5px 10px; font-size:10.5px; color:#71717a; border-top:1px solid #2f2f33; position:sticky; bottom:0; background:#18181b;'; hint.textContent = 'クリック=選択 / ☰ドラッグ=並べ替え・SHIFT⇄MOTION移動'; pop.appendChild(hint);
+    };
+    const move = e => {
+      if (!drag) return;
+      if (!drag.on) { if (Math.abs(e.clientX - drag.sx) + Math.abs(e.clientY - drag.sy) < 7) return; drag.on = true; ghost = document.createElement('div'); ghost.style.cssText = 'position:fixed; z-index:100001; pointer-events:none; background:#2563eb; color:#fff; padding:3px 9px; border-radius:5px; font-size:12px;'; ghost.textContent = drag.n; document.body.appendChild(ghost); }
+      ghost.style.left = (e.clientX + 10) + 'px'; ghost.style.top = (e.clientY + 6) + 'px';
+      const el = document.elementFromPoint(e.clientX, e.clientY); if (!el) return;
+      const gBox = el.closest('.fo-g'); if (!gBox || !pop.contains(gBox)) return; const tk = gBox.dataset.k;
+      const src = sm.shift.includes(drag.n) ? 'shift' : (sm.motion.includes(drag.n) ? 'motion' : null); if (!src) return;
+      const rowEl = el.closest('.fo-i');
+      if (rowEl) { const tn = rowEl.dataset.n; if (tn === drag.n) return; const rc = rowEl.getBoundingClientRect(), after = e.clientY > rc.top + rc.height / 2; sm[src].splice(sm[src].indexOf(drag.n), 1); const ti = sm[tk].indexOf(tn); sm[tk].splice(ti + (after ? 1 : 0), 0, drag.n); }
+      else { if (sm[tk][0] === drag.n) return; sm[src].splice(sm[src].indexOf(drag.n), 1); sm[tk].unshift(drag.n); }
+      drag.k = tk; draw();
+    };
+    const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.removeEventListener('pointercancel', up); if (ghost) { ghost.remove(); ghost = null; } const d = drag; drag = null; if (!d) return; if (d.on) { saveSm(); draw(); } else { smPick(d.k, d.n); close(); } };
+    const begin = (e, d, el) => {
+      if (e.button != null && e.button > 0) return;
+      if (e.pointerType === 'touch' && !(e.target.closest && e.target.closest('.fo-hd'))) { el.onclick = () => { smPick(d.k, d.n); close(); }; return; }
+      e.preventDefault(); drag = Object.assign({ on: false, sx: e.clientX, sy: e.clientY }, d);
+      document.addEventListener('pointermove', move); document.addEventListener('pointerup', up); document.addEventListener('pointercancel', up);
+    };
+    draw();
+  }
+  // ===== ROUTE TREE(Routeを登録して、選手クリックで付ける) =====
+  const RT_YD = PX_PER_YD;
+  // pts: [右(+)/上(+) のヤード数], dir: out=サイドライン側 / in=中央側 / none=そのまま
+  const RT_DEF = [
+    ['WR-TE', 'Go / Fly', 'none', [[0,0],[0,12]]], ['WR-TE', 'Fade', 'out', [[0,0],[1.5,12]]], ['WR-TE', 'Hitch', 'in', [[0,0],[0,5],[-0.6,4]]],
+    ['WR-TE', 'Slant', 'in', [[0,0],[0,1],[4,5]]], ['WR-TE', 'Out', 'out', [[0,0],[0,6],[5,6]]], ['WR-TE', 'In / Dig', 'in', [[0,0],[0,8],[6,8]]],
+    ['WR-TE', 'Post', 'in', [[0,0],[0,8],[5,13]]], ['WR-TE', 'Corner', 'out', [[0,0],[0,8],[5,13]]], ['WR-TE', 'Curl', 'in', [[0,0],[0,10],[1,8]]],
+    ['WR-TE', 'Comeback', 'out', [[0,0],[0,12],[2,10]]], ['WR-TE', 'Shallow Cross', 'in', [[0,0],[0,2],[12,3]]], ['WR-TE', 'Wheel', 'out', [[0,0],[4,1],[6,3],[6,12]]],
+    ['RB', 'Flat', 'out', [[0,0],[6,0.5]]], ['RB', 'Swing', 'out', [[0,0],[3,-1],[6,1]]], ['RB', 'Angle', 'in', [[0,0],[0,3],[3,5]]], ['RB', 'Check Release', 'out', [[0,0],[0,2],[3,3]]]
+  ];
+  const rtSeed = () => RT_DEF.map(([cat, name, dir, p]) => ({ cat, name, dir, pts: p.map(([x, y]) => ({ x: x * RT_YD, y: -y * RT_YD })) }));
+  let rtLib = null;
+  try { rtLib = JSON.parse(localStorage.getItem('pdl_routelib') || 'null'); } catch (e) { rtLib = null; }
+  if (!Array.isArray(rtLib)) {
+    rtLib = rtSeed();
+    try { (JSON.parse(localStorage.getItem('pdl_routes') || '[]') || []).forEach(r => rtLib.push({ ...r, cat: 'My Routes' })); } catch (e) {}
+  }
+  const saveRt = () => { try { localStorage.setItem('pdl_routelib', JSON.stringify(rtLib)); } catch (e) {} };
+  const rtAll = () => rtLib;
+  function rtFill(keep) {
+    const sel = document.getElementById('rt-sel'); if (!sel) return; const cur = keep !== undefined ? keep : sel.value;
+    sel.innerHTML = ''; const cats = {};
+    rtAll().forEach(r => { (cats[r.cat || 'My Routes'] = cats[r.cat || 'My Routes'] || []).push(r); });
+    Object.keys(cats).forEach(c => { const og = document.createElement('optgroup'); og.label = c; cats[c].forEach(r => { const o = document.createElement('option'); o.value = r.name; o.textContent = r.name; og.appendChild(o); }); sel.appendChild(og); });
+    if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
+    const r = rtAll().find(x => x.name === sel.value), d = document.getElementById('rt-dir'); if (d && r) d.value = r.dir || 'none';
+  }
+  const rtCur = () => { const v = document.getElementById('rt-sel').value; return rtAll().find(r => r.name === v); };
+  const rtSelLine = () => { if (!selectedObj || selectedObj.type !== 'line' || !selectedObj.item || !selectedObj.item.points || selectedObj.item.points.length < 2) { alert('先に、図の線を1本クリックして選んでください。'); return null; } return selectedObj.item; };
+  const rtShape = l => { const o = l.points[0]; return { type: l.type === 'ink' ? 'route' : l.type, arrowhead: l.arrowhead, corner: l.corner, smooth: !!l.smooth, pts: l.points.map(q => ({ x: q.x - o.x, y: q.y - o.y })) }; };
+  function rtApplyTo(p) {
+    const r = rtCur(); if (!r) return toast('Route を選んでください', 2000);
+    const flip = document.getElementById('rt-flip').checked ? -1 : 1, side = p.x < W / 2 ? -1 : 1;
+    const sx = (r.dir === 'out' ? side : r.dir === 'in' ? -side : 1) * flip;
+    pushHistory();
+    const ln = { type: r.type || 'route', color: document.getElementById('stroke-color').value, thickness: parseFloat(document.getElementById('line-thickness').value), arrowhead: r.arrowhead || document.getElementById('line-arrowhead').value, arcDir: document.getElementById('line-arc-dir').value, corner: r.corner || document.getElementById('line-corner').value, points: r.pts.map(q => ({ x: p.x + sx * q.x, y: p.y + q.y })) };
+    if (r.smooth) ln.smooth = true;
+    ln.grp = 'route'; lines.push(ln); selectedObj = { type: 'line', item: ln }; render();
+  }
+  function rtOp(op) {
+    const on = document.getElementById('rt-on');
+    if (op === 'mode') { if (on.checked) { const cdm = document.getElementById('cd-on'); if (cdm) cdm.checked = false; setMode('select'); toast('Route Tree モード ON: 選手(丸)をクリックすると、「' + (document.getElementById('rt-sel').value || '') + '」が付きます', 3200); } canvas.style.cursor = on.checked ? 'copy' : ''; return; }
+    if (op === 'select') { const r = rtCur(), d = document.getElementById('rt-dir'); if (r && d) d.value = r.dir || 'none'; if (!on.checked) { on.checked = true; rtOp('mode'); } return; }
+    if (op === 'register') {
+      const l = rtSelLine(); if (!l) return;
+      const name = (prompt('Route の名前を入力してください:', '') || '').trim(); if (!name) return;
+      if (rtAll().some(r => r.name === name)) return alert('同じ名前が、すでにあります。');
+      const cat = (prompt('カテゴリー名(空欄なら My Routes):', (rtCur() && rtCur().cat) || 'My Routes') || '').trim() || 'My Routes';
+      rtLib.push({ name, cat, dir: 'none', ...rtShape(l) }); saveRt(); rtFill(name); toast('「' + name + '」を登録しました(' + cat + ')。向きは「そのまま」です。必要なら「向き」を変更', 3000); return;
+    }
+    if (op === 'reset') {
+      if (!confirm('最初の16種類を元の形に戻します。(登録した Route は残ります。最初のものを修正・削除していた場合は、元に戻ります)')) return;
+      const names = new Set(RT_DEF.map(r => r[1])); rtLib = [...rtSeed(), ...rtLib.filter(r => !names.has(r.name))]; saveRt(); rtFill(); return;
+    }
+    const r = rtCur(); if (!r) return alert('Route を選んでください。');
+    if (op === 'dir') { r.dir = document.getElementById('rt-dir').value; saveRt(); return; }
+    if (op === 'overwrite') { const l = rtSelLine(); if (!l) return; if (!confirm('「' + r.name + '」の形を、選択中の線で置き換えますか？')) return; Object.assign(r, { type: undefined, arrowhead: undefined, corner: undefined, smooth: false }, rtShape(l)); saveRt(); toast('「' + r.name + '」の形を変更しました', 2200); return; }
+    if (op === 'rename') {
+      const t = (prompt('新しい名前:', r.name) || '').trim(); if (!t || t === r.name) return;
+      if (rtAll().some(x => x.name === t)) return alert('同じ名前が、すでにあります。');
+      r.name = t; saveRt(); rtFill(t); return;
+    }
+    if (op === 'cat') { const t = (prompt('カテゴリー名:', r.cat || 'My Routes') || '').trim(); if (!t) return; r.cat = t; saveRt(); rtFill(r.name); return; }
+    if (op === 'delete') { if (!confirm('「' + r.name + '」を削除しますか？')) return; rtLib = rtLib.filter(x => x !== r); saveRt(); rtFill(); }
+  }
+  let rtLast = { p: null, t: 0 };
+  function rtClick(e) {
+    const on = document.getElementById('rt-on'); if (!on || !on.checked || e.target !== canvas) return;
+    const rect = canvas.getBoundingClientRect(), x = (e.clientX - rect.left) / zoom, y = (e.clientY - rect.top) / zoom;
+    const p = getClosestPlayer(x, y); if (!p) return;
+    e.stopImmediatePropagation(); e.preventDefault();
+    const now = Date.now(); if (rtLast.p === p && now - rtLast.t < 400) return; rtLast = { p, t: now }; rtApplyTo(p);
+  }
+
+  // ===== COVER(Coverageの図=ゾーン・線・文字 を登録して呼び出す) =====
+  let covLib = [];
+  try { covLib = JSON.parse(localStorage.getItem('pdl_covers') || '[]') || []; } catch (e) { covLib = []; }
+  const saveCov = () => { try { localStorage.setItem('pdl_covers', JSON.stringify(covLib)); } catch (e) {} };
+  function covFill(keep) {
+    const sel = document.getElementById('cov-sel'); if (!sel) return; const cur = keep !== undefined ? keep : sel.value;
+    sel.innerHTML = '<option value="">(Cover を選ぶ)</option>'; covLib.forEach(c => { const o = document.createElement('option'); o.value = c.name; o.textContent = c.name; sel.appendChild(o); });
+    sel.value = [...sel.options].some(o => o.value === cur) ? cur : '';
+  }
+  function covOp(op) {
+    const sel = document.getElementById('cov-sel'), cur = sel.value, ox = W / 2, oy = losY;
+    if (op === 'save') {
+      const el = document.getElementById('cov-name'); const name = el.value.trim();
+      if (!name) return alert('Cover の名前を入力してください。');
+      if (!zones.length && !lines.length && !texts.length) return alert('登録する図(ゾーン・線・文字)が、まだありません。');
+      const rel = o => { const c = JSON.parse(JSON.stringify(o)); if (c.points) c.points.forEach(q => { q.x -= ox; q.y -= oy; }); else { c.x -= ox; c.y -= oy; } return c; };
+      const item = { name, zones: zones.map(rel), lines: lines.map(rel), texts: texts.map(rel) };
+      const i = covLib.findIndex(c => c.name === name);
+      if (i >= 0) { if (!confirm('「' + name + '」は、すでにあります。今の図で上書きしますか？')) return; covLib[i] = item; } else covLib.push(item);
+      saveCov(); el.value = ''; covFill(name); toast('「' + name + '」を登録しました', 2200); return;
+    }
+    if (!cur) { if (op === 'apply') return; return alert('Cover を選んでください。'); }
+    const c = covLib.find(x => x.name === cur); if (!c) return;
+    if (op === 'apply') {
+      pushHistory();
+      const back = o => { const k = JSON.parse(JSON.stringify(o)); if (k.points) k.points.forEach(q => { q.x += ox; q.y += oy; }); else { k.x += ox; k.y += oy; } return k; };
+      if (document.getElementById('cov-replace').checked) { zones = []; lines = []; texts = []; }
+      c.zones.forEach(o => zones.push(back(o))); c.lines.forEach(o => lines.push(back(o))); c.texts.forEach(o => texts.push(back(o)));
+      selectedObj = null; render(); toast('「' + c.name + '」を出しました(Ctrl+Zで戻せます)', 2200); return;
+    }
+    if (op === 'overwrite') {
+      if (!zones.length && !lines.length && !texts.length) return alert('今の図(ゾーン・線・文字)が、まだありません。');
+      if (!confirm('「' + c.name + '」を、今の図で置き換えますか？')) return;
+      const rel = o => { const k = JSON.parse(JSON.stringify(o)); if (k.points) k.points.forEach(q => { q.x -= ox; q.y -= oy; }); else { k.x -= ox; k.y -= oy; } return k; };
+      c.zones = zones.map(rel); c.lines = lines.map(rel); c.texts = texts.map(rel); saveCov(); toast('「' + c.name + '」を変更しました', 2200); return;
+    }
+    if (op === 'rename') {
+      const t = (prompt('新しい名前:', c.name) || '').trim(); if (!t || t === c.name) return;
+      if (covLib.some(x => x.name === t)) return alert('同じ名前が、すでにあります。');
+      c.name = t; saveCov(); covFill(t); return;
+    }
+    if (op === 'delete') { if (!confirm('「' + c.name + '」を削除しますか？')) return; covLib = covLib.filter(x => x !== c); saveCov(); covFill(''); }
+  }
+  // ===== 記号モード(Rams風: Cover / Blitz / Twist / Shift / Motion)。ゾーンの丸は使わない =====
+  // p: 右(+)/上(+)のヤード数。lab=[文字, 終点からの上下(+=上)]。dir: out=サイドライン側 / in=中央側 / none
+  const CD_LISTS = {
+    cover: [
+      { n: '1/2 (Deep Half)', t: 'wavy', a: 'standard', dir: 'out', p: [[0, 0], [2.5, 7]], lab: ['1/2', 1] },
+      { n: '1/3 (Deep Third)', t: 'wavy', a: 'standard', dir: 'out', p: [[0, 0], [2, 8]], lab: ['1/3', 1] },
+      { n: 'Middle 1/3', t: 'wavy', a: 'standard', dir: 'none', p: [[0, 0], [0, 8]], lab: ['1/3', 1] },
+      { n: 'Middle Run Through', t: 'wavy', a: 'standard', dir: 'none', p: [[0, 0], [0, 9]], lab: ['MIDDLE RUN THROUGH', 1] },
+      { n: 'Curl', t: 'route', a: 'dot', dir: 'in', p: [[0, 0], [0.7, 4]], lab: ['CURL', 1] },
+      { n: 'Hook', t: 'route', a: 'dot', dir: 'in', p: [[0, 0], [0.7, 3.5]], lab: ['HOOK', 1] },
+      { n: 'Hook (Read QB)', t: 'route', a: 'dot', dir: 'in', p: [[0, 0], [1.2, 3.5]], lab: ['HOOK (READ QB)', 1] },
+      { n: 'Paint', t: 'route', a: 'dot', dir: 'none', p: [[0, 0], [0, 3.5]], lab: ['PAINT', 1] },
+      { n: 'Flat (T止め)', t: 'route', a: 'block', dir: 'out', p: [[0, 0], [0, -1.6]], lab: ['FLAT', -1] },
+      { n: 'Flat (横へ)', t: 'route', a: 'standard', dir: 'out', p: [[0, 0], [4, 0]], lab: ['FLAT', 1] },
+      { n: 'Man (点線)', t: 'dashed', a: 'standard', dir: 'in', p: [[0, 0], [1.5, -4]], lab: ['MAN', 1] }
+    ],
+    blitz: [
+      { n: 'Blitz 直線 (まっすぐ)', t: 'route', a: 'standard', dir: 'none', go: 0 },
+      { n: 'Blitz 中へ (カーブ)', t: 'route', a: 'standard', dir: 'in', go: 2.2 },
+      { n: 'Blitz 外へ (カーブ)', t: 'route', a: 'standard', dir: 'out', go: 2.2 },
+      { n: 'Blitz 大きく中へ', t: 'route', a: 'standard', dir: 'in', go: 4 },
+      { n: 'Spy (点線)', t: 'dashed', a: 'standard', dir: 'none', p: [[0, 0], [0, -3]] }
+    ],
+    twist: [{ n: 'Twist (X字・(1)(2)付き)', two: 'twist' }],
+    shift: [{ n: 'Shift (点線の矢印)', t: 'dashed' }],
+    motion: [{ n: 'Motion (波線の矢印)', t: 'wavy' }, { n: 'Motion (点線の矢印)', t: 'dashed' }]
+  };
+  const cdKind = () => (document.getElementById('cd-kind') || {}).value || 'cover';
+  function cdFill() { const sel = document.getElementById('cd-sel'); if (!sel) return; sel.innerHTML = ''; (CD_LISTS[cdKind()] || []).forEach(d => { const o = document.createElement('option'); o.value = d.n; o.textContent = d.n; sel.appendChild(o); }); }
+  const cdTextObj = (txt, x, y, fs, grp) => { ctx.save(); ctx.font = `bold ${fs}px "Arial", sans-serif`; const w = ctx.measureText(txt).width; ctx.restore(); return { text: txt, x: x - w / 2, y, fontFamily: 'Arial', fontSize: String(fs), fontStyle: 'bold', color: '#000000', underline: false, cd: true, grp }; };
+  const cdLine = (type, arrow, pts, grp) => ({ type, color: '#000000', thickness: 1.6, arrowhead: arrow, arcDir: 'auto', corner: 'round', points: pts, cd: true, grp });
+  let cdPend = null;
+  function cdApplyTo(p) {
+    const kind = cdKind(), d = (CD_LISTS[kind] || []).find(x => x.n === document.getElementById('cd-sel').value); if (!d) return;
+    const flip = document.getElementById('cd-flip').checked ? -1 : 1, side = p.x < W / 2 ? -1 : 1;
+    const sx = (d.dir === 'out' ? side : d.dir === 'in' ? -side : 1) * flip;
+    pushHistory();
+    if (kind === 'cover') {
+      const pts = d.p.map(([x, y]) => ({ x: p.x + sx * x * PX_PER_YD, y: p.y - y * PX_PER_YD }));
+      lines.push(cdLine(d.t, d.a, pts, 'cover'));
+      const e = pts[pts.length - 1]; texts.push(cdTextObj(d.lab[0], e.x, e.y - d.lab[1] * 11, 9, 'cover'));
+    } else if (kind === 'blitz') {
+      const endY = losY + 26;
+      if (d.p) lines.push(cdLine(d.t, d.a, d.p.map(([x, y]) => ({ x: p.x + sx * x * PX_PER_YD, y: p.y - y * PX_PER_YD })), 'blitz'));
+      else {
+        const dx = sx * d.go * PX_PER_YD, pts = [{ x: p.x, y: p.y }];
+        if (d.go) pts.push({ x: p.x + dx * 0.25, y: p.y + (endY - p.y) * 0.55 });
+        pts.push({ x: p.x + dx, y: endY }); lines.push(cdLine(d.t, d.a, pts, 'blitz'));
+      }
+    }
+    render();
+  }
+  function cdTwist(a, b) {
+    pushHistory(); const endY = losY + 18;
+    lines.push(cdLine('route', 'standard', [{ x: a.x, y: a.y }, { x: b.x, y: endY }], 'twist'));
+    lines.push(cdLine('route', 'standard', [{ x: b.x, y: b.y }, { x: a.x, y: endY }], 'twist'));
+    texts.push(cdTextObj('(1)', b.x, endY + 12, 8, 'twist')); texts.push(cdTextObj('(2)', a.x, endY + 12, 8, 'twist'));
+    render();
+  }
+  function cdMove(p, x, y) {
+    const kind = cdKind(), d = (CD_LISTS[kind] || []).find(q => q.n === document.getElementById('cd-sel').value); if (!d) return;
+    pushHistory(); lines.push(cdLine(d.t, 'standard', [{ x: p.x, y: p.y }, { x, y }], kind)); render();
+  }
+  function cdOp(op) {
+    const on = document.getElementById('cd-on');
+    if (op === 'kind') { cdFill(); cdPend = null; if (!on.checked) { on.checked = true; cdOp('mode'); } return; }
+    if (op === 'mode') { cdPend = null; if (on.checked) { const r = document.getElementById('rt-on'); if (r) r.checked = false; setMode('select'); toast('記号モード ON(' + document.getElementById('cd-kind').selectedOptions[0].textContent + ')', 3000); } canvas.style.cursor = on.checked ? 'copy' : ''; return; }
+    if (op === 'select') { cdPend = null; if (!on.checked) { on.checked = true; cdOp('mode'); } return; }
+    if (op === 'tags') {
+      const L = document.getElementById('cd-tagl').value.trim(), R = document.getElementById('cd-tagr').value.trim();
+      if (!L && !R) return alert('下の枠に入れる文字を入力してください。');
+      pushHistory(); texts = texts.filter(t => !t.tag);
+      const fs = 11; ctx.save(); ctx.font = `bold ${fs}px "Arial", sans-serif`;
+      const y = H - 22;
+      if (L) texts.push({ text: L, x: 16, y, fontFamily: 'Arial', fontSize: String(fs), fontStyle: 'bold', color: '#000000', underline: false, box: true, tag: 'L' });
+      if (R) { const w = ctx.measureText(R).width; texts.push({ text: R, x: W - 16 - w - 8, y, fontFamily: 'Arial', fontSize: String(fs), fontStyle: 'bold', color: '#000000', underline: false, box: true, tag: 'R' }); }
+      ctx.restore(); render(); return;
+    }
+    if (op === 'tagsClear') { pushHistory(); texts = texts.filter(t => !t.tag); render(); return; }
+    if (op === 'clear') {
+      const k = cdKind(); if (!confirm('「' + document.getElementById('cd-kind').selectedOptions[0].textContent + '」の記号を、すべて消しますか？')) return;
+      pushHistory(); lines = lines.filter(l => !(l.cd && l.grp === k)); texts = texts.filter(t => !(t.cd && t.grp === k)); render();
+    }
+  }
+  function cdClick(e) {
+    const on = document.getElementById('cd-on'); if (!on || !on.checked || e.target !== canvas) return;
+    const rect = canvas.getBoundingClientRect(), x = (e.clientX - rect.left) / zoom, y = (e.clientY - rect.top) / zoom, kind = cdKind();
+    const p = getClosestPlayer(x, y);
+    const now = Date.now();
+    if (kind === 'shift' || kind === 'motion') {
+      if (!cdPend) { if (!p) return; e.stopImmediatePropagation(); e.preventDefault(); if (cdLast.t && now - cdLast.t < 400) return; cdLast = { p, t: now }; cdPend = p; toast('次に、行き先をクリックしてください', 2500); return; }
+      e.stopImmediatePropagation(); e.preventDefault(); if (now - cdLast.t < 400) return; cdLast = { p: null, t: now };
+      const from = cdPend; cdPend = null; cdMove(from, p ? p.x : x, p ? p.y : y); return;
+    }
+    if (!p) return;
+    e.stopImmediatePropagation(); e.preventDefault();
+    if (cdLast.p === p && now - cdLast.t < 400) return; cdLast = { p, t: now };
+    if (kind === 'twist') { if (!cdPend) { cdPend = p; toast('次に、もう1人のDLをクリックしてください', 2500); return; } if (cdPend !== p) { const a = cdPend; cdPend = null; cdTwist(a, p); } return; }
+    cdApplyTo(p);
+  }
+  let cdLast = { p: null, t: 0 };
+
+  // ===== 表示する線(Check方式) =====
+  const VIS_KEYS = ['cover', 'blitz', 'twist', 'shift', 'motion', 'route'];
+  let visGrp = {}; VIS_KEYS.forEach(k => visGrp[k] = true);
+  const grpHidden = o => !!(o && o.grp && visGrp[o.grp] === false);
+  function visSync() { VIS_KEYS.forEach(k => { const e = document.getElementById('vis-' + k); if (e) e.checked = visGrp[k] !== false; }); }
+  function visLoad(v) { VIS_KEYS.forEach(k => { visGrp[k] = !v || v[k] !== false; }); visSync(); }
+  function visOp(op) {
+    if (op === 'assign') {
+      const g = document.getElementById('vis-assign').value;
+      if (!selectedObj || !selectedObj.item || !['line', 'text'].includes(selectedObj.type)) return alert('先に、分類を付けたい線(または文字)を1つクリックして選んでください。');
+      pushHistory(); if (g) selectedObj.item.grp = g; else delete selectedObj.item.grp; toast('分類を付けました', 1800); render(); return;
+    }
+    VIS_KEYS.forEach(k => { const e = document.getElementById('vis-' + k); if (e) visGrp[k] = e.checked; });
+    if (selectedObj && selectedObj.item && grpHidden(selectedObj.item)) selectedObj = null;
+    render();
+  }
+
+  // ===== 画面上の Category(プレーの分類)を、ドラッグで並べ替えできるリストで選ぶ =====
+  function syncCatBtn() {
+    const sel = document.getElementById('play-cat'), t = document.getElementById('play-cat-btn-t'); if (!sel || !t) return;
+    const o = sel.options[sel.selectedIndex]; t.textContent = o ? o.textContent.replace(/\s*\(.*\)\s*$/, '') : '';
+  }
+  function hookCatSel() {
+    const sel = document.getElementById('play-cat'); if (!sel || sel._hk) return; sel._hk = 1;
+    const d = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+    Object.defineProperty(sel, 'value', { get() { return d.get.call(this); }, set(v) { d.set.call(this, v); syncCatBtn(); }, configurable: true });
+    sel.addEventListener('change', syncCatBtn); syncCatBtn();
+  }
+  function openCatPicker() {
+    const old = document.getElementById('form-pop'); if (old) { old.remove(); return; }
+    const btn = document.getElementById('play-cat-btn'), sel = document.getElementById('play-cat');
+    const pop = document.createElement('div'); pop.id = 'form-pop';
+    const r = btn.getBoundingClientRect(), top = r.bottom + 2, maxH = Math.max(160, Math.min(window.innerHeight * 0.7, window.innerHeight - top - 10));
+    pop.style.cssText = `position:fixed; z-index:99998; left:${Math.max(4, r.left)}px; top:${top}px; width:${Math.max(r.width, 230)}px; max-height:${maxH}px; overflow:auto; background:#18181b; border:1px solid #52525b; border-radius:6px; box-shadow:0 8px 24px rgba(0,0,0,.6); font-size:13px; color:#e4e4e7;`;
+    document.body.appendChild(pop);
+    const onKey = e => { if (e.key === 'Escape') close(); };
+    const outside = e => { if (!pop.contains(e.target) && !btn.contains(e.target)) close(); };
+    const close = () => { pop.remove(); document.removeEventListener('pointerdown', outside, true); document.removeEventListener('keydown', onKey, true); };
+    setTimeout(() => { document.addEventListener('pointerdown', outside, true); document.addEventListener('keydown', onKey, true); }, 0);
+    const pick = v => { sel.value = v; sel.dispatchEvent(new Event('change', { bubbles: true })); close(); };
+    const hd = '<span class="cat-hd" style="flex:none; padding:2px 8px; color:#71717a; touch-action:none; cursor:grab; user-select:none;" title="Drag to reorder">☰</span>';
+    const draw = () => {
+      pop.innerHTML = '';
+      allCats().forEach(c => {
+        const row = document.createElement('div'); row.className = 'cat-pop-row'; row.dataset.k = c.k;
+        row.style.cssText = 'display:flex; align-items:center; padding:7px 4px 7px 10px; cursor:pointer;' + (c.k === sel.value ? 'background:#2563eb; color:#fff;' : '');
+        row.innerHTML = `<span style="flex:1;">${esc(c.l)}</span>${hd}`;
+        row.onclick = () => { if (dragSwallow) return; pick(c.k); };
+        row.onpointerdown = e => { if (e.pointerType === 'touch' && !(e.target.closest && e.target.closest('.cat-hd'))) return; dragSort(e, c.k, '.cat-pop-row', (a, b) => { catMoveTo(a, b); draw(); }, kk => catLabel(kk)); };
+        pop.appendChild(row);
+      });
+      const add = document.createElement('div'); add.style.cssText = 'padding:7px 10px; cursor:pointer; color:#34d399; border-top:1px solid #2f2f33;'; add.textContent = '＋ Add Category…'; add.onclick = () => pick('__add'); pop.appendChild(add);
+      const hint = document.createElement('div'); hint.style.cssText = 'padding:5px 10px; font-size:10.5px; color:#71717a; position:sticky; bottom:0; background:#18181b;'; hint.textContent = 'Click = select / Drag = reorder categories'; pop.appendChild(hint);
+    };
+    draw();
+  }
   function openFormPicker(side) {
     const old = document.getElementById('form-pop'); if (old) { old.remove(); return; }
     const btn = document.getElementById(side + '-form-btn'), sel = fsel(side);
@@ -1868,6 +2346,7 @@ const GridironApp = (() => {
     });
     if (prevVal && map[prevVal]) sel.value = prevVal; else sel.value = '';
     hookFormSel(side); syncFormBtn(side);
+    try { rtFill(); covFill(); cdFill(); window.addEventListener('click', cdClick, true); window.addEventListener('click', rtClick, true); hookCatSel(); smRefresh(); ['call-shift','call-motion'].forEach(id => { const e = document.getElementById(id); if (e) e.addEventListener('input', smRefresh); }); } catch (e) {}
     if (!sel._catL) { sel._catL = 1; sel.addEventListener('change', () => refreshCatSelect(side)); }
     refreshCatSelect(side);
   }
@@ -1958,11 +2437,15 @@ const GridironApp = (() => {
 
   // OFF 標準11人(x=キャンバス上の位置, relY=LOSからの距離px)
   const OFF11 = [
-    ['LT', 'circle', 390, 15], ['LG', 'circle', 420, 15], ['C', 'square', 450, 15], ['RG', 'circle', 480, 15], ['RT', 'circle', 510, 15],
-    ['QB', 'circle', 450, 75], ['R', 'circle', 450, 115],
-    ['X', 'circle', 130, 15], ['S', 'circle', 310, 28], ['Y', 'circle', 545, 15], ['Z', 'circle', 770, 28]
+    ['TE', 'circle', 348, 15], ['LT', 'circle', 382, 15], ['LG', 'circle', 416, 15], ['C', 'square', 450, 15], ['RG', 'circle', 484, 15], ['RT', 'circle', 518, 15], ['TE', 'circle', 552, 15],
+    ['QB', 'circle', 450, 40], ['FB', 'circle', 450, 61], ['HB', 'circle', 416, 84], ['HB', 'circle', 484, 84]
   ];
+  function setPlayerSizes(o, d) {
+    const a = document.getElementById('off-size-range'), b = document.getElementById('def-size-range');
+    if (a && o) a.value = o; if (b && d) b.value = d; changePlayerSize();
+  }
   function placeOff11() {
+    setPlayerSizes(12, 0);
     pushHistory();
     const defPlayers = players.filter(p => p.side === 'def');
     const off = OFF11.map(([label, shape, x, relY]) => ({ label, shape, side: 'off', x, y: losY + relY, strokeColor: '#000000', fillColor: '#ffffff', visible: true }));
@@ -2006,7 +2489,40 @@ const GridironApp = (() => {
     ['W', -112, -85], ['M', 0, -95], ['S', 112, -85],
     ['CB', -300, -58], ['CB', 300, -58], ['SS', 150, -150], ['FS', -20, -210]
   ];
+  // 3-4(画像ベース)。DEFサイズ14: DL3・LB4・CB2・SS・FS
+  const DEF34 = [
+    ['T', -57, -37], ['N', 0, -37], ['T', 57, -37],
+    ['W', -85, -64], ['M', -28, -64], ['J', 28, -64], ['S', 85, -64],
+    ['CB', -57, -95], ['CB', 57, -95], ['FS', -29, -136], ['SS', 29, -136]
+  ];
+  // 4-2-5 Nickel: DL4・LB2・CB2・Ni・SS・FS
+  const DEF425 = [
+    ['E', -85, -37], ['T', -28, -37], ['N', 28, -37], ['R', 85, -37],
+    ['W', -45, -66], ['M', 45, -66],
+    ['CB', -150, -85], ['CB', 150, -85], ['Ni', 95, -80], ['SS', 55, -135], ['FS', -30, -145]
+  ];
+  function placeDef425() {
+    setPlayerSizes(0, 14);
+    pushHistory();
+    const offPlayers = players.filter(p => p.side !== 'def');
+    const pal = l => (defPalette.find(it => it.label === l) || { shape: 'text' });
+    const def = DEF425.map(([label, dx, dy]) => ({ label, shape: pal(label).shape || 'text', side: 'def', x: W / 2 + dx, y: losY + dy, strokeColor: '#1e293b', fillColor: 'transparent', visible: true }));
+    players = [...offPlayers, ...def];
+    applyDefHashShift(false);
+    render();
+  }
+  function placeDef34() {
+    setPlayerSizes(0, 14);
+    pushHistory();
+    const offPlayers = players.filter(p => p.side !== 'def');
+    const pal = l => (defPalette.find(it => it.label === l) || { shape: 'text' });
+    const def = DEF34.map(([label, dx, dy]) => ({ label, shape: pal(label).shape || 'text', side: 'def', x: W / 2 + dx, y: losY + dy, strokeColor: '#1e293b', fillColor: 'transparent', visible: true }));
+    players = [...offPlayers, ...def];
+    applyDefHashShift(false);
+    render();
+  }
   function placeDef43() {
+    setPlayerSizes(0, 14);
     pushHistory();
     const offPlayers = players.filter(p => p.side !== 'def');
     const pal = l => (defPalette.find(it => it.label === l) || { shape: 'text' });
@@ -2812,7 +3328,7 @@ const GridironApp = (() => {
       ctx.restore();
     });
 
-    lines.forEach(line => drawCustomLine(line, hideHandles));
+    lines.forEach(line => { if (!grpHidden(line)) drawCustomLine(line, hideHandles); });
 
     if (!hideHandles && currentLine) {
       const targetP = getClosestPlayer(mousePos.x, mousePos.y);
@@ -2843,12 +3359,14 @@ const GridironApp = (() => {
     }
 
     texts.forEach(t => {
+      if (grpHidden(t)) return;
       ctx.save();
       const isSel = !hideHandles && selectedObj && selectedObj.item === t;
       ctx.font = `${t.fontStyle || 'normal'} ${t.fontSize || 15}px "${t.fontFamily || 'Calibri'}", sans-serif`;
       ctx.fillStyle = t.color || '#000000';
       ctx.textBaseline = 'middle';
       ctx.textAlign = 'left';
+      if (t.box) { const bw = ctx.measureText(t.text).width, bh = parseInt(t.fontSize || 15, 10); ctx.save(); ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#000000'; ctx.lineWidth = 1.6; ctx.fillRect(t.x - 4, t.y - bh / 2 - 4, bw + 8, bh + 8); ctx.strokeRect(t.x - 4, t.y - bh / 2 - 4, bw + 8, bh + 8); ctx.restore(); }
       ctx.fillText(t.text, t.x, t.y);
       if (t.underline) {
         const uw = ctx.measureText(t.text).width, ufs = parseInt(t.fontSize || 15, 10);
@@ -2932,7 +3450,7 @@ const GridironApp = (() => {
 
       if (p.visible !== false) {
         ctx.fillStyle = p.side === 'def' ? ((!p.strokeColor || p.strokeColor === '#1e293b') ? defTextColor(p) : p.strokeColor) : (p.strokeColor || '#000000');
-        const fontSize = Math.max(10, Math.min(18, Math.round(r * 0.95)));
+        const fontSize = p.side === 'def' ? Math.max(10, Math.min(60, Math.round(r <= 12 ? r * 0.95 : r * 0.95 + (r - 12) * 6.3))) : Math.max(10, Math.min(18, Math.round(r * 0.95)));   // DEFは13以上で文字を大きく(14で約24px)
         ctx.font = `bold ${fontSize}px Arial`;
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         if (!(p.side !== 'def' && OL_HIDE.includes((p.label || '').trim().toUpperCase()))) ctx.fillText(p.label, p.x, p.y);   // OLは中身の文字を出さない
@@ -3916,7 +4434,7 @@ const GridironApp = (() => {
     players = JSON.parse(JSON.stringify(pData.players || []));
     lines = JSON.parse(JSON.stringify(pData.lines || []));
     zones = JSON.parse(JSON.stringify(pData.zones || []));
-    texts = JSON.parse(JSON.stringify(pData.texts || []));
+    texts = JSON.parse(JSON.stringify(pData.texts || [])); visLoad(pData.vis);
     if (pData.ezTop && !pData.ezExt) {   // 旧形式(エンドゾーンがフィールド内)の保存データは、上の余白ぶんだけ下げる
       const dy = EZ_H;
       players.forEach(p => p.y += dy); zones.forEach(z => z.y += dy); texts.forEach(x => x.y += dy); lines.forEach(l => (l.points || []).forEach(pt => pt.y += dy));
@@ -3944,12 +4462,33 @@ const GridironApp = (() => {
     render(); updatePlayList(); updateSaveState();
   }
 
+  // 保存済みの図(Route Tree / Cover / Front / Stunts / Blitz など)を、いま開いているPlayに重ねて転用する
+  function mergePlayObj(name, pData) {
+    const cat = pData.cat === 'shift' ? 'motion' : (pData.cat || 'play');
+    const DEFC = ['front', 'stunt', 'blitz', 'cov'], OFFC = ['form'];
+    pushHistory();
+    const cp = o => JSON.parse(JSON.stringify(o || []));
+    let pl = cp(pData.players), ln = cp(pData.lines), zn = cp(pData.zones), tx = cp(pData.texts);
+    if (pData.ezTop && !pData.ezExt) { const dy = EZ_H; pl.forEach(p => p.y += dy); zn.forEach(z => z.y += dy); tx.forEach(x => x.y += dy); ln.forEach(l => (l.points || []).forEach(pt => pt.y += dy)); }
+    const notes = [];
+    ['off', 'def'].forEach(side => {
+      const sp = pl.filter(p => p.side === side); if (!sp.length) return;
+      const hasCur = players.some(p => p.side === side);
+      const take = !hasCur || (side === 'def' && DEFC.includes(cat)) || (side === 'off' && OFFC.includes(cat));
+      if (take) { players = [...players.filter(p => p.side !== side), ...sp]; notes.push(side.toUpperCase() + '陣形'); }
+    });
+    ln.forEach(l => lines.push(l)); zn.forEach(z => zones.push(z)); tx.forEach(t => texts.push(t));
+    const nm = nameOf(name);
+    selectedObj = null; currentLine = null; render(); dirty = true; updateSaveState();
+    toast('「' + nm + '」を重ねました(線' + ln.length + '・ゾーン' + zn.length + '・文字' + tx.length + (notes.length ? '・' + notes.join('/') : '') + ')。Ctrl+Zで戻せます', 3600);
+  }
+
   function buildPlayObj() {
     render(true);
     const o = {
       cat: document.getElementById('play-cat').value || 'play',
       savedAt: Date.now(), savedBy: shareUser(),
-      pnotes: pnClone(),
+      pnotes: pnClone(), vis: { ...visGrp },
       players: JSON.parse(JSON.stringify(players)),
       lines: JSON.parse(JSON.stringify(lines)),
       zones: JSON.parse(JSON.stringify(zones)),
@@ -4248,9 +4787,10 @@ const GridironApp = (() => {
       div.style.paddingLeft = g ? '18px' : '8px';
       const cc = savedPlays[name].cat || 'play';
       { const sp = savedPlays[name]; div.title = sp.savedAt ? ('更新: ' + (sp.savedBy || '(名前なし)') + '  ' + fmtT(sp.savedAt)) : ''; }
-      div.innerHTML = `<input type="checkbox" class="sel" style="width:auto;margin-right:5px;flex:none"${playSel.has(name) ? ' checked' : ''}><span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(nameOf(name))}</span><span class="mvb" style="flex:none;display:flex;gap:2px;margin-right:3px;"><button type="button" class="mini-btn mvu" title="Move up" style="padding:0 5px;font-size:9px;">▲</button><button type="button" class="mini-btn mvd" title="Move down" style="padding:0 5px;font-size:9px;">▼</button></span><span class="del" title="削除">×</span>`;
+      div.innerHTML = `<input type="checkbox" class="sel" style="width:auto;margin-right:5px;flex:none"${playSel.has(name) ? ' checked' : ''}><span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(nameOf(name))}</span><span class="mvb" style="flex:none;display:flex;gap:2px;margin-right:3px;"><button type="button" class="mini-btn mvu" title="Move up" style="padding:0 5px;font-size:9px;">▲</button><button type="button" class="mini-btn mvd" title="Move down" style="padding:0 5px;font-size:9px;">▼</button></span><button type="button" class="mini-btn mrg" title="今のPlayに重ねる(転用): この図の 線・ゾーン・文字(+DEF/OFFの陣形)を、いま開いているPlayに追加します" style="padding:0 6px;font-size:11px;margin-right:3px;flex:none;">＋重ねる</button><span class="del" title="削除">×</span>`;
       div.querySelector('.mvu').onclick = e => { e.stopPropagation(); movePlay(name, ks, -1); };
       div.querySelector('.mvd').onclick = e => { e.stopPropagation(); movePlay(name, ks, 1); };
+      div.querySelector('.mrg').onclick = e => { e.stopPropagation(); mergePlayObj(name, savedPlays[name]); };
       div.onclick = () => loadPlayObj(name, savedPlays[name]);
       { const cb = div.querySelector('.sel'); cb.onclick = e => { e.stopPropagation(); if (cb.checked) playSel.add(name); else playSel.delete(name); playSelInfo(); }; }
       div.querySelector('.del').onclick = (e) => {
@@ -5082,7 +5622,7 @@ const GridironApp = (() => {
   function exportJSON() {
     const data = { plays: savedPlays, offForms: offFormations, defForms: defFormations, offPalette, defPalette, groupNames, cats: customCats };
     const link = document.createElement('a');
-    link.download = 'playbook_backup_v1623.json';
+    link.download = 'playbook_backup_v1643.json';
     link.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
     link.click();
   }
@@ -5192,7 +5732,7 @@ const GridironApp = (() => {
 
   return {
     init, setMode, undo, redo, toast, toggleBlockEnd, openFontDialog, deleteSelected, addPlayer, clearField, render,
-    selectGroup, applySelectedOff, applySelectedDef, renameFormation, moveFormation, openFormOrder, openFormPicker, placeDef43, placeOff11, assignFormCat, catAdd, catRename, catDelete, catMove, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
+    selectGroup, applySelectedOff, applySelectedDef, renameFormation, moveFormation, openFormOrder, openFormPicker, smOp, rtOp, covOp, cdOp, visOp, openCatPicker, placeDef34, placeDef425, placeDef43, placeOff11, assignFormCat, catAdd, catRename, catDelete, catMove, overwriteFormation, createNewFormation, deleteFormation, clearOffOnly, clearDefOnly,
     flipOffDefPositions, flipLR, duplicateSelected, togglePenOnly, shareExport, editTextContent, textEditStart, savePlayAs, nudgeDir, pnSide, pnAdd, pnFromField, pnReset, renameGroup, resetGroupNames, changeOffHashPosition, changeDefHashPosition, alignSide,
     changePlayerSize, syncPlayTitle, changeFieldSettings, changeEndZone, changeSelectedColor, updateLineProps, updateTextProps,
     setPlayerStrokeColor, setPlayerFillColor, setPlayerSymbol, ctxAction,
